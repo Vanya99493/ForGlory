@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.GameStateMachineModule.States.Base;
+using Infrastructure.Providers;
 
 namespace Infrastructure.GameStateMachineModule
 {
     public class GameStateMachine
     {
-        public event Action BootstrapStateEnd;
-        
         private readonly Dictionary<Type, IGameState> _states;
         private IGameState _currentGameState;
 
-        public GameStateMachine(CoroutineRunner coroutineRunner)
+        public GameStateMachine(CoroutineRunner coroutineRunner, CellPixelsPrefabsProvider cellPixelsPrefabsProvider, CellDataProvider cellDataProvider)
         {
             _states = new Dictionary<Type, IGameState>()
             {
                 { typeof(BootstrapGameState), new BootstrapGameState(coroutineRunner) },
                 { typeof(MainMenuGameState), new MainMenuGameState() },
-                { typeof(GameGameState), new GameGameState() }
+                { typeof(GameGameState), new GameGameState(cellPixelsPrefabsProvider, cellDataProvider) }
             };
-
-            SubscribeStateEndActions();
         }
 
         public void Enter<TState>() where TState : IGameState
@@ -32,9 +29,9 @@ namespace Infrastructure.GameStateMachineModule
             _currentGameState.Enter();
         }
 
-        private void SubscribeStateEndActions()
+        public void SubscribeBootstrapStateEndAction(Action OnBootstrapStateEnd)
         {
-            _states[typeof(BootstrapGameState)].StateEnded += BootstrapStateEnd;
+            _states[typeof(BootstrapGameState)].StateEnded += OnBootstrapStateEnd;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MVP.Battleground
+namespace BattleModule.ViewPart
 {
     [Serializable]
     public class BattlegroundView

@@ -1,6 +1,7 @@
 ﻿using System;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
+using UnityEngine;
 
 namespace Infrastructure.GameStateMachineModule.States
 {

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc94b8b4b1194e7c845acaf6c459a1cb, type: 3}
+  m_Name: CellPixelsPrefabsContainer
+  m_EditorClassIdentifier: 
+  cellPixels:
+    list:
+    - Key: 0
+      Value: {fileID: 1911800287029145406, guid: ea217bb72e1c28943ab36cf99487c64e, type: 3}
+    - Key: 1
+      Value: {fileID: 7583911379178741109, guid: 5f3e1d7f37f4b0f4cb9e49ce358e3ce6, type: 3}
+    - Key: 2
+      Value: {fileID: -6709846354912939375, guid: ca2a80713b80afe41949638fbeb5d2b5, type: 3}
+    - Key: 3
+      Value: {fileID: -9201567251149319992, guid: 7c955b2660539c34b88db18a33a08769, type: 3}
+    - Key: 4
+      Value: {fileID: -7970397064901167666, guid: ba626611d017fe347bfa7fedc0640191, type: 3}
+    - Key: 5
+      Value: {fileID: -1273525965172070513, guid: fcdbc46bc63ded24eab7433a053ad5ea, type: 3}
+    - Key: 6
+      Value: {fileID: 6425198212676112381, guid: 7773aa0d1c2810a41a8b9d5a35a3fafc, type: 3}
+    keyCollision: 0

@@ -1,6 +1,8 @@
 ﻿using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule;
 using Infrastructure.GameStateMachineModule.States;
+using Infrastructure.Providers;
+using UnityEngine;
 
 namespace Infrastructure
 {
@@ -8,10 +10,10 @@ namespace Infrastructure
     {
         private readonly GameStateMachine _gameStateMachine;
 
-        public Game(CoroutineRunner coroutineRunner)
+        public Game(CoroutineRunner coroutineRunner, CellPixelsPrefabsProvider cellPixelsPrefabsProvider, CellDataProvider cellDataProvider)
         {
-            _gameStateMachine = new GameStateMachine(coroutineRunner);
-            _gameStateMachine.BootstrapStateEnd += EnterMainMenu;
+            _gameStateMachine = new GameStateMachine(coroutineRunner, cellPixelsPrefabsProvider, cellDataProvider);
+            _gameStateMachine.SubscribeBootstrapStateEndAction(EnterMainMenu);
         }
 
         public void StartGame()
@@ -21,7 +23,8 @@ namespace Infrastructure
 
         private void EnterMainMenu()
         {
-            _gameStateMachine.Enter<MainMenuGameState>();
+            //_gameStateMachine.Enter<MainMenuGameState>();
+            _gameStateMachine.Enter<GameGameState>();
         }
     }
 }

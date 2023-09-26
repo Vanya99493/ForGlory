@@ -168,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coroutineRunner: {fileID: 1643043810}
+  cellPixelsPrefabsProvider:
+    cellPixelsPrefabsContainer: {fileID: 11400000, guid: 4b19646e46949964abec6a07b13c39d5, type: 2}
 --- !u!1 &1643043809
 GameObject:
   m_ObjectHideFlags: 0
