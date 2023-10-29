@@ -1,9 +1,7 @@
 ﻿using System;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
-using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
-using PlaygroundModule.ViewPart;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
@@ -11,28 +9,33 @@ namespace Infrastructure.GameStateMachineModule.States
     {
         public event Action StateEnded;
 
-        private readonly CellPixelsPrefabsProvider _cellPixelsPrefabsProvider;
-        private readonly CellDataProvider _cellDataProvider;
+        private readonly CellPrefabsProvider _cellPrefabsProvider;
         
-        public GameGameState(CellPixelsPrefabsProvider cellPixelsPrefabsProvider, CellDataProvider cellDataProvider)
+        public GameGameState(CellPrefabsProvider cellPrefabsProvider)
         {
-            _cellPixelsPrefabsProvider = cellPixelsPrefabsProvider;
-            _cellDataProvider = cellDataProvider;
+            _cellPrefabsProvider = cellPrefabsProvider;
         }
         
         public void Enter()
         {
-            PlaygroundFactory playgroundFactory = new PlaygroundFactory();
-            PlaygroundView playgroundView = playgroundFactory.InstantiatePlayground();
-            PlaygroundModel model = new PlaygroundModel(playgroundView);
-            playgroundView.Initialize(new PlaygroundPresenter(model, _cellPixelsPrefabsProvider));
-            
-            playgroundView.SpawnPlayground();
+            CreatePlayground();
         }
 
         public void Exit()
         {
             
+        }
+
+        private void CreatePlayground()
+        {
+            PlaygroundPresenter playgroundPresenter = new PlaygroundPresenter(_cellPrefabsProvider);
+
+            int height = 6;
+            int width = 6;
+            float playgroundSizeHeight = height * 1.0f;
+            float playgroundSizeWidth = width * 1.0f;
+            
+            playgroundPresenter.CreateAndSpawnPlayground(height, width, playgroundSizeHeight, playgroundSizeWidth);
         }
     }
 }

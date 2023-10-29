@@ -12,13 +12,13 @@ namespace Infrastructure.GameStateMachineModule
         private readonly Dictionary<Type, IGameState> _states;
         private IGameState _currentGameState;
 
-        public GameStateMachine(CoroutineRunner coroutineRunner, CellPixelsPrefabsProvider cellPixelsPrefabsProvider, CellDataProvider cellDataProvider)
+        public GameStateMachine(CoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider)
         {
             _states = new Dictionary<Type, IGameState>()
             {
                 { typeof(BootstrapGameState), new BootstrapGameState(coroutineRunner) },
                 { typeof(MainMenuGameState), new MainMenuGameState() },
-                { typeof(GameGameState), new GameGameState(cellPixelsPrefabsProvider, cellDataProvider) }
+                { typeof(GameGameState), new GameGameState(cellPrefabsProvider) }
             };
         }
 

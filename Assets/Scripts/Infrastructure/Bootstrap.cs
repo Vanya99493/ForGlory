@@ -1,14 +1,14 @@
 ﻿using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Infrastructure
 {
     public class Bootstrap : MonoBehaviour, ICoroutineRunner
     {
         [SerializeField] private CoroutineRunner coroutineRunner;
-        [SerializeField] private CellPixelsPrefabsProvider cellPixelsPrefabsProvider;
-        [SerializeField] private CellDataProvider cellDataProvider;
+        [FormerlySerializedAs("cellPixelsPrefabsProvider")] [SerializeField] private CellPrefabsProvider cellPrefabsProvider;
         
         private Game _game;
         
@@ -17,7 +17,7 @@ namespace Infrastructure
             DontDestroyOnLoad(this);
             DontDestroyOnLoad(coroutineRunner);
             
-            _game = new Game(coroutineRunner, cellPixelsPrefabsProvider, cellDataProvider);
+            _game = new Game(coroutineRunner, cellPrefabsProvider);
             _game.StartGame();
         }
     }

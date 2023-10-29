@@ -15,10 +15,5 @@ namespace PlaygroundModule.ViewPart
         {
             _presenter = playgroundPresenter;
         }
-
-        public void SpawnPlayground()
-        {
-            _presenter.SpawnPlayground(this.transform);
-        }
     }
 }
