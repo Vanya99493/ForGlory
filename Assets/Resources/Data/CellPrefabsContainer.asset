@@ -32,4 +32,7 @@ MonoBehaviour:
     - Key: 6
       Value:
       - {fileID: 5655846170395031181, guid: 0c8a9cd6f6647fa4994955d4bfe9690c, type: 3}
+    - Key: 0
+      Value:
+      - {fileID: 4685730211887140616, guid: e90bb0633e465814eb7e9b59d8f20b95, type: 3}
     keyCollision: 0

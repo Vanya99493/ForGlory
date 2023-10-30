@@ -1,6 +1,7 @@
 ﻿using BattleModule.ViewPart;
+using CharacterModule.ViewPart;
+using CustomClasses;
 using PlaygroundModule.ViewPart;
-using UIModule;
 using UnityEngine;
 
 namespace ScriptableObjects
@@ -8,12 +9,6 @@ namespace ScriptableObjects
     [CreateAssetMenu(fileName = "GameScenePrefabsContainer", menuName = "ScriptableObjects/Prefabs/GameScenePrefabsContainer", order = 1)]
     public class GameScenePrefabsContainer : ScriptableObject
     {
-        [SerializeField] private UIController uiController;
-        [SerializeField] private PlaygroundView playgroundView;
-        [SerializeField] private BattlegroundView battlegroundView;
-
-        public UIController UIControllerPrefab => uiController;
-        public PlaygroundView PlaygroundViewPrefab => playgroundView;
-        public BattlegroundView BattlegroundViewPrefab => battlegroundView;
+        public SerializableDictionary<string, CharacterView> CharacterPrefabsMap;
     }
 }

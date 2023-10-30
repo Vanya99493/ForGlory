@@ -11,7 +11,7 @@ namespace Infrastructure.Providers
     [Serializable]
     public class CellPrefabsProvider
     {
-        [FormerlySerializedAs("cellPixelsPrefabsContainer")] [SerializeField] private CellPrefabsContainer cellPrefabsContainer;
+        [SerializeField] private CellPrefabsContainer cellPrefabsContainer;
 
         public List<CellView> GetCellPixelPrefabs(CellType type) =>
             cellPrefabsContainer.CellPixelPrefabs(type);

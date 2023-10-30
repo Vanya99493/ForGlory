@@ -1,8 +1,6 @@
 ﻿using System;
-using BattleModule.ViewPart;
-using PlaygroundModule.ViewPart;
+using CharacterModule.ViewPart;
 using ScriptableObjects;
-using UIModule;
 using UnityEngine;
 
 namespace Infrastructure.Providers
@@ -12,8 +10,6 @@ namespace Infrastructure.Providers
     {
         [SerializeField] private GameScenePrefabsContainer gameScenePrefabsContainer;
 
-        public UIController GetUIController() => gameScenePrefabsContainer.UIControllerPrefab;
-        public PlaygroundView GetPlaygroundView() => gameScenePrefabsContainer.PlaygroundViewPrefab;
-        public BattlegroundView GetBattlegroundView() => gameScenePrefabsContainer.BattlegroundViewPrefab;
+        public CharacterView GetCharacterByName(string name) => gameScenePrefabsContainer.CharacterPrefabsMap[name];
     }
 }

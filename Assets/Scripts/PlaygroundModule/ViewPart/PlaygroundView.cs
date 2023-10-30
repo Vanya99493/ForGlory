@@ -14,6 +14,12 @@ namespace PlaygroundModule.ViewPart
         public void Initialize(PlaygroundPresenter playgroundPresenter)
         {
             _presenter = playgroundPresenter;
+            _presenter.DestroyPlayground += OnDestroyPlayground;
+        }
+
+        private void OnDestroyPlayground()
+        {
+            Destroy?.Invoke(this);
         }
     }
 }

@@ -2,7 +2,6 @@
 using Infrastructure.GameStateMachineModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.Providers;
-using UnityEngine;
 
 namespace Infrastructure
 {
@@ -10,9 +9,9 @@ namespace Infrastructure
     {
         private readonly GameStateMachine _gameStateMachine;
 
-        public Game(CoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider)
+        public Game(CoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
-            _gameStateMachine = new GameStateMachine(coroutineRunner, cellPrefabsProvider);
+            _gameStateMachine = new GameStateMachine(coroutineRunner, cellPrefabsProvider, gameScenePrefabsProvider);
             _gameStateMachine.SubscribeBootstrapStateEndAction(EnterMainMenu);
         }
 

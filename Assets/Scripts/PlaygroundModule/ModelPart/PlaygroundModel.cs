@@ -15,7 +15,7 @@ namespace PlaygroundModule.ModelPart
             _view = playgroundView;
         }
 
-        public void Initialize(Cell[,] playground)
+        public void InitializePlayground(Cell[,] playground)
         {
             _playground = new Cell[playground.GetLength(0), playground.GetLength(1)];
             for (int i = 0; i < Height; i++)
