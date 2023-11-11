@@ -30,7 +30,7 @@ namespace Infrastructure.GameStateMachineModule.States
         public void Enter()
         {
             CreatePlayground();
-            CreatePlayer();
+            CreatePlayer(2, 2);
         }
 
         public void Exit()
@@ -51,25 +51,42 @@ namespace Infrastructure.GameStateMachineModule.States
             float playgroundSizeHeight = height * 1.0f;
             float playgroundSizeWidth = width * 1.0f;
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, playgroundSizeHeight, playgroundSizeWidth);
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }
 
-        private void CreatePlayer()
+        private void CreatePlayer(int heightSpawnCellIndex, int widthSpawnCellIndex)
         {
-            Vector3 playerSpawnPos = new Vector3(-1.5f, 0, 0.5f);
+            Vector3 playerSpawnPos = new Vector3(
+                -2.5f + 1f * widthSpawnCellIndex,
+                0.5f,
+                2.5f - 1f * heightSpawnCellIndex
+            );
             
-            CharacterView view = new CharacterFactory().InstantiateCharacter(
-                _gameScenePrefabsProvider.GetCharacterByName("Player"), 
-                playerSpawnPos,
-                Quaternion.identity
-                );
-            CharacterModel model = new CharacterModel();
+            CharacterView view = new CharacterFactory()
+                .InstantiateCharacter(_gameScenePrefabsProvider.GetCharacterByName("Player"));
+            CharacterModel model = new CharacterModel(view, playerSpawnPos, heightSpawnCellIndex, widthSpawnCellIndex);
             _playerPresenter = new CharacterPresenter(model);
             view.Inititalize(_playerPresenter);
+            _playgroundPresenter.SetCharacterOnCell(_playerPresenter, heightSpawnCellIndex, widthSpawnCellIndex);
            
             // ***
             _playerPresenter.Enter<int>();
             // ***
+        }
+
+        private void OnCellClicked(int heightIndex, int widthIndex)
+        {
+            new Vector3(
+                -2.5f + 1f * widthIndex,
+                0.5f,
+                2.5f - 1f * heightIndex
+                );
+            if (_playerPresenter.TryAddMoveRoute(_playgroundPresenter, heightIndex, widthIndex))
+            {
+                (int heightCellIndex, int widthCellIndex) = _playerPresenter.GetCharacterCellIndexes();
+                _playgroundPresenter.RemoveCharacterFromCell(heightCellIndex, widthCellIndex);
+                _playerPresenter.Move();
+            }
         }
     }
 }

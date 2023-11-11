@@ -1,7 +1,8 @@
 ﻿using System;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
-using UnityEngine;
+using Infrastructure.Providers;
+using Object = UnityEngine.Object;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
@@ -12,10 +13,12 @@ namespace Infrastructure.GameStateMachineModule.States
         private const string GameSceneName = "GameScene";
 
         private readonly CoroutineRunner _coroutineRunner;
+        private readonly HandlersProvider _handlersProvider;
 
-        public BootstrapGameState(CoroutineRunner coroutineRunner)
+        public BootstrapGameState(CoroutineRunner coroutineRunner, HandlersProvider handlersProvider)
         {
             _coroutineRunner = coroutineRunner;
+            _handlersProvider = handlersProvider;
         }
 
         public void Enter()
@@ -31,7 +34,14 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private void OnSceneLoaded()
         {
+            InstantiateInputHandler();
+            
             StateEnded?.Invoke();
+        }
+
+        private void InstantiateInputHandler()
+        {
+            Object.Instantiate(_handlersProvider.GetInputHandler());
         }
     }
 }

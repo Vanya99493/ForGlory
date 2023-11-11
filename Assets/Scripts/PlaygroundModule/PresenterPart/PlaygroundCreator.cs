@@ -4,16 +4,40 @@ namespace PlaygroundModule.PresenterPart
 {
     public class PlaygroundCreator
     {
-        public Cell[,] CreatePlayground(PlaygroundModel playgroundModel)
+        public CellPresenter[,] CreatePlayground(PlaygroundModel playgroundModel)
         {
-            Cell[,] playground =
+            CellPresenter[,] playground =
             {
-                {new Cell(CellType.Hill), new Cell(CellType.Hill),new Cell(CellType.Plain),new Cell(CellType.Hill),new Cell(CellType.Hill),new Cell(CellType.Hill)},
-                {new Cell(CellType.Hill), new Cell(CellType.RampBT),new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.Hill)},
-                {new Cell(CellType.Water), new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.RampTB),new Cell(CellType.Hill)},
-                {new Cell(CellType.Hill), new Cell(CellType.RampRL),new Cell(CellType.Plain),new Cell(CellType.Hill),new Cell(CellType.Hill),new Cell(CellType.Hill)},
-                {new Cell(CellType.Hill), new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.Hill),new Cell(CellType.Hill)},
-                {new Cell(CellType.Hill), new Cell(CellType.Hill),new Cell(CellType.Plain),new Cell(CellType.Plain),new Cell(CellType.RampLR),new Cell(CellType.Hill)}
+                {
+                    new CellPresenter(new CellModel(CellType.Hill, 0, 0)), new CellPresenter(new CellModel(CellType.Hill, 0, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 0, 2)), new CellPresenter(new CellModel(CellType.Hill, 0, 3)),
+                    new CellPresenter(new CellModel(CellType.Hill, 0, 4)), new CellPresenter(new CellModel(CellType.Hill, 0, 5))
+                },
+                {
+                    new CellPresenter(new CellModel(CellType.Hill, 1, 0)), new CellPresenter(new CellModel(CellType.RampBT, 1, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 1, 2)), new CellPresenter(new CellModel(CellType.Plain, 1, 3)),
+                    new CellPresenter(new CellModel(CellType.Plain, 1, 4)), new CellPresenter(new CellModel(CellType.Hill, 1, 5))
+                },
+                {
+                    new CellPresenter(new CellModel(CellType.Water, 2, 0)), new CellPresenter(new CellModel(CellType.Plain, 2, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 2, 2)), new CellPresenter(new CellModel(CellType.Plain, 2, 3)),
+                    new CellPresenter(new CellModel(CellType.RampTB, 2, 4)), new CellPresenter(new CellModel(CellType.Hill, 2, 5))
+                },
+                {
+                    new CellPresenter(new CellModel(CellType.Hill, 3, 0)), new CellPresenter(new CellModel(CellType.RampRL, 3, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 3, 2)), new CellPresenter(new CellModel(CellType.Hill, 3, 3)),
+                    new CellPresenter(new CellModel(CellType.Hill, 3, 4)), new CellPresenter(new CellModel(CellType.Hill, 3, 5))
+                },
+                {
+                    new CellPresenter(new CellModel(CellType.Hill, 4, 0)), new CellPresenter(new CellModel(CellType.Plain, 4, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 4, 2)), new CellPresenter(new CellModel(CellType.Plain, 4, 3)),
+                    new CellPresenter(new CellModel(CellType.Hill, 4, 4)), new CellPresenter(new CellModel(CellType.Hill, 4, 5))
+                },
+                {
+                    new CellPresenter(new CellModel(CellType.Hill, 5, 0)), new CellPresenter(new CellModel(CellType.Hill, 5, 1)),
+                    new CellPresenter(new CellModel(CellType.Plain, 5, 2)), new CellPresenter(new CellModel(CellType.Plain, 5, 3)),
+                    new CellPresenter(new CellModel(CellType.RampLR, 5, 4)), new CellPresenter(new CellModel(CellType.Hill, 5, 5))
+                }
             };
 
             return playground;

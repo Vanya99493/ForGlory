@@ -9,9 +9,9 @@ namespace Infrastructure
     {
         private readonly GameStateMachine _gameStateMachine;
 
-        public Game(CoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public Game(CoroutineRunner coroutineRunner, HandlersProvider handlersProvider, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
-            _gameStateMachine = new GameStateMachine(coroutineRunner, cellPrefabsProvider, gameScenePrefabsProvider);
+            _gameStateMachine = new GameStateMachine(coroutineRunner, handlersProvider, cellPrefabsProvider, gameScenePrefabsProvider);
             _gameStateMachine.SubscribeBootstrapStateEndAction(EnterMainMenu);
         }
 

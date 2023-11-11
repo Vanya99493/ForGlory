@@ -1,28 +1,34 @@
 ﻿using System;
 using CharacterModule.PresenterPart;
-using Inrefaces;
+using Infrastructure.InputHandlerModule;
+using Interfaces;
 using UnityEngine;
 
 namespace CharacterModule.ViewPart
 {
     public class CharacterView : MonoBehaviour, IClickable
     {
-        public event Action<CharacterView> Destroy; 
+        public event Action<CharacterView> Destroy;
 
         private CharacterPresenter _presenter;
 
         public void Inititalize(CharacterPresenter presenter)
         {
             _presenter = presenter;
-            _presenter.DestroyPlayground += OnDestroyPlayground;
-        }
-        
-        public void Click()
-        {
-            _presenter.ClickOnCharacter();
+            _presenter.DestroyCharacter += OnDestroyCharacter;
         }
 
-        private void OnDestroyPlayground()
+        public void Move(Vector3 newPosition)
+        {
+            transform.position = newPosition;
+        }
+
+        public void Click(InputMouseButtonType mouseButtonType)
+        {
+            _presenter.ClickOnCharacter(mouseButtonType);
+        }
+
+        private void OnDestroyCharacter()
         {
             Destroy?.Invoke(this);
         }

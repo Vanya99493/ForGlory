@@ -168,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coroutineRunner: {fileID: 1643043810}
+  handlersProvider:
+    handlersContainer: {fileID: 11400000, guid: 7479f27efbab1d04e87e194b528d5d8f, type: 2}
   gameScenePrefabsProvider:
     gameScenePrefabsContainer: {fileID: 11400000, guid: d87c0b64801e0b842a108f6ef9908178, type: 2}
   cellPrefabsProvider:

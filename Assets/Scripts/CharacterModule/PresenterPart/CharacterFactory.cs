@@ -5,9 +5,9 @@ namespace CharacterModule.PresenterPart
 {
     public class CharacterFactory
     {
-        public CharacterView InstantiateCharacter(CharacterView characterPrefab, Vector3 position, Quaternion rotation)
+        public CharacterView InstantiateCharacter(CharacterView characterPrefab)
         {
-            CharacterView characterView = Object.Instantiate(characterPrefab, position, rotation);
+            CharacterView characterView = Object.Instantiate(characterPrefab, new Vector3(), Quaternion.identity);
             characterView.Destroy += OnDestroy;
             return characterView;
         }

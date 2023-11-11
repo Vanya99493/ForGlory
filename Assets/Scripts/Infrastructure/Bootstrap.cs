@@ -7,6 +7,7 @@ namespace Infrastructure
     public class Bootstrap : MonoBehaviour, ICoroutineRunner
     {
         [SerializeField] private CoroutineRunner coroutineRunner;
+        [SerializeField] private HandlersProvider handlersProvider;
         [SerializeField] private GameScenePrefabsProvider gameScenePrefabsProvider;
         [SerializeField] private CellPrefabsProvider cellPrefabsProvider;
         
@@ -17,7 +18,7 @@ namespace Infrastructure
             DontDestroyOnLoad(this);
             DontDestroyOnLoad(coroutineRunner);
             
-            _game = new Game(coroutineRunner, cellPrefabsProvider, gameScenePrefabsProvider);
+            _game = new Game(coroutineRunner, handlersProvider, cellPrefabsProvider, gameScenePrefabsProvider);
             _game.StartGame();
         }
     }
