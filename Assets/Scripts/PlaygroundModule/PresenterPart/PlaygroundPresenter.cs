@@ -10,13 +10,13 @@ namespace PlaygroundModule.PresenterPart
     {
         public event Action DestroyPlayground; 
 
-        private readonly PlaygroundModel _model;
+        public readonly PlaygroundModel Model;
 
         private CellFactory _cellFactory;
 
         public PlaygroundPresenter(PlaygroundModel model, CellPrefabsProvider cellPrefabsProvider)
         {
-            _model = model;
+            Model = model;
             _cellFactory = new CellFactory(cellPrefabsProvider);
         }
 
@@ -27,24 +27,24 @@ namespace PlaygroundModule.PresenterPart
 
         public void CreateAndSpawnPlayground(Transform parent, float playgroundSizeHeight, float playgroundSizeWidth, Action<int, int> OnCellClicked)
         {
-            var playground = new PlaygroundCreator().CreatePlayground(_model);
-            _model.InitializePlayground(playground);
-            new PlaygroundSpawner().SpawnPlayground(_cellFactory, _model, parent, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
+            var playground = new PlaygroundCreator().CreatePlayground(Model);
+            Model.InitializePlayground(playground);
+            new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }
 
         public bool SetCharacterOnCell(CharacterPresenter character, int heightCellIndex, int widthCellIndex)
         {
-            return _model.SetCharacterOnCell(character, heightCellIndex, widthCellIndex);
+            return Model.SetCharacterOnCell(character, heightCellIndex, widthCellIndex);
         }
 
         public bool CheckCellOnCharacter(int heightCellIndex, int widthCellIndex)
         {
-            return _model.CheckCellOnCharacter(heightCellIndex, widthCellIndex);
+            return Model.CheckCellOnCharacter(heightCellIndex, widthCellIndex);
         }
 
         public void RemoveCharacterFromCell(int heightCellIndex, int widthCellIndex)
         {
-            _model.RemoveCharacterFromCell(heightCellIndex, widthCellIndex);
+            Model.RemoveCharacterFromCell(heightCellIndex, widthCellIndex);
         }
     }
 }

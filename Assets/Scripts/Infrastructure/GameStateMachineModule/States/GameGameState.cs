@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
 using CharacterModule.ViewPart;
+using CustomClasses;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
 using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
+using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
 using UnityEngine;
 
@@ -56,15 +59,9 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private void CreatePlayer(int heightSpawnCellIndex, int widthSpawnCellIndex)
         {
-            Vector3 playerSpawnPos = new Vector3(
-                -2.5f + 1f * widthSpawnCellIndex,
-                0.5f,
-                2.5f - 1f * heightSpawnCellIndex
-            );
-            
             CharacterView view = new CharacterFactory()
                 .InstantiateCharacter(_gameScenePrefabsProvider.GetCharacterByName("Player"));
-            CharacterModel model = new CharacterModel(view, playerSpawnPos, heightSpawnCellIndex, widthSpawnCellIndex);
+            CharacterModel model = new CharacterModel(view, heightSpawnCellIndex, widthSpawnCellIndex);
             _playerPresenter = new CharacterPresenter(model);
             view.Inititalize(_playerPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerPresenter, heightSpawnCellIndex, widthSpawnCellIndex);
@@ -81,10 +78,21 @@ namespace Infrastructure.GameStateMachineModule.States
                 0.5f,
                 2.5f - 1f * heightIndex
                 );
-            if (_playerPresenter.TryAddMoveRoute(_playgroundPresenter, heightIndex, widthIndex))
+            List<Pair<int, int>> route;
+            WideSearch bfsSearch = new WideSearch();
+            if (_playerPresenter.Model.CanMove && bfsSearch.TryBuildRoute(
+                    new Node(
+                        _playerPresenter.Model.HeightCellIndex, 
+                        _playerPresenter.Model.WidthCellIndex, 
+                        _playgroundPresenter.Model.GetCellPresenter(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex).Model.CellType
+                        ),
+                    new Node(heightIndex, widthIndex,
+                    _playgroundPresenter.Model.GetCellPresenter(heightIndex, widthIndex).Model.CellType),
+                    _playgroundPresenter,
+                    out route
+                ));
             {
-                (int heightCellIndex, int widthCellIndex) = _playerPresenter.GetCharacterCellIndexes();
-                _playgroundPresenter.RemoveCharacterFromCell(heightCellIndex, widthCellIndex);
+                _playgroundPresenter.RemoveCharacterFromCell(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex);
                 _playerPresenter.Move();
             }
         }

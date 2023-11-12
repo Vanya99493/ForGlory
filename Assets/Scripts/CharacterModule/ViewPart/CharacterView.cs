@@ -18,8 +18,13 @@ namespace CharacterModule.ViewPart
             _presenter.DestroyCharacter += OnDestroyCharacter;
         }
 
-        public void Move(Vector3 newPosition)
+        public void Move(int heightIndex, int widthIndex)
         {
+            Vector3 newPosition = new Vector3(
+                -2.5f + 1f * widthIndex,
+                0.5f,
+                2.5f - 1f * heightIndex
+            );
             transform.position = newPosition;
         }
 

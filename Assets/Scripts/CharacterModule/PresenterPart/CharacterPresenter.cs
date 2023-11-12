@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using CharacterModule.ModelPart;
+using CustomClasses;
 using Infrastructure.InputHandlerModule;
-using PlaygroundModule.PresenterPart;
 using UnityEngine;
 
 namespace CharacterModule.PresenterPart
@@ -12,11 +12,11 @@ namespace CharacterModule.PresenterPart
         public event Action DestroyCharacter;
         public event Action ClickOnCharacterAction;
         
-        private CharacterModel _model;
+        public readonly CharacterModel Model;
 
         public CharacterPresenter(CharacterModel model)
         {
-            _model = model;
+            Model = model;
         }
 
         public void Enter<TState>()
@@ -28,28 +28,19 @@ namespace CharacterModule.PresenterPart
         {
             if (mouseButtonType == InputMouseButtonType.LeftMouseButton)
             {
-                _model.SwitchMoveState();
+                Model.SwitchMoveState();
                 ClickOnCharacterAction?.Invoke();
             }
         }
 
-        public (int, int) GetCharacterCellIndexes()
+        public void AddRoute(List<Pair<int, int>> route)
         {
-            return (_model.HeightCellIndex, _model.WidthCellIndex);
-        }
-
-        public bool TryAddMoveRoute(PlaygroundPresenter playgroundPresenter, int heightIndex, int widthIndex)
-        {
-            bool canMove = _model.CanMove && !playgroundPresenter.CheckCellOnCharacter(heightIndex, widthIndex);
-
-            // realize BFS 
-            
-            return canMove;
+            Model.AddRoute(route);
         }
 
         public void Move()
         {
-            _model.Move(new List<Vector3>());
+            Model.Move();
         }
         
         public void Destroy()
