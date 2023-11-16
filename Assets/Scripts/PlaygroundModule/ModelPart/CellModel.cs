@@ -1,5 +1,6 @@
 ﻿using CharacterModule.PresenterPart;
 using PlaygroundModule.ViewPart;
+using UnityEngine;
 
 namespace PlaygroundModule.ModelPart
 {
@@ -13,6 +14,7 @@ namespace PlaygroundModule.ModelPart
         public int CellHeightId { get; private set; }
         public int CellWidthId { get; private set; }
         public CharacterPresenter CharacterOnCell { get; private set; }
+        public Vector3 MoveCellPosition => _view.MoveCellPosition;
 
         public CellModel(CellType cellType, int cellHeightId, int cellWidthId)
         {

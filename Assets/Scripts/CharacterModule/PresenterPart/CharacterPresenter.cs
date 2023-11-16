@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using CharacterModule.ModelPart;
 using CustomClasses;
+using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
-using UnityEngine;
+using PlaygroundModule.PresenterPart;
 
 namespace CharacterModule.PresenterPart
 {
     public class CharacterPresenter
     {
         public event Action DestroyCharacter;
-        public event Action ClickOnCharacterAction;
+        public event Action<bool, int> ClickOnCharacterAction;
         
         public readonly CharacterModel Model;
 
@@ -29,7 +30,7 @@ namespace CharacterModule.PresenterPart
             if (mouseButtonType == InputMouseButtonType.LeftMouseButton)
             {
                 Model.SwitchMoveState();
-                ClickOnCharacterAction?.Invoke();
+                ClickOnCharacterAction?.Invoke(Model.CanMove, Model.Energy);
             }
         }
 
@@ -38,9 +39,10 @@ namespace CharacterModule.PresenterPart
             Model.AddRoute(route);
         }
 
-        public void Move()
+        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter)
         {
-            Model.Move();
+            Model.Move(coroutineRunner, playgroundPresenter);
+            playgroundPresenter.SetCharacterOnCell(this, Model.HeightCellIndex, Model.WidthCellIndex);
         }
         
         public void Destroy()

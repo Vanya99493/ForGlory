@@ -28,6 +28,7 @@ namespace PlaygroundModule.PresenterPart
                         zStartSpawnPosition - cellSizeHeight * i
                     );
                     CellView cellView = cellFactory.InstantiateCell(cellPresenter.Model.CellType, parent, cellSpawnPosition);
+                    cellPresenter.InitializeView(cellView);
                     cellView.CellClicked += OnCellClicked;
                     cellView.Initialize(cellPresenter);
                     cellPresenter.Model.IntitializeView(cellView);

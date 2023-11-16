@@ -12,10 +12,10 @@ namespace Infrastructure.GameStateMachineModule.States
         
         private const string GameSceneName = "GameScene";
 
-        private readonly CoroutineRunner _coroutineRunner;
+        private readonly ICoroutineRunner _coroutineRunner;
         private readonly HandlersProvider _handlersProvider;
 
-        public BootstrapGameState(CoroutineRunner coroutineRunner, HandlersProvider handlersProvider)
+        public BootstrapGameState(ICoroutineRunner coroutineRunner, HandlersProvider handlersProvider)
         {
             _coroutineRunner = coroutineRunner;
             _handlersProvider = handlersProvider;

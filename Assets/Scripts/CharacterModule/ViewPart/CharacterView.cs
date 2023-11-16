@@ -9,8 +9,20 @@ namespace CharacterModule.ViewPart
     public class CharacterView : MonoBehaviour, IClickable
     {
         public event Action<CharacterView> Destroy;
-
+        
         private CharacterPresenter _presenter;
+
+        private Vector3 _newPosition;
+        private bool _canMove = false;
+        
+        private void Update()
+        {
+            if (_canMove)
+            {
+                transform.position = _newPosition;
+                _canMove = false;
+            }
+        }
 
         public void Inititalize(CharacterPresenter presenter)
         {
@@ -18,14 +30,10 @@ namespace CharacterModule.ViewPart
             _presenter.DestroyCharacter += OnDestroyCharacter;
         }
 
-        public void Move(int heightIndex, int widthIndex)
+        public void Move(Vector3 newPosition)
         {
-            Vector3 newPosition = new Vector3(
-                -2.5f + 1f * widthIndex,
-                0.5f,
-                2.5f - 1f * heightIndex
-            );
-            transform.position = newPosition;
+            _newPosition = newPosition;
+            _canMove = true;
         }
 
         public void Click(InputMouseButtonType mouseButtonType)

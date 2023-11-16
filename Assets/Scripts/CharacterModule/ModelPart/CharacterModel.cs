@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
+using System.Collections;
 using CharacterModule.ViewPart;
 using CustomClasses;
+using Infrastructure.CoroutineRunnerModule;
+using PlaygroundModule.PresenterPart;
 using UnityEngine;
 
 namespace CharacterModule.ModelPart
@@ -9,18 +11,22 @@ namespace CharacterModule.ModelPart
     public class CharacterModel
     {
         private CharacterView _view;
-        private float _speed = 1f;
-        private List<Pair<int, int>> _route;
+        private float _speed = 4f;
+        private Queue<Pair<int, int>> _route;
+        private int _maxEnergy;
 
         public bool CanMove { get; private set; }
         public int HeightCellIndex { get; private set; }
         public int WidthCellIndex { get; private set; }
+        public int Energy { get; private set; }
 
-        public CharacterModel(CharacterView view, int heightCellIndex, int widthCellIndex)
+        public CharacterModel(CharacterView view, int heightCellIndex, int widthCellIndex, PlaygroundPresenter playgroundPresenter, int maxEnergy)
         {
             _view = view;
-            SetPosition(heightCellIndex, widthCellIndex);
+            SetPosition(playgroundPresenter, heightCellIndex, widthCellIndex);
             CanMove = false;
+            _maxEnergy = maxEnergy;
+            Energy = _maxEnergy;
         }
 
         public void SwitchMoveState()
@@ -31,26 +37,59 @@ namespace CharacterModule.ModelPart
 
         public void AddRoute(List<Pair<int, int>> route)
         {
+            _route = new Queue<Pair<int, int>>();
             foreach (var checkPoint in route)
             {
-                _route.Add(new Pair<int, int>(checkPoint.FirstValue, checkPoint.SecondValue));
+                _route.Enqueue(new Pair<int, int>(checkPoint.FirstValue, checkPoint.SecondValue));
             }
         }
 
-        public void Move()
+        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter)
         {
-            foreach (Pair<int, int> checkPoint in _route)
+            if (_route.Count > 0)
             {
-                SetPosition(checkPoint.FirstValue, checkPoint.SecondValue);
-                Thread.Sleep(1000);
+                playgroundPresenter.RemoveCharacterFromCell(HeightCellIndex, WidthCellIndex);
+                coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter));
             }
         }
 
-        private void SetPosition(int heightCellIndex, int widthCellIndex)
+        private void SetPosition(PlaygroundPresenter playgroundPresenter, int heightCellIndex, int widthCellIndex)
         {
+            _view.Move(playgroundPresenter.Model.GetCellPresenter(heightCellIndex, widthCellIndex).Model.MoveCellPosition);
+            
             HeightCellIndex = heightCellIndex;
             WidthCellIndex = widthCellIndex;
-            _view.Move(HeightCellIndex, WidthCellIndex);
+        }
+
+        private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter)
+        {
+            while (_route.Count > 0 && Energy > 0)
+            {
+                Pair<int, int> checkPoint = _route.Dequeue();
+                Energy--;
+                    
+                Vector3 targetPosition = playgroundPresenter.Model.GetCellPresenter(checkPoint.FirstValue, checkPoint.SecondValue).Model.MoveCellPosition;
+                Vector3 currentPosition = playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition;
+                float xDifference = targetPosition.x - currentPosition.x;  
+                float yDifference = targetPosition.y - currentPosition.y;  
+                float zDifference = targetPosition.z - currentPosition.z;  
+                float deltaTime = 0f;
+            
+                while(deltaTime <= 1f)
+                {
+                    _view.Move(new Vector3(
+                        currentPosition.x + xDifference * deltaTime,
+                        currentPosition.y + yDifference * deltaTime,
+                        currentPosition.z + zDifference * deltaTime
+                    ));
+                    deltaTime += Time.fixedDeltaTime * _speed;
+                    yield return new WaitForSeconds(Time.fixedDeltaTime);
+                }
+                HeightCellIndex = checkPoint.FirstValue;
+                WidthCellIndex = checkPoint.SecondValue;
+            }
+
+            Energy = _maxEnergy;
         }
     }
 }

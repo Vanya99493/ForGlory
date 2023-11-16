@@ -9,11 +9,21 @@ namespace PlaygroundModule.ViewPart
     public class CellView : MonoBehaviour, IClickable
     {
         [SerializeField] private Transform movePositionTransform;
+        [SerializeField] private Material activeMaterial;
+        
+        private Material _passiveMaterial;
         
         public event Action<int, int> CellClicked;
         public event Action<CellView> Destroy;
 
         private CellPresenter _cellPresenter;
+
+        public Vector3 MoveCellPosition => movePositionTransform.position;
+
+        private void Start()
+        {
+            _passiveMaterial = GetComponent<MeshRenderer>().material;
+        }
 
         public void Initialize(CellPresenter presenter)
         {
@@ -26,6 +36,16 @@ namespace PlaygroundModule.ViewPart
             {
                 CellClicked?.Invoke(_cellPresenter.Model.CellHeightId, _cellPresenter.Model.CellWidthId);
             }
+        }
+
+        public void ActivateCell()
+        {
+            gameObject.GetComponent<MeshRenderer>().material = activeMaterial;
+        }
+
+        public void DeactivateCell()
+        {
+            gameObject.GetComponent<MeshRenderer>().material = _passiveMaterial;
         }
     }
 }

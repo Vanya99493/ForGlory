@@ -342,3 +342,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePositionTransform: {fileID: 8466831738362663927}
+  activeMaterial: {fileID: 2100000, guid: 6627deb6d391efa4aaeebe43eb57b3b5, type: 2}

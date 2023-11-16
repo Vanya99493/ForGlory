@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePositionTransform: {fileID: 6601379599611170248}
+  activeMaterial: {fileID: 2100000, guid: 6627deb6d391efa4aaeebe43eb57b3b5, type: 2}
 --- !u!1 &7572826252357861189
 GameObject:
   m_ObjectHideFlags: 0

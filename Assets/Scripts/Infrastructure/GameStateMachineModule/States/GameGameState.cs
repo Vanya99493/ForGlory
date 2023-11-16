@@ -4,6 +4,7 @@ using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
 using CharacterModule.ViewPart;
 using CustomClasses;
+using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
 using PlaygroundModule.ModelPart;
@@ -18,16 +19,21 @@ namespace Infrastructure.GameStateMachineModule.States
     {
         public event Action StateEnded;
 
+        private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellPrefabsProvider _cellPrefabsProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
 
         private PlaygroundPresenter _playgroundPresenter;
         private CharacterPresenter _playerPresenter;
+
+        private WideSearch _bfsSearch;
         
-        public GameGameState(CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public GameGameState(ICoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
+            _coroutineRunner = coroutineRunner;
             _cellPrefabsProvider = cellPrefabsProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
+            _bfsSearch = new WideSearch();
         }
         
         public void Enter()
@@ -61,8 +67,9 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             CharacterView view = new CharacterFactory()
                 .InstantiateCharacter(_gameScenePrefabsProvider.GetCharacterByName("Player"));
-            CharacterModel model = new CharacterModel(view, heightSpawnCellIndex, widthSpawnCellIndex);
+            CharacterModel model = new CharacterModel(view, heightSpawnCellIndex, widthSpawnCellIndex, _playgroundPresenter, 5);
             _playerPresenter = new CharacterPresenter(model);
+            _playerPresenter.ClickOnCharacterAction += OnCharacterClicked;
             view.Inititalize(_playerPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerPresenter, heightSpawnCellIndex, widthSpawnCellIndex);
            
@@ -71,16 +78,30 @@ namespace Infrastructure.GameStateMachineModule.States
             // ***
         }
 
+        private void OnCharacterClicked(bool canMove, int energy)
+        {
+            List<Node> cells = _bfsSearch.GetCellsByLength(
+                energy, 
+                new Node(
+                    _playerPresenter.Model.HeightCellIndex, 
+                    _playerPresenter.Model.WidthCellIndex, 
+                    _playgroundPresenter.Model.GetCellPresenter(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex).Model.CellType
+                ), 
+                _playgroundPresenter
+                );
+            foreach (Node cell in cells)
+            {
+                if (canMove)
+                    _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).ActivateCell();
+                else
+                    _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).DeactivateCell();
+            }
+        }
+
         private void OnCellClicked(int heightIndex, int widthIndex)
         {
-            new Vector3(
-                -2.5f + 1f * widthIndex,
-                0.5f,
-                2.5f - 1f * heightIndex
-                );
-            List<Pair<int, int>> route;
-            WideSearch bfsSearch = new WideSearch();
-            if (_playerPresenter.Model.CanMove && bfsSearch.TryBuildRoute(
+            List<Pair<int, int>> route = new List<Pair<int, int>>();
+            if (_playerPresenter.Model.CanMove && _bfsSearch.TryBuildRoute(
                     new Node(
                         _playerPresenter.Model.HeightCellIndex, 
                         _playerPresenter.Model.WidthCellIndex, 
@@ -93,7 +114,8 @@ namespace Infrastructure.GameStateMachineModule.States
                 ));
             {
                 _playgroundPresenter.RemoveCharacterFromCell(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex);
-                _playerPresenter.Move();
+                _playerPresenter.AddRoute(route);
+                _playerPresenter.Move(_coroutineRunner, _playgroundPresenter);
             }
         }
     }

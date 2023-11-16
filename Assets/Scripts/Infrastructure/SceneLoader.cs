@@ -8,7 +8,7 @@ namespace Infrastructure
 {
     public class SceneLoader
     {
-        public void LoadScene(string nextScene, CoroutineRunner coroutineRunner, Action callback)
+        public void LoadScene(string nextScene, ICoroutineRunner coroutineRunner, Action callback)
         {
             if (SceneManager.GetActiveScene().name == nextScene)
                 return;

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using CharacterModule.PresenterPart;
+using CustomClasses;
 using Infrastructure.Providers;
 using PlaygroundModule.ModelPart;
 using UnityEngine;
