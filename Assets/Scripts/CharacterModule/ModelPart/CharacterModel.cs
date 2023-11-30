@@ -15,6 +15,7 @@ namespace CharacterModule.ModelPart
         private Queue<Pair<int, int>> _route;
         private int _maxEnergy;
 
+        public bool MoveState { get; private set; }
         public bool CanMove { get; private set; }
         public int HeightCellIndex { get; private set; }
         public int WidthCellIndex { get; private set; }
@@ -24,15 +25,15 @@ namespace CharacterModule.ModelPart
         {
             _view = view;
             SetPosition(playgroundPresenter, heightCellIndex, widthCellIndex);
-            CanMove = false;
+            MoveState = false;
+            CanMove = true;
             _maxEnergy = maxEnergy;
             Energy = _maxEnergy;
         }
 
         public void SwitchMoveState()
         {
-            CanMove = !CanMove;
-            Debug.Log(CanMove);
+            MoveState = !MoveState;
         }
 
         public void AddRoute(List<Pair<int, int>> route)
@@ -48,6 +49,7 @@ namespace CharacterModule.ModelPart
         {
             if (_route.Count > 0)
             {
+                CanMove = false;
                 playgroundPresenter.RemoveCharacterFromCell(HeightCellIndex, WidthCellIndex);
                 coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter));
             }
@@ -89,6 +91,8 @@ namespace CharacterModule.ModelPart
                 WidthCellIndex = checkPoint.SecondValue;
             }
 
+            SwitchMoveState();
+            CanMove = true;
             Energy = _maxEnergy;
         }
     }

@@ -27,6 +27,7 @@ namespace Infrastructure.GameStateMachineModule.States
         private CharacterPresenter _playerPresenter;
 
         private WideSearch _bfsSearch;
+        private List<Node> _activeCells;
         
         public GameGameState(ICoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
@@ -34,6 +35,7 @@ namespace Infrastructure.GameStateMachineModule.States
             _cellPrefabsProvider = cellPrefabsProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
             _bfsSearch = new WideSearch();
+            _activeCells = new List<Node>();
         }
         
         public void Enter()
@@ -80,7 +82,7 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private void OnCharacterClicked(bool canMove, int energy)
         {
-            List<Node> cells = _bfsSearch.GetCellsByLength(
+            _activeCells = _bfsSearch.GetCellsByLength(
                 energy, 
                 new Node(
                     _playerPresenter.Model.HeightCellIndex, 
@@ -89,19 +91,33 @@ namespace Infrastructure.GameStateMachineModule.States
                 ), 
                 _playgroundPresenter
                 );
-            foreach (Node cell in cells)
+            if (canMove)
+                ActivateCells();
+            else
+                DeactivateCells();
+        }
+
+        private void ActivateCells()
+        {
+            foreach (Node cell in _activeCells)
             {
-                if (canMove)
-                    _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).ActivateCell();
-                else
-                    _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).DeactivateCell();
+                _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).ActivateCell();
             }
+        }
+
+        private void DeactivateCells()
+        {
+            foreach (Node cell in _activeCells)
+            {
+                _playgroundPresenter.Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).DeactivateCell();
+            }
+            _activeCells.Clear();
         }
 
         private void OnCellClicked(int heightIndex, int widthIndex)
         {
             List<Pair<int, int>> route = new List<Pair<int, int>>();
-            if (_playerPresenter.Model.CanMove && _bfsSearch.TryBuildRoute(
+            if (_playerPresenter.Model.MoveState && _bfsSearch.TryBuildRoute(
                     new Node(
                         _playerPresenter.Model.HeightCellIndex, 
                         _playerPresenter.Model.WidthCellIndex, 
@@ -116,6 +132,7 @@ namespace Infrastructure.GameStateMachineModule.States
                 _playgroundPresenter.RemoveCharacterFromCell(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex);
                 _playerPresenter.AddRoute(route);
                 _playerPresenter.Move(_coroutineRunner, _playgroundPresenter);
+                DeactivateCells();
             }
         }
     }

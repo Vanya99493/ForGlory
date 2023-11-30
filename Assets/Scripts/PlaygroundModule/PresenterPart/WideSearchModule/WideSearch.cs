@@ -20,7 +20,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             {
                 Node currentNode = bfsQueue.Dequeue();
 
-                if (currentNode.Distance > length)
+                if (currentNode.Distance >= length)
                 {
                     continue;
                 }

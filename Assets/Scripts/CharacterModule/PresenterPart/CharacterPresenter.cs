@@ -27,10 +27,10 @@ namespace CharacterModule.PresenterPart
         
         public void ClickOnCharacter(InputMouseButtonType mouseButtonType)
         {
-            if (mouseButtonType == InputMouseButtonType.LeftMouseButton)
+            if (mouseButtonType == InputMouseButtonType.LeftMouseButton && Model.CanMove)
             {
                 Model.SwitchMoveState();
-                ClickOnCharacterAction?.Invoke(Model.CanMove, Model.Energy);
+                ClickOnCharacterAction?.Invoke(Model.MoveState, Model.Energy);
             }
         }
 
