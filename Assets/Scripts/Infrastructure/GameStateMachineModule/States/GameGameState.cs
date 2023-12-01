@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CameraModule;
 using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
 using CharacterModule.ViewPart;
@@ -42,6 +43,7 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             CreatePlayground();
             CreatePlayer(2, 2);
+            Camera.main.GetComponent<CameraFolower>().SetTarget(_playerPresenter.View.transform);
         }
 
         public void Exit()
@@ -57,22 +59,22 @@ namespace Infrastructure.GameStateMachineModule.States
             _playgroundPresenter = new PlaygroundPresenter(model, _cellPrefabsProvider);
             view.Initialize(_playgroundPresenter);
 
-            int height = 6;
-            int width = 6;
+            int height = 20;
+            int width = 20;
             float playgroundSizeHeight = height * 1.0f;
             float playgroundSizeWidth = width * 1.0f;
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }
 
         private void CreatePlayer(int heightSpawnCellIndex, int widthSpawnCellIndex)
         {
             CharacterView view = new CharacterFactory()
                 .InstantiateCharacter(_gameScenePrefabsProvider.GetCharacterByName("Player"));
-            CharacterModel model = new CharacterModel(view, heightSpawnCellIndex, widthSpawnCellIndex, _playgroundPresenter, 5);
-            _playerPresenter = new CharacterPresenter(model);
+            CharacterModel model = new CharacterModel(heightSpawnCellIndex, widthSpawnCellIndex, 5);
+            _playerPresenter = new CharacterPresenter(model, view);
+            _playerPresenter.Model.SetPosition(_playgroundPresenter);
             _playerPresenter.ClickOnCharacterAction += OnCharacterClicked;
-            view.Inititalize(_playerPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerPresenter, heightSpawnCellIndex, widthSpawnCellIndex);
            
             // ***
@@ -132,8 +134,8 @@ namespace Infrastructure.GameStateMachineModule.States
                 _playgroundPresenter.RemoveCharacterFromCell(_playerPresenter.Model.HeightCellIndex, _playerPresenter.Model.WidthCellIndex);
                 _playerPresenter.AddRoute(route);
                 _playerPresenter.Move(_coroutineRunner, _playgroundPresenter);
-                DeactivateCells();
             }
+            DeactivateCells();
         }
     }
 }

@@ -27,9 +27,9 @@ namespace PlaygroundModule.PresenterPart
             DestroyPlayground?.Invoke();
         }
 
-        public void CreateAndSpawnPlayground(Transform parent, float playgroundSizeHeight, float playgroundSizeWidth, Action<int, int> OnCellClicked)
+        public void CreateAndSpawnPlayground(Transform parent, int height, int width, float playgroundSizeHeight, float playgroundSizeWidth, Action<int, int> OnCellClicked)
         {
-            var playground = new PlaygroundCreator().CreatePlayground(Model);
+            var playground = new PlaygroundCreator().CreatePlayground(height, width);
             Model.InitializePlayground(playground);
             new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }

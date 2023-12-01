@@ -15,6 +15,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             Queue<Node> bfsQueue = new Queue<Node>();
             bfsQueue.Enqueue(startNode);
             bfsArray[startNode.HeightIndex, startNode.WidthIndex].Visited = true;
+            cells.Add(bfsArray[startNode.HeightIndex, startNode.WidthIndex]);
             
             while (bfsQueue.Count > 0)
             {

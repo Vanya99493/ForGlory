@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections;
-using CharacterModule.ViewPart;
 using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
 using PlaygroundModule.PresenterPart;
@@ -10,7 +10,9 @@ namespace CharacterModule.ModelPart
 {
     public class CharacterModel
     {
-        private CharacterView _view;
+        public event Action<Vector3> SetPositionAction;
+        public event Action<Vector3> MoveAction;
+        
         private float _speed = 4f;
         private Queue<Pair<int, int>> _route;
         private int _maxEnergy;
@@ -21,10 +23,10 @@ namespace CharacterModule.ModelPart
         public int WidthCellIndex { get; private set; }
         public int Energy { get; private set; }
 
-        public CharacterModel(CharacterView view, int heightCellIndex, int widthCellIndex, PlaygroundPresenter playgroundPresenter, int maxEnergy)
+        public CharacterModel(int heightCellIndex, int widthCellIndex, int maxEnergy)
         {
-            _view = view;
-            SetPosition(playgroundPresenter, heightCellIndex, widthCellIndex);
+            HeightCellIndex = heightCellIndex;
+            WidthCellIndex = widthCellIndex;
             MoveState = false;
             CanMove = true;
             _maxEnergy = maxEnergy;
@@ -55,12 +57,9 @@ namespace CharacterModule.ModelPart
             }
         }
 
-        private void SetPosition(PlaygroundPresenter playgroundPresenter, int heightCellIndex, int widthCellIndex)
+        public void SetPosition(PlaygroundPresenter playgroundPresenter)
         {
-            _view.Move(playgroundPresenter.Model.GetCellPresenter(heightCellIndex, widthCellIndex).Model.MoveCellPosition);
-            
-            HeightCellIndex = heightCellIndex;
-            WidthCellIndex = widthCellIndex;
+            MoveAction?.Invoke(playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition);
         }
 
         private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter)
@@ -79,7 +78,7 @@ namespace CharacterModule.ModelPart
             
                 while(deltaTime <= 1f)
                 {
-                    _view.Move(new Vector3(
+                    MoveAction?.Invoke(new Vector3(
                         currentPosition.x + xDifference * deltaTime,
                         currentPosition.y + yDifference * deltaTime,
                         currentPosition.z + zDifference * deltaTime
