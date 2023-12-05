@@ -1,5 +1,8 @@
-﻿namespace CustomClasses
+﻿using System;
+
+namespace CustomClasses
 {
+    [Serializable]
     public class Pair<T, K>
     {
         public T FirstValue;

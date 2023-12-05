@@ -1,11 +1,19 @@
 ﻿using System.Collections.Generic;
 using CustomClasses;
+using Infrastructure.Providers;
 using PlaygroundModule.ModelPart;
 
 namespace PlaygroundModule.PresenterPart.WideSearchModule
 {
     public class WideSearch
     {
+        private CellDataProvider _cellDataProvider;
+
+        public WideSearch(CellDataProvider cellDataProvider)
+        {
+            _cellDataProvider = cellDataProvider;
+        }
+        
         public List<Node> GetCellsByLength(int length, Node startNode, PlaygroundPresenter playgroundPresenter)
         {
             List<Node> cells = new List<Node>();
@@ -183,81 +191,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
 
         private bool CanMove(CellType start, CellType target, Direction direction)
         {
-            if (start == target)
-                return true;
-            
-            if (target == CellType.Water)
-                return false;
-            if (start == CellType.Plain)
-            {
-                switch (direction)
-                {
-                    case Direction.Up:
-                        if (target == CellType.RampBT)
-                            return true;
-                        break;
-                    case Direction.Down:
-                        if (target == CellType.RampTB)
-                            return true;
-                        break;
-                    case Direction.Left:
-                        if (target == CellType.RampRL)
-                            return true;
-                        break;
-                    case Direction.Right:
-                        if (target == CellType.RampLR)
-                            return true;
-                        break;
-                }
-            }
-            if (start == CellType.Hill)
-            {
-                switch (direction)
-                {
-                    case Direction.Up:
-                        if (target == CellType.RampTB)
-                            return true;
-                        break;
-                    case Direction.Down:
-                        if (target == CellType.RampBT)
-                            return true;
-                        break;
-                    case Direction.Left:
-                        if (target == CellType.RampLR)
-                            return true;
-                        break;
-                    case Direction.Right:
-                        if (target == CellType.RampRL)
-                            return true;
-                        break;
-                }
-            }
-
-            switch (start)
-            {
-                case CellType.RampBT:
-                    if ((direction == Direction.Up && target == CellType.Hill) || 
-                        (direction == Direction.Down && target == CellType.Plain))
-                        return true;
-                    break;
-                case CellType.RampTB:
-                    if ((direction == Direction.Up && target == CellType.Plain) || 
-                        (direction == Direction.Down && target == CellType.Hill))
-                        return true;
-                    break;
-                case CellType.RampLR:
-                    if ((direction == Direction.Left && target == CellType.Plain) ||
-                        (direction == Direction.Right && target == CellType.Hill))
-                        return true;
-                    break;
-                case CellType.RampRL:
-                    if ((direction == Direction.Left && target == CellType.Hill) ||
-                        (direction == Direction.Right && target == CellType.Plain))
-                        return true;
-                    break;
-            }
-
-            return false;
+            return _cellDataProvider.GetCellPixelsMoveRoots(start)[direction].Contains(target);
         }
     }
 }

@@ -172,8 +172,8 @@ MonoBehaviour:
     handlersContainer: {fileID: 11400000, guid: 7479f27efbab1d04e87e194b528d5d8f, type: 2}
   gameScenePrefabsProvider:
     gameScenePrefabsContainer: {fileID: 11400000, guid: d87c0b64801e0b842a108f6ef9908178, type: 2}
-  cellPrefabsProvider:
-    cellPrefabsContainer: {fileID: 11400000, guid: 4b19646e46949964abec6a07b13c39d5, type: 2}
+  cellDataProvider:
+    cellDataContainer: {fileID: 11400000, guid: 4b19646e46949964abec6a07b13c39d5, type: 2}
 --- !u!1 &1643043809
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,16 +8,16 @@ namespace PlaygroundModule.PresenterPart
 {
     public class CellFactory
     {
-        private readonly CellPrefabsProvider _cellPrefabsProvider;
+        private readonly CellDataProvider _cellDataProvider;
         
-        public CellFactory(CellPrefabsProvider cellPrefabsProvider)
+        public CellFactory(CellDataProvider cellDataProvider)
         {
-            _cellPrefabsProvider = cellPrefabsProvider;
+            _cellDataProvider = cellDataProvider;
         }
         
         public CellView InstantiateCell(CellType info, Transform parent, Vector3 spawnPosition)
         {
-            CellView cellObject = Object.Instantiate(_cellPrefabsProvider.GetCellPixelPrefabs(info)[0], parent);
+            CellView cellObject = Object.Instantiate(_cellDataProvider.GetCellPixelPrefabs(info)[0], parent);
             cellObject.Destroy += OnDestroy;
             cellObject.transform.position = new Vector3(spawnPosition.x, cellObject.transform.position.y, spawnPosition.z);
             

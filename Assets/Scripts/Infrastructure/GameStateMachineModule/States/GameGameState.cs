@@ -21,7 +21,7 @@ namespace Infrastructure.GameStateMachineModule.States
         public event Action StateEnded;
 
         private readonly ICoroutineRunner _coroutineRunner;
-        private readonly CellPrefabsProvider _cellPrefabsProvider;
+        private readonly CellDataProvider _cellDataProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
 
         private PlaygroundPresenter _playgroundPresenter;
@@ -30,12 +30,12 @@ namespace Infrastructure.GameStateMachineModule.States
         private WideSearch _bfsSearch;
         private List<Node> _activeCells;
         
-        public GameGameState(ICoroutineRunner coroutineRunner, CellPrefabsProvider cellPrefabsProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public GameGameState(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
             _coroutineRunner = coroutineRunner;
-            _cellPrefabsProvider = cellPrefabsProvider;
+            _cellDataProvider = cellDataProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
-            _bfsSearch = new WideSearch();
+            _bfsSearch = new WideSearch(cellDataProvider);
             _activeCells = new List<Node>();
         }
         
@@ -56,7 +56,7 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel(view);
-            _playgroundPresenter = new PlaygroundPresenter(model, _cellPrefabsProvider);
+            _playgroundPresenter = new PlaygroundPresenter(model, _cellDataProvider);
             view.Initialize(_playgroundPresenter);
 
             int height = 20;
@@ -64,7 +64,7 @@ namespace Infrastructure.GameStateMachineModule.States
             float playgroundSizeHeight = height * 1.0f;
             float playgroundSizeWidth = width * 1.0f;
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, playgroundSizeHeight, playgroundSizeWidth, _cellDataProvider, OnCellClicked);
         }
 
         private void CreatePlayer(int heightSpawnCellIndex, int widthSpawnCellIndex)

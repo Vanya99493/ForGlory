@@ -10,7 +10,6 @@ namespace CharacterModule.ModelPart
 {
     public class CharacterModel
     {
-        public event Action<Vector3> SetPositionAction;
         public event Action<Vector3> MoveAction;
         
         private float _speed = 4f;
