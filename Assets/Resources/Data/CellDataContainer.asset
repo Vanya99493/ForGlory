@@ -17,13 +17,115 @@ MonoBehaviour:
     cellPrefabs:
     - {fileID: 1783562288668689548, guid: 9de3b339a4201084681f54de65a305cd, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 0
+        Value: 0100000006000000
+      - Key: 1
+        Value: 0100000005000000
+      - Key: 2
+        Value: 0100000004000000
+      - Key: 3
+        Value: 0100000003000000
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          - Key: 2
+            Value: 0.2
+          - Key: 6
+            Value: 0.3
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          - Key: 2
+            Value: 0.2
+          - Key: 5
+            Value: 0.3
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          - Key: 2
+            Value: 0.2
+          - Key: 4
+            Value: 0.3
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          - Key: 2
+            Value: 0.2
+          - Key: 3
+            Value: 0.3
+          keyCollision: 0
       keyCollision: 0
   - cellType: 2
     cellPrefabs:
     - {fileID: 626293964962371252, guid: a91d3d8689f4f6e4089a150bd76834b6, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 0
+        Value: 0200000005000000
+      - Key: 1
+        Value: 0200000006000000
+      - Key: 2
+        Value: 0200000003000000
+      - Key: 3
+        Value: 0200000004000000
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          - Key: 1
+            Value: 0.2
+          - Key: 5
+            Value: 0.3
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          - Key: 1
+            Value: 0.2
+          - Key: 6
+            Value: 0.3
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          - Key: 1
+            Value: 0.2
+          - Key: 3
+            Value: 0.3
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          - Key: 1
+            Value: 0.2
+          - Key: 4
+            Value: 0.3
+          keyCollision: 0
       keyCollision: 0
   - cellType: 0
     cellPrefabs:
@@ -31,27 +133,202 @@ MonoBehaviour:
     moveRoot:
       list: []
       keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list: []
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list: []
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list: []
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list: []
+          keyCollision: 0
+      keyCollision: 0
   - cellType: 3
     cellPrefabs:
     - {fileID: 8341082408082432630, guid: bbf817b7de8e0774cb56f14d1a307716, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 2
+        Value: 01000000
+      - Key: 3
+        Value: 02000000
+      - Key: 0
+        Value: 
+      - Key: 1
+        Value: 
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          keyCollision: 0
       keyCollision: 0
   - cellType: 4
     cellPrefabs:
     - {fileID: 5732707573915421682, guid: 096d898d76d2fe346aefebeb9c96b62f, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 2
+        Value: 02000000
+      - Key: 3
+        Value: 01000000
+      - Key: 0
+        Value: 
+      - Key: 1
+        Value: 
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 1
+            Value: 0
+          keyCollision: 0
       keyCollision: 0
   - cellType: 5
     cellPrefabs:
     - {fileID: 2373323789967593050, guid: b18cf19612a8e8b4989a2200bd6cff77, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 0
+        Value: 01000000
+      - Key: 1
+        Value: 02000000
+      - Key: 2
+        Value: 
+      - Key: 3
+        Value: 
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
       keyCollision: 0
   - cellType: 6
     cellPrefabs:
     - {fileID: 5655846170395031181, guid: 0c8a9cd6f6647fa4994955d4bfe9690c, type: 3}
     moveRoot:
-      list: []
+      list:
+      - Key: 0
+        Value: 02000000
+      - Key: 1
+        Value: 01000000
+      - Key: 2
+        Value: 
+      - Key: 3
+        Value: 
+      keyCollision: 0
+    spawnRoot:
+      list:
+      - Key: 0
+        Value:
+          list:
+          - Key: 2
+            Value: 1
+          keyCollision: 0
+      - Key: 1
+        Value:
+          list:
+          - Key: 1
+            Value: 1
+          keyCollision: 0
+      - Key: 2
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
+      - Key: 3
+        Value:
+          list:
+          - Key: 1
+            Value: 0.5
+          - Key: 2
+            Value: 0.5
+          keyCollision: 0
       keyCollision: 0

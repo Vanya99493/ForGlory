@@ -25,11 +25,11 @@ namespace PlaygroundModule.PresenterPart
             DestroyPlayground?.Invoke();
         }
 
-        public void CreateAndSpawnPlayground(Transform parent, int height, int width, float playgroundSizeHeight, float playgroundSizeWidth, CellDataProvider cellDataProvider, Action<int, int> OnCellClicked)
+        public void CreateAndSpawnPlayground(Transform parent, int height, int width, int lengthOfWater, int lengthOfCoast, float playgroundSizeHeight, float playgroundSizeWidth, CellDataProvider cellDataProvider, Action<int, int> OnCellClicked)
         {
             //var playground = new PlaygroundCreator().CreatePlayground(height, width);
             //var playground = new PlaygroundCreator().CreatePlaygroundByBundles(height, width);
-            var playground = new PlaygroundCreator().CreatePlaygroundByNewRootSpawnSystem(height, width, cellDataProvider);
+            var playground = new PlaygroundCreator().CreatePlaygroundByNewRootSpawnSystem(cellDataProvider, height, width, lengthOfWater, lengthOfCoast);
             Model.InitializePlayground(playground);
             new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }

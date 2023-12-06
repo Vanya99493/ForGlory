@@ -13,6 +13,7 @@ using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
@@ -42,7 +43,7 @@ namespace Infrastructure.GameStateMachineModule.States
         public void Enter()
         {
             CreatePlayground();
-            CreatePlayer(2, 2);
+            CreatePlayer();
             Camera.main.GetComponent<CameraFolower>().SetTarget(_playerPresenter.View.transform);
         }
 
@@ -59,16 +60,26 @@ namespace Infrastructure.GameStateMachineModule.States
             _playgroundPresenter = new PlaygroundPresenter(model, _cellDataProvider);
             view.Initialize(_playgroundPresenter);
 
-            int height = 20;
-            int width = 20;
+            int height = 25;
+            int width = 25;
+            int lengthOfWater = 2;
+            int lengthOfCoast = 3;
             float playgroundSizeHeight = height * 1.0f;
             float playgroundSizeWidth = width * 1.0f;
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, playgroundSizeHeight, playgroundSizeWidth, _cellDataProvider, OnCellClicked);
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, lengthOfWater, lengthOfCoast, playgroundSizeHeight, playgroundSizeWidth, _cellDataProvider, OnCellClicked);
         }
 
-        private void CreatePlayer(int heightSpawnCellIndex, int widthSpawnCellIndex)
+        private void CreatePlayer()
         {
+            int heightSpawnCellIndex, widthSpawnCellIndex;
+            do
+            {
+                heightSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Height);
+                widthSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Width);
+            } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Hill &&
+                     _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain);
+            
             CharacterView view = new CharacterFactory()
                 .InstantiateCharacter(_gameScenePrefabsProvider.GetCharacterByName("Player"));
             CharacterModel model = new CharacterModel(heightSpawnCellIndex, widthSpawnCellIndex, 5);
