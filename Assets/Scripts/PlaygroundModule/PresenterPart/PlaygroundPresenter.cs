@@ -34,9 +34,9 @@ namespace PlaygroundModule.PresenterPart
             new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnCellClicked);
         }
 
-        public bool SetCharacterOnCell(CharacterPresenter character, int heightCellIndex, int widthCellIndex)
+        public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
         {
-            return Model.SetCharacterOnCell(character, heightCellIndex, widthCellIndex);
+            return Model.SetCharacterOnCell(team, heightCellIndex, widthCellIndex);
         }
 
         public bool CheckCellOnCharacter(int heightCellIndex, int widthCellIndex)

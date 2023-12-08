@@ -20,9 +20,9 @@ namespace PlaygroundModule.PresenterPart
             _view = view;
         }
 
-        public bool SetCharacterOnCell(CharacterPresenter character)
+        public bool SetCharacterOnCell(TeamPresenter team)
         {
-            return Model.SetCharacterOnCell(character);
+            return Model.SetCharacterOnCell(team);
         }
 
         public void RemoveCharacterFromCell()

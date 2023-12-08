@@ -13,7 +13,7 @@ namespace PlaygroundModule.ModelPart
         
         public int CellHeightId { get; private set; }
         public int CellWidthId { get; private set; }
-        public CharacterPresenter CharacterOnCell { get; private set; }
+        public TeamPresenter TeamOnCell { get; private set; }
         public Vector3 MoveCellPosition => _view.MoveCellPosition;
 
         public CellModel(CellType cellType, int cellHeightId, int cellWidthId)
@@ -28,20 +28,20 @@ namespace PlaygroundModule.ModelPart
             _view = view;
         }
 
-        public bool SetCharacterOnCell(CharacterPresenter character)
+        public bool SetCharacterOnCell(TeamPresenter team)
         {
-            if (CharacterOnCell != null)
+            if (TeamOnCell != null)
             {
                 return false;
             }
             
-            CharacterOnCell = character;
+            TeamOnCell = team;
             return true;
         }
 
         public void RemoveCharacterFromCell()
         {
-            CharacterOnCell = null;
+            TeamOnCell = null;
         }
     }
 }

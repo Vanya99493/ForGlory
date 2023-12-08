@@ -1,6 +1,6 @@
 ﻿namespace CharacterModule.ViewPart
 {
-    public abstract class CharacterView
+    public class PlayerTeamView : TeamView
     {
         
     }

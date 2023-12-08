@@ -15,5 +15,7 @@ MonoBehaviour:
   CharacterPrefabsMap:
     list:
     - Key: Player
-      Value: {fileID: 1053808067914239075, guid: 2f8d905a98a622a4980943e70c9c7e89, type: 3}
+      Value: {fileID: 1142290907365102850, guid: 2f8d905a98a622a4980943e70c9c7e89, type: 3}
+    - Key: Enemy
+      Value: {fileID: 6975488116013920274, guid: 28a4fe96c4664d64a935324da4f0eed3, type: 3}
     keyCollision: 0
