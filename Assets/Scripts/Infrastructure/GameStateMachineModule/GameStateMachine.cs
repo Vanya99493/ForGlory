@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using CameraModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
+using UIModule;
+using UnityEngine;
 
 namespace Infrastructure.GameStateMachineModule
 {
@@ -12,13 +15,12 @@ namespace Infrastructure.GameStateMachineModule
         private readonly Dictionary<Type, IGameState> _states;
         private IGameState _currentGameState;
 
-        public GameStateMachine(ICoroutineRunner coroutineRunner, HandlersProvider handlersProvider, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public GameStateMachine(UIController uiController, CameraFollower mainCamera, ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
-            _states = new Dictionary<Type, IGameState>()
+            _states = new Dictionary<Type, IGameState>
             {
-                { typeof(BootstrapGameState), new BootstrapGameState(coroutineRunner, handlersProvider) },
-                { typeof(MainMenuGameState), new MainMenuGameState() },
-                { typeof(GameGameState), new GameGameState(coroutineRunner, cellDataProvider, gameScenePrefabsProvider) }
+                { typeof(MainMenuState), new MainMenuState(uiController) },
+                { typeof(GameState), new GameState(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider) }
             };
         }
 
@@ -27,11 +29,6 @@ namespace Infrastructure.GameStateMachineModule
             _currentGameState?.Exit();
             _currentGameState = _states[typeof(TState)];
             _currentGameState.Enter();
-        }
-
-        public void SubscribeBootstrapStateEndAction(Action OnBootstrapStateEnd)
-        {
-            _states[typeof(BootstrapGameState)].StateEnded += OnBootstrapStateEnd;
         }
     }
 }

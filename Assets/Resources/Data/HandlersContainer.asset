@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba6a5d912d442bfaf307a9603fe31bb, type: 3}
   m_Name: HandlersContainer
   m_EditorClassIdentifier: 
+  Camera: {fileID: 5453219743161142263, guid: 23e3662657644604dbc0386ab2794913, type: 3}
+  CoroutineRunner: {fileID: 2503681404497423369, guid: 7d5aa12a962cae24398e019bef3c4560, type: 3}
   InputHandler: {fileID: 8647859174432925092, guid: 3d953533658e759478dad9f03271129b, type: 3}
+  UIController: {fileID: 1605943539183050126, guid: 1ef5f1292f9020a4a83f584e2a1a2adc, type: 3}

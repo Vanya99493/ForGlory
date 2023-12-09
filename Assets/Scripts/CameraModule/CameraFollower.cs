@@ -2,7 +2,7 @@
 
 namespace CameraModule
 {
-    public class CameraFolower : MonoBehaviour
+    public class CameraFollower : MonoBehaviour
     {
         [SerializeField] private Vector3 offset;
 
@@ -13,6 +13,12 @@ namespace CameraModule
         {
             _target = target;
             _haveTarget = true;
+        }
+
+        public void ResetTarget()
+        {
+            _haveTarget = false;
+            _target = null;
         }
         
         private void LateUpdate()

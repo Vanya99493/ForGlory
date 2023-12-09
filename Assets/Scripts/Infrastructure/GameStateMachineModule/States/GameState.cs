@@ -12,15 +12,18 @@ using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
+using UIModule;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
-    public class GameGameState : IGameState
+    public class GameState : IGameState
     {
         public event Action StateEnded;
 
+        private readonly UIController _uiController;
+        private readonly CameraFollower _mainCamera;
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
@@ -32,8 +35,11 @@ namespace Infrastructure.GameStateMachineModule.States
         private WideSearch _bfsSearch;
         private List<Node> _activeCells;
         
-        public GameGameState(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public GameState(UIController uiController, CameraFollower mainCamera, ICoroutineRunner coroutineRunner, 
+            CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
+            _uiController = uiController;
+            _mainCamera = mainCamera;
             _coroutineRunner = coroutineRunner;
             _cellDataProvider = cellDataProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
@@ -48,13 +54,17 @@ namespace Infrastructure.GameStateMachineModule.States
             
             CreateEnemy();
             
-            Camera.main.GetComponent<CameraFolower>().SetTarget(_playerTeamPresenter.View.transform);
+            _mainCamera.SetTarget(_playerTeamPresenter.View.transform);
+            
+            _uiController.ActivateGameHud();
         }
 
         public void Exit()
         {
+            _mainCamera.ResetTarget();
             _playgroundPresenter.Destroy();
             _playerTeamPresenter.Destroy();
+            _enemyTeamPresenter.Destroy();
         }
 
         private void CreatePlayground()

@@ -1,29 +1,42 @@
-﻿using Infrastructure.CoroutineRunnerModule;
+﻿using CameraModule;
+using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule;
 using Infrastructure.GameStateMachineModule.States;
+using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
+using UIModule;
+using UnityEngine;
 
 namespace Infrastructure
 {
     public class Game
     {
         private readonly GameStateMachine _gameStateMachine;
+        
+        private UIController _uiController;
+        private CameraFollower _mainCamera;
+        private InputHandler _inputHandler;
 
-        public Game(CoroutineRunner coroutineRunner, HandlersProvider handlersProvider, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
-            _gameStateMachine = new GameStateMachine(coroutineRunner, handlersProvider, cellDataProvider, gameScenePrefabsProvider);
-            _gameStateMachine.SubscribeBootstrapStateEndAction(EnterMainMenu);
+            _uiController = uiController;
+            _mainCamera = mainCamera;
+            _inputHandler = inputHandler;
+            _gameStateMachine = new GameStateMachine(_uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
+            
+            InitializeUIActions();
         }
 
         public void StartGame()
         {
-            _gameStateMachine.Enter<BootstrapGameState>();
+            _gameStateMachine.Enter<MainMenuState>();
         }
 
-        private void EnterMainMenu()
+        private void InitializeUIActions()
         {
-            //_gameStateMachine.Enter<MainMenuGameState>();
-            _gameStateMachine.Enter<GameGameState>();
+            _uiController.mainMenuBasePanel.StartGameAction += () => _gameStateMachine.Enter<GameState>();
+            _uiController.mainMenuBasePanel.EndGameAction += Application.Quit;
+            _uiController.gameHudBasePanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>();
         }
     }
 }
