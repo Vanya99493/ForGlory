@@ -1,6 +1,8 @@
-﻿namespace CharacterModule.ViewPart
+﻿using UnityEngine;
+
+namespace CharacterModule.ViewPart
 {
-    public abstract class CharacterView
+    public class CharacterView : MonoBehaviour
     {
         
     }

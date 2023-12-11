@@ -1,16 +1,17 @@
 ﻿using System;
-using CharacterModule.PresenterPart;
 using Infrastructure.InputHandlerModule;
 using Interfaces;
 using UnityEngine;
 
 namespace CharacterModule.ViewPart
 {
-    public abstract class TeamView : MonoBehaviour, IClickable
-    {
+    public class TeamView : MonoBehaviour, IClickable
+    {        
         public event Action<TeamView> Destroy;
         public event Action<InputMouseButtonType> ClickOnCharacter;
 
+        public Transform[] characterPositions;
+        
         private Vector3 _newPosition;
         private bool _canMove = false;
         

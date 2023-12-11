@@ -5,7 +5,7 @@ namespace CharacterModule.PresenterPart
 {
     public class EnemyCharacterPresenter : CharacterPresenter
     {
-        public EnemyCharacterPresenter(CharacterModel model, CharacterView view) : base(model, view)
+        public EnemyCharacterPresenter(EnemyCharacterModel model, EnemyCharacterView view) : base(model, view)
         {
         }
     }

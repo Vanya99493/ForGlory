@@ -9,7 +9,7 @@ namespace PlaygroundModule.PresenterPart
     {
         public void SpawnPlayground(CellFactory cellFactory, PlaygroundModel model, Transform parent, 
             float playgroundSizeHeight, float playgroundSizeWidth,
-            Action<int, int> OnCellClicked)
+            Action<int, int> OnMoveCellClicked, Action OnCellClicked)
         {
             float cellSizeHeight = playgroundSizeHeight / model.Height;
             float cellSizeWidth = playgroundSizeWidth / model.Width;
@@ -29,6 +29,7 @@ namespace PlaygroundModule.PresenterPart
                     );
                     CellView cellView = cellFactory.InstantiateCell(cellPresenter.Model.CellType, parent, cellSpawnPosition);
                     cellPresenter.InitializeView(cellView);
+                    cellView.MoveToCellAction += OnMoveCellClicked;
                     cellView.CellClicked += OnCellClicked;
                     cellView.Initialize(cellPresenter);
                     cellPresenter.Model.IntitializeView(cellView);

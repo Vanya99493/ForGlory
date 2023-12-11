@@ -12,7 +12,7 @@ namespace CharacterModule.PresenterPart
     public abstract class TeamPresenter
     {
         public event Action DestroyCharacter;
-        public abstract event Action<bool, int> ClickOnCharacterAction;
+        public abstract event Action<TeamPresenter> ClickOnCharacterAction;
         
         public readonly TeamModel Model;
         public readonly TeamView View;
@@ -22,6 +22,7 @@ namespace CharacterModule.PresenterPart
             Model = model;
             View = view;
             Model.MoveAction += View.Move;
+            Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
         }
@@ -40,13 +41,17 @@ namespace CharacterModule.PresenterPart
 
         public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter)
         {
-            Model.Move(coroutineRunner, playgroundPresenter);
-            playgroundPresenter.SetCharacterOnCell(this, Model.HeightCellIndex, Model.WidthCellIndex);
+            Model.Move(coroutineRunner, playgroundPresenter, this as PlayerTeamPresenter);
         }
         
         public void Destroy()
         {
             DestroyCharacter?.Invoke();
+        }
+
+        private void OnEndMoveAction(PlaygroundPresenter playgroundPresenter)
+        {
+            playgroundPresenter.SetCharacterOnCell(this, Model.HeightCellIndex, Model.WidthCellIndex);
         }
     }
 }

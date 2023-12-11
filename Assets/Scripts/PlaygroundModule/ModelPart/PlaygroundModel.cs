@@ -1,22 +1,24 @@
-﻿using CharacterModule.PresenterPart;
+﻿using System.Collections.Generic;
+using CharacterModule.PresenterPart;
 using PlaygroundModule.PresenterPart;
-using PlaygroundModule.ViewPart;
+using PlaygroundModule.PresenterPart.WideSearchModule;
 
 namespace PlaygroundModule.ModelPart
 {
     public class PlaygroundModel
     {
-        private readonly PlaygroundView _view;
+        public List<Node> ActiveCells;
+        
         private CellPresenter[,] _playground;
 
         public int Height => _playground.GetLength(0);
         public int Width => _playground.GetLength(1);
 
-        public PlaygroundModel(PlaygroundView playgroundView)
+        public PlaygroundModel()
         {
-            _view = playgroundView;
+            ActiveCells = new List<Node>();
         }
-
+        
         public void InitializePlayground(CellPresenter[,] playground)
         {
             _playground = new CellPresenter[playground.GetLength(0), playground.GetLength(1)];
@@ -31,19 +33,19 @@ namespace PlaygroundModule.ModelPart
 
         public CellPresenter GetCellPresenter(int heightIndex, int widthIndex) => _playground[heightIndex, widthIndex];
 
-        public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
+        public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex, bool isFirstInitialization = false)
         {
-            return _playground[heightCellIndex, widthCellIndex].SetCharacterOnCell(team);
+            return _playground[heightCellIndex, widthCellIndex].SetCharacterOnCell(team, isFirstInitialization);
         }
         
-        public bool CheckCellOnCharacter(int heightCellIndex, int widthCellIndex)
+        public bool CheckCellOnCharacters(int heightCellIndex, int widthCellIndex)
         {
-            return _playground[heightCellIndex, widthCellIndex] != null;
+            return _playground[heightCellIndex, widthCellIndex].CheckCellOnCharacters();
         }
 
-        public void RemoveCharacterFromCell(int heightCellIndex, int widthCellIndex)
+        public void RemoveCharacterFromCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
         {
-            _playground[heightCellIndex, widthCellIndex].RemoveCharacterFromCell();
+            _playground[heightCellIndex, widthCellIndex].RemoveCharacterFromCell(team);
         }
     }
 }

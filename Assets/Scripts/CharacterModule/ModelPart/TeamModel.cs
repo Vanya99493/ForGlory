@@ -12,6 +12,7 @@ namespace CharacterModule.ModelPart
     public abstract class TeamModel
     {
         public event Action<Vector3> MoveAction;
+        public event Action<PlaygroundPresenter> EndMoveAction;
         
         private float _speed = 4f;
         private Queue<Pair<int, int>> _route;
@@ -61,13 +62,19 @@ namespace CharacterModule.ModelPart
         {
             Energy = _maxEnergy;
         }
+        
+        public void ResetMovementSettings()
+        {
+            MoveState = false;
+            CanMove = true;
+        }
 
-        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter)
+        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter, PlayerTeamPresenter playerTeam)
         {
             if (_route.Count > 0)
             {
                 CanMove = false;
-                playgroundPresenter.RemoveCharacterFromCell(HeightCellIndex, WidthCellIndex);
+                playgroundPresenter.RemoveCharacterFromCell(playerTeam, HeightCellIndex, WidthCellIndex);
                 coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter));
             }
         }
@@ -107,7 +114,7 @@ namespace CharacterModule.ModelPart
 
             SwitchMoveState();
             CanMove = true;
-            ResetEnergy();
+            EndMoveAction?.Invoke(playgroundPresenter);
         }
     }
 }

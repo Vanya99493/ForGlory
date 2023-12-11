@@ -8,15 +8,17 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
         public int WidthIndex;
         public CellType CellType;
         public bool Visited;
+        public bool IsBusy;
         public Node PrevNode;
         public int Distance;
 
-        public Node(int heightIndex, int widthIndex, CellType cellType)
+        public Node(int heightIndex, int widthIndex, CellType cellType, bool isBusy)
         {
             HeightIndex = heightIndex;
             WidthIndex = widthIndex;
             CellType = cellType;
             Visited = false;
+            IsBusy = isBusy;
             Distance = 0;
         }
         

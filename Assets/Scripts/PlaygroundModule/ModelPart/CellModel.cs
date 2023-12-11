@@ -1,4 +1,6 @@
-﻿using CharacterModule.PresenterPart;
+﻿using System;
+using System.Collections.Generic;
+using CharacterModule.PresenterPart;
 using PlaygroundModule.ViewPart;
 using UnityEngine;
 
@@ -6,6 +8,8 @@ namespace PlaygroundModule.ModelPart
 {
     public class CellModel
     {
+        public event Action<List<TeamPresenter>> TeamsCollisionAction;
+        
         private CellType _cellType;
         private CellView _view;
 
@@ -13,7 +17,7 @@ namespace PlaygroundModule.ModelPart
         
         public int CellHeightId { get; private set; }
         public int CellWidthId { get; private set; }
-        public TeamPresenter TeamOnCell { get; private set; }
+        public List<TeamPresenter> TeamsOnCell { get; private set; }
         public Vector3 MoveCellPosition => _view.MoveCellPosition;
 
         public CellModel(CellType cellType, int cellHeightId, int cellWidthId)
@@ -21,6 +25,8 @@ namespace PlaygroundModule.ModelPart
             _cellType = cellType;
             CellHeightId = cellHeightId;
             CellWidthId = cellWidthId;
+
+            TeamsOnCell = new List<TeamPresenter>();
         }
 
         public void IntitializeView(CellView view)
@@ -28,20 +34,31 @@ namespace PlaygroundModule.ModelPart
             _view = view;
         }
 
-        public bool SetCharacterOnCell(TeamPresenter team)
+        public bool SetCharacterOnCell(TeamPresenter team, bool isFirstInitialization = false)
         {
-            if (TeamOnCell != null)
+            if (isFirstInitialization && TeamsOnCell.Count > 0)
             {
                 return false;
             }
             
-            TeamOnCell = team;
+            TeamsOnCell.Add(team);
+
+            if (TeamsOnCell.Count >= 2)
+            {
+                TeamsCollisionAction?.Invoke(TeamsOnCell);
+            }
+            
             return true;
         }
 
-        public void RemoveCharacterFromCell()
+        public bool CheckCellOnCharacters()
         {
-            TeamOnCell = null;
+            return TeamsOnCell.Count > 0;
+        }
+        
+        public void RemoveCharacterFromCell(TeamPresenter team)
+        {
+            TeamsOnCell.Remove(team);
         }
     }
 }

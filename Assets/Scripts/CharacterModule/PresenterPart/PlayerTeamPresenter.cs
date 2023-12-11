@@ -7,7 +7,7 @@ namespace CharacterModule.PresenterPart
 {
     public class PlayerTeamPresenter : TeamPresenter
     {
-        public override event Action<bool, int> ClickOnCharacterAction;
+        public override event Action<TeamPresenter> ClickOnCharacterAction;
         
         public PlayerTeamPresenter(TeamModel model, TeamView view) : base(model, view)
         {
@@ -18,7 +18,7 @@ namespace CharacterModule.PresenterPart
             if (mouseButtonType == InputMouseButtonType.LeftMouseButton && Model.CanMove)
             {
                 Model.SwitchMoveState();
-                ClickOnCharacterAction?.Invoke(Model.MoveState, Model.Energy);
+                ClickOnCharacterAction?.Invoke(this);
             }
         }
     }

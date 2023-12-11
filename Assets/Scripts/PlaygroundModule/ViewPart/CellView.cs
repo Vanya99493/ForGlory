@@ -10,10 +10,12 @@ namespace PlaygroundModule.ViewPart
     {
         [SerializeField] private Transform movePositionTransform;
         [SerializeField] private Material activeMaterial;
+        [SerializeField] private Material activeRedMaterial;
         
         private Material _passiveMaterial;
-        
-        public event Action<int, int> CellClicked;
+
+        public event Action CellClicked;
+        public event Action<int, int> MoveToCellAction;
         public event Action<CellView> Destroy;
 
         private CellPresenter _cellPresenter;
@@ -34,13 +36,22 @@ namespace PlaygroundModule.ViewPart
         {
             if (mouseButtonType == InputMouseButtonType.RightMouseButton)
             {
-                CellClicked?.Invoke(_cellPresenter.Model.CellHeightId, _cellPresenter.Model.CellWidthId);
+                MoveToCellAction?.Invoke(_cellPresenter.Model.CellHeightId, _cellPresenter.Model.CellWidthId);
+            }
+            else if (mouseButtonType == InputMouseButtonType.LeftMouseButton)
+            {
+                CellClicked?.Invoke();
             }
         }
 
         public void ActivateCell()
         {
             gameObject.GetComponent<MeshRenderer>().material = activeMaterial;
+        }
+
+        public void ActivateRedCell()
+        {
+            gameObject.GetComponent<MeshRenderer>().material = activeRedMaterial;
         }
 
         public void DeactivateCell()

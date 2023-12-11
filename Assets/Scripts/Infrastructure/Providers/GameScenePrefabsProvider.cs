@@ -10,6 +10,7 @@ namespace Infrastructure.Providers
     {
         [SerializeField] private GameScenePrefabsContainer gameScenePrefabsContainer;
 
-        public TeamView GetCharacterByName(string name) => gameScenePrefabsContainer.CharacterPrefabsMap[name];
+        public TeamView GetTeamView() => gameScenePrefabsContainer.TeamView;
+        public CharacterView GetCharacterByName(string name) => gameScenePrefabsContainer.CharacterPrefabsMap[name];
     }
 }

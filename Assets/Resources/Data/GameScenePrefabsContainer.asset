@@ -12,10 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4304e86e03cc48f1ac05c7184a89c4db, type: 3}
   m_Name: GameScenePrefabsContainer
   m_EditorClassIdentifier: 
+  TeamView: {fileID: 5450282438131917672, guid: d4b908b1eec981442b079611fc38c08a, type: 3}
   CharacterPrefabsMap:
     list:
-    - Key: Player
-      Value: {fileID: 1142290907365102850, guid: 2f8d905a98a622a4980943e70c9c7e89, type: 3}
-    - Key: Enemy
-      Value: {fileID: 6975488116013920274, guid: 28a4fe96c4664d64a935324da4f0eed3, type: 3}
+    - Key: Player1
+      Value: {fileID: 0}
+    - Key: Player2
+      Value: {fileID: 0}
+    - Key: Player3
+      Value: {fileID: 0}
+    - Key: Enemy1
+      Value: {fileID: 0}
+    - Key: Enemy2
+      Value: {fileID: 0}
+    - Key: Enemy3
+      Value: {fileID: 0}
     keyCollision: 0

@@ -20,17 +20,23 @@ namespace PlaygroundModule.PresenterPart
             _view = view;
         }
 
-        public bool SetCharacterOnCell(TeamPresenter team)
+        public bool SetCharacterOnCell(TeamPresenter team, bool isFirstInitialization = false)
         {
-            return Model.SetCharacterOnCell(team);
+            return Model.SetCharacterOnCell(team, isFirstInitialization);
         }
 
-        public void RemoveCharacterFromCell()
+        public bool CheckCellOnCharacters()
         {
-            Model.RemoveCharacterFromCell();
+            return Model.CheckCellOnCharacters();
+        } 
+
+        public void RemoveCharacterFromCell(TeamPresenter team)
+        {
+            Model.RemoveCharacterFromCell(team);
         }
 
         public void ActivateCell() => _view.ActivateCell();
+        public void ActivateRedCell() => _view.ActivateRedCell();
         public void DeactivateCell() => _view.DeactivateCell();
     }
 }
