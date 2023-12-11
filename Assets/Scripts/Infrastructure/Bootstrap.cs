@@ -29,10 +29,12 @@ namespace Infrastructure
         
         private void InstantiateComponents()
         {
-            _coroutineRunner = Instantiate(handlersProvider.GetCoroutineRunner());
-            _inputHandler = Instantiate(handlersProvider.GetInputHandler());
-            _uiController = Instantiate(handlersProvider.GetUIController());
-            _mainCamera = Instantiate(handlersProvider.GetCamera());
+            var parent = new GameObject("HandlersParent");
+            
+            _coroutineRunner = Instantiate(handlersProvider.GetCoroutineRunner(), parent.transform);
+            _inputHandler = Instantiate(handlersProvider.GetInputHandler(), parent.transform);
+            _uiController = Instantiate(handlersProvider.GetUIController(), parent.transform);
+            _mainCamera = Instantiate(handlersProvider.GetCamera(), parent.transform);
         }
     }
 }

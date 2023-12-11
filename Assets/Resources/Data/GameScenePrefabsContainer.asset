@@ -16,15 +16,15 @@ MonoBehaviour:
   CharacterPrefabsMap:
     list:
     - Key: Player1
-      Value: {fileID: 0}
+      Value: {fileID: -6367836372760818034, guid: ec6c17bc4c2d1e44b80dc7f4b5b5b8bd, type: 3}
     - Key: Player2
-      Value: {fileID: 0}
+      Value: {fileID: 7942053812125113841, guid: bb65e9d1631884144b9d4e5f66cc2ca4, type: 3}
     - Key: Player3
-      Value: {fileID: 0}
+      Value: {fileID: 7709856755251082505, guid: 74c66c74ea59e53439c802dbc12a1db3, type: 3}
     - Key: Enemy1
-      Value: {fileID: 0}
+      Value: {fileID: 5291244145808550373, guid: f69285ff17a16c14d9a6aa6ba252d20d, type: 3}
     - Key: Enemy2
-      Value: {fileID: 0}
+      Value: {fileID: -1925442147609141807, guid: df6d0e861f87af3428da9ba2ad7344b1, type: 3}
     - Key: Enemy3
-      Value: {fileID: 0}
+      Value: {fileID: 2388797026154983584, guid: 829cc55cbae00714586d144fbc43d1aa, type: 3}
     keyCollision: 0

@@ -11,8 +11,8 @@ namespace PlaygroundModule.ModelPart
         
         private CellPresenter[,] _playground;
 
-        public int Height => _playground.GetLength(0);
-        public int Width => _playground.GetLength(1);
+        public int PlaygroundHeight => _playground.GetLength(0);
+        public int PlaygroundWidth => _playground.GetLength(1);
 
         public PlaygroundModel()
         {
@@ -22,9 +22,9 @@ namespace PlaygroundModule.ModelPart
         public void InitializePlayground(CellPresenter[,] playground)
         {
             _playground = new CellPresenter[playground.GetLength(0), playground.GetLength(1)];
-            for (int i = 0; i < Height; i++)
+            for (int i = 0; i < PlaygroundHeight; i++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int j = 0; j < PlaygroundWidth; j++)
                 {
                     _playground[i, j] = playground[i, j];
                 }

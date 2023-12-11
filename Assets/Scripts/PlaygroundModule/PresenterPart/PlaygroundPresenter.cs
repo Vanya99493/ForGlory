@@ -29,16 +29,16 @@ namespace PlaygroundModule.PresenterPart
 
         public void CreateAndSpawnPlayground(Transform parent, int height, int width, int lengthOfWater, int lengthOfCoast, 
             float playgroundSizeHeight, float playgroundSizeWidth, CellDataProvider cellDataProvider, 
-            Action<int, int> OnMoveCellClicked, Action OnCellClicked)
+            Action<int, int> OnMoveCellClicked, Action OnCellClicked, Action<List<TeamPresenter>> OnTeamsCollision)
         {
             var playground = new PlaygroundCreator().CreatePlaygroundByNewRootSpawnSystem(cellDataProvider, height, width, lengthOfWater, lengthOfCoast);
             Model.InitializePlayground(playground);
             new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnMoveCellClicked, OnCellClicked);
+            SubscribeOnTeamsCollision(OnTeamsCollision);
         }
 
         public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex, bool isFirstInitialization = false)
         {
-            // need to add multiple cell characters and check after set on two teams on same cell
             return Model.SetCharacterOnCell(team, heightCellIndex, widthCellIndex, isFirstInitialization);
         }
 
@@ -85,6 +85,17 @@ namespace PlaygroundModule.PresenterPart
         public void ResetActiveCells()
         {
             Model.ActiveCells.Clear();
+        }
+
+        private void SubscribeOnTeamsCollision(Action<List<TeamPresenter>> OnTeamsCollision)
+        {
+            for (int i = 0; i < Model.PlaygroundHeight; i++)
+            {
+                for (int j = 0; j < Model.PlaygroundWidth; j++)
+                {
+                    Model.GetCellPresenter(i, j).Model.TeamsCollisionAction += OnTeamsCollision;
+                }
+            }
         }
     }
 }

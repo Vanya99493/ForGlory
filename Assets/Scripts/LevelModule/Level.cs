@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BattleModule.PresenterPart;
 using CameraModule;
 using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
@@ -25,8 +26,8 @@ namespace LevelModule
         private PlaygroundPresenter _playgroundPresenter;
         private PlayerTeamPresenter _playerTeamPresenter;
         private List<EnemyTeamPresenter> _enemiesTeamPresenter;
-
-
+        private BattlegroundPresenter _battlegroundPresenter;
+        
         public Level(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
             _coroutineRunner = coroutineRunner;
@@ -41,8 +42,9 @@ namespace LevelModule
             _enemiesTeamPresenter = new List<EnemyTeamPresenter>();
             
             CreatePlayground();
-            CreatePlayer();
+            CreateBattleground();
             
+            CreatePlayer();
             // need to create more enemies
             CreateEnemies(3);
         }
@@ -90,7 +92,14 @@ namespace LevelModule
             float playgroundSizeHeight = height * 1.0f;
             float playgroundSizeWidth = width * 1.0f;
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, lengthOfWater, lengthOfCoast, playgroundSizeHeight, playgroundSizeWidth, _cellDataProvider, OnMoveCellClicked, OnCellClicked);
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, height, width, lengthOfWater, lengthOfCoast, 
+                playgroundSizeHeight, playgroundSizeWidth, _cellDataProvider, 
+                OnMoveCellClicked, OnCellClicked, OnTeamsCollision);
+        }
+
+        private void CreateBattleground()
+        {
+            _battlegroundPresenter = new BattlegroundPresenter();
         }
 
         private void CreatePlayer()
@@ -98,10 +107,11 @@ namespace LevelModule
             int heightSpawnCellIndex, widthSpawnCellIndex;
             do
             {
-                heightSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Height);
-                widthSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Width);
+                heightSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.PlaygroundHeight);
+                widthSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.PlaygroundWidth);
             } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Hill &&
-                     _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain);
+                     _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain &&
+                     !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
             (TeamView view, CharacterView[] characters) = new TeamFactory().InstantiateTeam(
                 _gameScenePrefabsProvider.GetTeamView(), 
@@ -120,10 +130,7 @@ namespace LevelModule
             _playerTeamPresenter.Model.SetPosition(_playgroundPresenter);
             _playerTeamPresenter.ClickOnCharacterAction += OnPlayerTeamClicked;
 
-            bool isSpawned;
-            do {
-                isSpawned = _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
-            } while (!isSpawned);
+            _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
            
             // ***
             _playerTeamPresenter.Enter<int>();
@@ -134,40 +141,44 @@ namespace LevelModule
         {
             for (int i = 0; i < enemyTeamsCount; i++)
             {
-                int heightSpawnCellIndex, widthSpawnCellIndex;
-                do
+                while (true)
                 {
-                    heightSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Height);
-                    widthSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.Width);
-                } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Hill &&
-                         _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain);
+                    int heightSpawnCellIndex, widthSpawnCellIndex;
+                    do
+                    {
+                        heightSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.PlaygroundHeight);
+                        widthSpawnCellIndex = Random.Range(0, _playgroundPresenter.Model.PlaygroundWidth);
+                    } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Hill &&
+                             _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain &&
+                             !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
-                (TeamView view, CharacterView[] characters) = new TeamFactory().InstantiateTeam(
-                    _gameScenePrefabsProvider.GetTeamView(), 
-                    _gameScenePrefabsProvider.GetCharacterByName("Enemy1"),
-                    _gameScenePrefabsProvider.GetCharacterByName("Enemy2"),
-                    _gameScenePrefabsProvider.GetCharacterByName("Enemy3")
-                );
+                    (TeamView view, CharacterView[] characters) = new TeamFactory().InstantiateTeam(
+                        _gameScenePrefabsProvider.GetTeamView(), 
+                        _gameScenePrefabsProvider.GetCharacterByName("Enemy1"),
+                        _gameScenePrefabsProvider.GetCharacterByName("Enemy2"),
+                        _gameScenePrefabsProvider.GetCharacterByName("Enemy3")
+                    );
 
-                EnemyCharacterPresenter[] enemies = new EnemyCharacterPresenter[characters.Length];
-                for (int j = 0; j < enemies.Length; j++)
-                {
-                    enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel("Enemy", 50, 3, 5), (EnemyCharacterView)characters[j]);
+                    EnemyCharacterPresenter[] enemies = new EnemyCharacterPresenter[characters.Length];
+                    for (int j = 0; j < enemies.Length; j++)
+                    {
+                        enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel("Enemy", 50, 3, 5), (EnemyCharacterView)characters[j]);
+                    }
+            
+                    TeamModel model = new EnemyTeamModel(heightSpawnCellIndex, widthSpawnCellIndex, enemies);
+                    EnemyTeamPresenter enemyTeamPresenter = new EnemyTeamPresenter(model, view);
+                    enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
+                    enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
+                    enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
+
+                    if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true))
+                    {
+                        _enemiesTeamPresenter.Add(enemyTeamPresenter);
+                        break;
+                    }
+
+                    enemyTeamPresenter.Destroy();
                 }
-            
-                TeamModel model = new EnemyTeamModel(heightSpawnCellIndex, widthSpawnCellIndex, enemies);
-                EnemyTeamPresenter enemyTeamPresenter = new EnemyTeamPresenter(model, view);
-                enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
-                enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
-                enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
-
-                bool isSpawned;
-                do
-                {
-                    isSpawned = _playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
-                } while (!isSpawned);
-            
-                _enemiesTeamPresenter.Add(enemyTeamPresenter);
             }
         } 
 
@@ -277,6 +288,11 @@ namespace LevelModule
                 _playerTeamPresenter.AddRoute(route);
                 _playerTeamPresenter.Move(_coroutineRunner, _playgroundPresenter);
             }
+        }
+
+        private void OnTeamsCollision(List<TeamPresenter> teams)
+        {
+            _battlegroundPresenter.StartBattle(teams);
         }
     }
 }

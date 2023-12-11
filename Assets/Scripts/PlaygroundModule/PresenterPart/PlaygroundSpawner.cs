@@ -11,15 +11,15 @@ namespace PlaygroundModule.PresenterPart
             float playgroundSizeHeight, float playgroundSizeWidth,
             Action<int, int> OnMoveCellClicked, Action OnCellClicked)
         {
-            float cellSizeHeight = playgroundSizeHeight / model.Height;
-            float cellSizeWidth = playgroundSizeWidth / model.Width;
+            float cellSizeHeight = playgroundSizeHeight / model.PlaygroundHeight;
+            float cellSizeWidth = playgroundSizeWidth / model.PlaygroundWidth;
             
-            float xStartSpawnPosition = -1 * (model.Width / 2.0f - cellSizeWidth / 2.0f);
-            float zStartSpawnPosition = model.Height / 2.0f - cellSizeHeight / 2.0f;
+            float xStartSpawnPosition = -1 * (model.PlaygroundWidth / 2.0f - cellSizeWidth / 2.0f);
+            float zStartSpawnPosition = model.PlaygroundHeight / 2.0f - cellSizeHeight / 2.0f;
 
-            for (int i = 0; i < model.Height; i++)
+            for (int i = 0; i < model.PlaygroundHeight; i++)
             {
-                for (int j = 0; j < model.Width; j++)
+                for (int j = 0; j < model.PlaygroundWidth; j++)
                 {
                     CellPresenter cellPresenter = model.GetCellPresenter(i, j);
                     Vector3 cellSpawnPosition = new Vector3(

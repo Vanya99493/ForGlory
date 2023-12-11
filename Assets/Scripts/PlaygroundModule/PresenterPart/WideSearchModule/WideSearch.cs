@@ -179,7 +179,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
 
         private Node[,] TranslatePlayground(PlaygroundPresenter playgroundPresenter)
         {
-            Node[,] bfsArray = new Node[playgroundPresenter.Model.Height, playgroundPresenter.Model.Width];
+            Node[,] bfsArray = new Node[playgroundPresenter.Model.PlaygroundHeight, playgroundPresenter.Model.PlaygroundWidth];
 
             for (int i = 0; i < bfsArray.GetLength(0); i++)
             {

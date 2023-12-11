@@ -1,9 +1,8 @@
-﻿using System;
+﻿using UnityEngine;
 
 namespace BattleModule.ViewPart
 {
-    [Serializable]
-    public class BattlegroundView
+    public class BattlegroundView : MonoBehaviour
     {
         
     }
