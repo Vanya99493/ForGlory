@@ -133,7 +133,7 @@ namespace LevelModule
             _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
            
             // ***
-            _playerTeamPresenter.Enter<int>();
+            // _playerTeamPresenter.Enter<int>();
             // ***
         }
 

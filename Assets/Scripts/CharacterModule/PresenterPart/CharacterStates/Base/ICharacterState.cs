@@ -1,7 +1,11 @@
-﻿namespace CharacterModule.PresenterPart.CharacterStates.Base
+﻿using System;
+
+namespace CharacterModule.PresenterPart.CharacterStates.Base
 {
-    public class ICharacterState
+    public interface ICharacterState
     {
+        public event Action StateEndedAction;
         
+        public void Exit();
     }
 }

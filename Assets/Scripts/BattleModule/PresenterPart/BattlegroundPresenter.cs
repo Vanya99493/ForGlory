@@ -10,7 +10,7 @@ namespace BattleModule.PresenterPart
 
         public void StartBattle(List<TeamPresenter> teams)
         {
-            Debug.Log("war!");
+            
         }
     }
 }

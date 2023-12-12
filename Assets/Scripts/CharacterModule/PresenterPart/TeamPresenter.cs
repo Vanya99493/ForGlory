@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using CharacterModule.ModelPart;
+using CharacterModule.PresenterPart.CharacterStates;
+using CharacterModule.PresenterPart.CharacterStates.Base;
 using CharacterModule.ViewPart;
 using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
@@ -17,6 +19,8 @@ namespace CharacterModule.PresenterPart
         public readonly TeamModel Model;
         public readonly TeamView View;
 
+        private Dictionary<Type, ICharacterState> _characterStates;
+
         protected TeamPresenter(TeamModel model, TeamView view)
         {
             Model = model;
@@ -25,14 +29,41 @@ namespace CharacterModule.PresenterPart
             Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
+
+            _characterStates = new Dictionary<Type, ICharacterState>()
+            {
+                { typeof(IdleCharacterState), new IdleCharacterState() },
+                { typeof(MoveCharacterState), new MoveCharacterState() },
+                { typeof(FollowCharacterState), new FollowCharacterState() }
+            };
         }
 
-        public void Enter<TState>()
+        public void EnterIdleState()
+        {
+            
+        }
+
+        public void EnterMoveState(PlaygroundPresenter playgroundPresenter, int heightCoordinate, int widthCoordinate)
+        {
+            
+        }
+
+        public void EnterFollowState(PlaygroundPresenter playgroundPresenter, CharacterPresenter target)
         {
             
         }
 
         public abstract void ClickOnTeam(InputMouseButtonType mouseButtonType);
+        
+        public void Destroy()
+        {
+            DestroyCharacter?.Invoke();
+        }
+
+        private void SubscribeStateMachineActions()
+        {
+            
+        }
 
         public void AddRoute(List<Pair<int, int>> route)
         {
@@ -42,11 +73,6 @@ namespace CharacterModule.PresenterPart
         public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter)
         {
             Model.Move(coroutineRunner, playgroundPresenter, this as PlayerTeamPresenter);
-        }
-        
-        public void Destroy()
-        {
-            DestroyCharacter?.Invoke();
         }
 
         private void OnEndMoveAction(PlaygroundPresenter playgroundPresenter)
