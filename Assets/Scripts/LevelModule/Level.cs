@@ -1,22 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using BattleModule.PresenterPart;
 using CameraModule;
 using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
+using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.ViewPart;
-using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
+using Infrastructure.ServiceLocatorModule;
 using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace LevelModule
 {
     public class Level
     {
+        public event Action StartStepChangingAction;
+        public event Action EndStepChangingAction;
+        
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
@@ -25,8 +32,14 @@ namespace LevelModule
         
         private PlaygroundPresenter _playgroundPresenter;
         private PlayerTeamPresenter _playerTeamPresenter;
-        private List<EnemyTeamPresenter> _enemiesTeamPresenter;
+        private List<EnemyTeamPresenter> _enemiesTeamPresenters;
         private BattlegroundPresenter _battlegroundPresenter;
+
+        private EnemyBehaviour _enemyBehaviour;
+        private bool _isStepChanging;
+
+        private int _enemiesStepCounter;
+        private int _playerStepCounter;
         
         public Level(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
@@ -35,18 +48,24 @@ namespace LevelModule
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
 
             _bfsSearch = new WideSearch(cellDataProvider);
+            ServiceLocator.Instance.RegisterService(_bfsSearch);
+
+            _enemyBehaviour = new EnemyBehaviour();
         }
 
-        public void StartLevel()
+        public void StartLevel(int enemiesCount)
         {
-            _enemiesTeamPresenter = new List<EnemyTeamPresenter>();
+            _isStepChanging = false;
+            _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
             CreatePlayground();
             CreateBattleground();
+
+            _enemiesStepCounter = enemiesCount;
+            _playerStepCounter = 1;
             
             CreatePlayer();
-            // need to create more enemies
-            CreateEnemies(3);
+            CreateEnemies(enemiesCount);
         }
 
         public void ResetLevel()
@@ -58,7 +77,7 @@ namespace LevelModule
         {
             _playgroundPresenter.Destroy();
             _playerTeamPresenter.Destroy();
-            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenter)
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
                 enemyTeamPresenter.Destroy();
             }
@@ -71,11 +90,33 @@ namespace LevelModule
 
         public void NextStep()
         {
+            _isStepChanging = true;
+            StartStepChangingAction?.Invoke();
+
+            new PlayerBehaviour().StartPlayerBehaviour(_playerTeamPresenter, _playgroundPresenter);
+            _enemyBehaviour.StartEnemiesBehaviour(_enemiesTeamPresenters, _playgroundPresenter, _playerTeamPresenter);
+            
+            _playgroundPresenter.DeactivateCells();
+
+            _coroutineRunner.StartCoroutine(BlockCoroutine());
+        }
+
+        private IEnumerator BlockCoroutine()
+        {
+            while (_isStepChanging)
+            {
+                yield return null;
+            }
+            
             _playerTeamPresenter.Model.ResetEnergy();
             _playerTeamPresenter.Model.ResetMovementSettings();
-            _playgroundPresenter.DeactivateCells();
-            
-            // need to add enemy behaviour
+
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.Model.ResetEnergy();
+                enemyTeamPresenter.Model.ResetMovementSettings();
+            }
+            EndStepChangingAction?.Invoke();
         }
         
         private void CreatePlayground()
@@ -131,10 +172,9 @@ namespace LevelModule
             _playerTeamPresenter.ClickOnCharacterAction += OnPlayerTeamClicked;
 
             _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
+            _playerTeamPresenter.Model.EndStepAction += OnEndPlayerMove;
            
-            // ***
-            // _playerTeamPresenter.Enter<int>();
-            // ***
+            _playerTeamPresenter.EnterIdleState(_playgroundPresenter);
         }
 
         private void CreateEnemies(int enemyTeamsCount)
@@ -162,7 +202,7 @@ namespace LevelModule
                     EnemyCharacterPresenter[] enemies = new EnemyCharacterPresenter[characters.Length];
                     for (int j = 0; j < enemies.Length; j++)
                     {
-                        enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel("Enemy", 50, 3, 5), (EnemyCharacterView)characters[j]);
+                        enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel("Enemy", 50, 3, 2, 5), (EnemyCharacterView)characters[j]);
                     }
             
                     TeamModel model = new EnemyTeamModel(heightSpawnCellIndex, widthSpawnCellIndex, enemies);
@@ -171,25 +211,53 @@ namespace LevelModule
                     enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
                     enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
 
+                    enemyTeamPresenter.EnterIdleState(_playgroundPresenter);
+                    
                     if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true))
                     {
-                        _enemiesTeamPresenter.Add(enemyTeamPresenter);
+                        enemyTeamPresenter.Model.EndStepAction += OnEndEnemyMove;
+                        _enemiesTeamPresenters.Add(enemyTeamPresenter);
                         break;
                     }
 
                     enemyTeamPresenter.Destroy();
                 }
             }
-        } 
+        }
+
+        private void OnEndPlayerMove()
+        {
+            --_playerStepCounter;
+            CheckStepMovement();
+        }
+
+        private void OnEndEnemyMove()
+        {
+            --_enemiesStepCounter;
+            CheckStepMovement();
+        }
+
+        private void CheckStepMovement()
+        {
+            if (_enemiesStepCounter <= 0 && _playerStepCounter <= 0)
+            {
+                _enemiesStepCounter = _enemiesTeamPresenters.Count;
+                _playerStepCounter = 1;
+                _isStepChanging = false;
+            }
+        }
 
         private void OnPlayerTeamClicked(TeamPresenter playerTeamPresenter)
         {
+            if (_isStepChanging)
+                return;
+            
             _playgroundPresenter.DeactivateCells();
             
             if (playerTeamPresenter.Model.MoveState)
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
-                    playerTeamPresenter.Model.Energy, 
+                    playerTeamPresenter.Model.TeamEnergy, 
                     new Node(
                         playerTeamPresenter.Model.HeightCellIndex, 
                         playerTeamPresenter.Model.WidthCellIndex, 
@@ -209,13 +277,16 @@ namespace LevelModule
 
         private void OnEnemyTeamClicked(TeamPresenter enemyTeamPresenter)
         {
+            if (_isStepChanging)
+                return;
+
             _playerTeamPresenter.Model.ResetMovementSettings();
             _playgroundPresenter.DeactivateCells();
             
             if (enemyTeamPresenter.Model.MoveState)
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
-                    enemyTeamPresenter.Model.Energy, 
+                    enemyTeamPresenter.Model.TeamEnergy, 
                     new Node(
                         enemyTeamPresenter.Model.HeightCellIndex, 
                         enemyTeamPresenter.Model.WidthCellIndex, 
@@ -235,31 +306,18 @@ namespace LevelModule
 
         private void OnEnemyFollowClick(EnemyTeamPresenter enemyTeamPresenter)
         {
+            if (_isStepChanging)
+                return;
+
             _playgroundPresenter.DeactivateCells();
-            List<Pair<int, int>> route = new List<Pair<int, int>>();
-            if (_playerTeamPresenter.Model.MoveState && _bfsSearch.TryBuildRoute(
-                    new Node(
-                        _playerTeamPresenter.Model.HeightCellIndex, 
-                        _playerTeamPresenter.Model.WidthCellIndex, 
-                        _playgroundPresenter.Model.GetCellPresenter(_playerTeamPresenter.Model.HeightCellIndex, _playerTeamPresenter.Model.WidthCellIndex).Model.CellType,
-                        true
-                    ),
-                    new Node(enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex,
-                        _playgroundPresenter.Model.GetCellPresenter(enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex).Model.CellType,
-                        _playgroundPresenter.CheckCellOnCharacter(enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex)),
-                    _playgroundPresenter,
-                    false,
-                    out route
-                ))
-            {
-                _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter, _playerTeamPresenter.Model.HeightCellIndex, _playerTeamPresenter.Model.WidthCellIndex);
-                _playerTeamPresenter.AddRoute(route);
-                _playerTeamPresenter.Move(_coroutineRunner, _playgroundPresenter);
-            }
+            _playerTeamPresenter.EnterFollowState(_playgroundPresenter, enemyTeamPresenter);
         }
 
         private void OnCellClicked()
         {
+            if (_isStepChanging)
+                return;
+
             _playgroundPresenter.DeactivateCells();
             _playgroundPresenter.ResetActiveCells();
             _playerTeamPresenter.Model.ResetMovementSettings();
@@ -267,27 +325,11 @@ namespace LevelModule
 
         private void OnMoveCellClicked(int heightIndex, int widthIndex)
         {
+            if (_isStepChanging)
+                return;
+
             _playgroundPresenter.DeactivateCells();
-            List<Pair<int, int>> route = new List<Pair<int, int>>();
-            if (_playerTeamPresenter.Model.MoveState && _bfsSearch.TryBuildRoute(
-                    new Node(
-                        _playerTeamPresenter.Model.HeightCellIndex, 
-                        _playerTeamPresenter.Model.WidthCellIndex, 
-                        _playgroundPresenter.Model.GetCellPresenter(_playerTeamPresenter.Model.HeightCellIndex, _playerTeamPresenter.Model.WidthCellIndex).Model.CellType,
-                        true
-                        ),
-                    new Node(heightIndex, widthIndex,
-                    _playgroundPresenter.Model.GetCellPresenter(heightIndex, widthIndex).Model.CellType,
-                    _playgroundPresenter.CheckCellOnCharacter(heightIndex, widthIndex)),
-                    _playgroundPresenter,
-                    true,
-                    out route
-                ))
-            {
-                _playgroundPresenter.RemoveCharacterFromCell(_playerTeamPresenter, _playerTeamPresenter.Model.HeightCellIndex, _playerTeamPresenter.Model.WidthCellIndex);
-                _playerTeamPresenter.AddRoute(route);
-                _playerTeamPresenter.Move(_coroutineRunner, _playgroundPresenter);
-            }
+            _playerTeamPresenter.EnterMoveState(_playgroundPresenter, heightIndex, widthIndex);
         }
 
         private void OnTeamsCollision(List<TeamPresenter> teams)

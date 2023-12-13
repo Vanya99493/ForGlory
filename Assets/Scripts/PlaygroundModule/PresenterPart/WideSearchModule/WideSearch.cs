@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using CustomClasses;
 using Infrastructure.Providers;
+using Infrastructure.ServiceLocatorModule;
 using PlaygroundModule.ModelPart;
 
 namespace PlaygroundModule.PresenterPart.WideSearchModule
 {
-    public class WideSearch
+    public class WideSearch : IService
     {
         private CellDataProvider _cellDataProvider;
 

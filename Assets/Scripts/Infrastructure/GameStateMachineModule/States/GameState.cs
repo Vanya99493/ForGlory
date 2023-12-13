@@ -24,12 +24,14 @@ namespace Infrastructure.GameStateMachineModule.States
             _mainCamera = mainCamera;
             
             _currentLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
+            
             SubscribeOnUIActions();
+            SubscribeStepChangingActions();
         }
         
         public void Enter()
         {
-            _currentLevel.StartLevel();
+            _currentLevel.StartLevel(3);
             _currentLevel.SetCameraTarget(_mainCamera);
             _uiController.ActivateGameHud();
         }
@@ -39,11 +41,18 @@ namespace Infrastructure.GameStateMachineModule.States
             _currentLevel.ResetLevel();
             _mainCamera.ResetTarget();
             _currentLevel.RemoveLevel();
+            _uiController.gameHudBasePanel.ResetNextStepButton();
         }
 
         private void SubscribeOnUIActions()
         {
             _uiController.gameHudBasePanel.NextStepAction += _currentLevel.NextStep;
+        }
+
+        private void SubscribeStepChangingActions()
+        {
+            _currentLevel.StartStepChangingAction += _uiController.gameHudBasePanel.BlockNextStepButton;
+            _currentLevel.EndStepChangingAction += _uiController.gameHudBasePanel.UnblockNextStepButton;
         }
     }
 }

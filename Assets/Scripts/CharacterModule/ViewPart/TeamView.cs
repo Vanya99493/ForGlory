@@ -1,11 +1,12 @@
 ﻿using System;
+using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
 using Interfaces;
 using UnityEngine;
 
 namespace CharacterModule.ViewPart
 {
-    public class TeamView : MonoBehaviour, IClickable
+    public class TeamView : MonoBehaviour, IClickable, ICoroutineRunner
     {        
         public event Action<TeamView> Destroy;
         public event Action<InputMouseButtonType> ClickOnCharacter;

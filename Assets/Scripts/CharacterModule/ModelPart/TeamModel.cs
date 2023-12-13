@@ -12,18 +12,21 @@ namespace CharacterModule.ModelPart
     public abstract class TeamModel
     {
         public event Action<Vector3> MoveAction;
+        public event Action EndStepAction;
         public event Action<PlaygroundPresenter> EndMoveAction;
         
         private float _speed = 4f;
         private Queue<Pair<int, int>> _route;
-        private int _maxEnergy;
+        private int _teamEnergy;
         private CharacterPresenter[] _characters;
 
+        public int RoutLength => _route.Count; 
+        
         public bool MoveState { get; private set; }
         public bool CanMove { get; private set; }
         public int HeightCellIndex { get; private set; }
         public int WidthCellIndex { get; private set; }
-        public int Energy { get; private set; }
+        public int TeamEnergy { get; private set; }
 
         protected TeamModel(CharacterPresenter[] characters, int heightCellIndex, int widthCellIndex)
         {
@@ -32,16 +35,18 @@ namespace CharacterModule.ModelPart
             MoveState = false;
             CanMove = true;
 
-            _maxEnergy = characters[0].Model.MaxEnergy;
+            _teamEnergy = characters[0].Model.MaxEnergy;
             _characters = new CharacterPresenter[characters.Length];
             for (int i = 0; i < characters.Length; i++)
             {
                 _characters[i] = characters[i];
-                if (_characters[i].Model.MaxEnergy < _maxEnergy)
-                    _maxEnergy = _characters[i].Model.MaxEnergy;
+                if (_characters[i].Model.MaxEnergy < _teamEnergy)
+                    _teamEnergy = _characters[i].Model.MaxEnergy;
             }
+
+            _route = new Queue<Pair<int, int>>();
             
-            Energy = _maxEnergy;
+            TeamEnergy = _teamEnergy;
         }
 
         public void SwitchMoveState()
@@ -51,7 +56,7 @@ namespace CharacterModule.ModelPart
 
         public void AddRoute(List<Pair<int, int>> route)
         {
-            _route = new Queue<Pair<int, int>>();
+            _route.Clear();
             foreach (var checkPoint in route)
             {
                 _route.Enqueue(new Pair<int, int>(checkPoint.FirstValue, checkPoint.SecondValue));
@@ -60,7 +65,7 @@ namespace CharacterModule.ModelPart
 
         public void ResetEnergy()
         {
-            Energy = _maxEnergy;
+            TeamEnergy = _teamEnergy;
         }
         
         public void ResetMovementSettings()
@@ -69,13 +74,17 @@ namespace CharacterModule.ModelPart
             CanMove = true;
         }
 
-        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter, PlayerTeamPresenter playerTeam)
+        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter, TeamPresenter playerTeam)
         {
             if (_route.Count > 0)
             {
                 CanMove = false;
                 playgroundPresenter.RemoveCharacterFromCell(playerTeam, HeightCellIndex, WidthCellIndex);
                 coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter));
+            }
+            else
+            {
+                EndStepAction?.Invoke();
             }
         }
 
@@ -86,10 +95,10 @@ namespace CharacterModule.ModelPart
 
         private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter)
         {
-            while (_route.Count > 0 && Energy > 0)
+            while (_route.Count > 0 && TeamEnergy > 0)
             {
                 Pair<int, int> checkPoint = _route.Dequeue();
-                Energy--;
+                TeamEnergy--;
                     
                 Vector3 targetPosition = playgroundPresenter.Model.GetCellPresenter(checkPoint.FirstValue, checkPoint.SecondValue).Model.MoveCellPosition;
                 Vector3 currentPosition = playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition;
@@ -115,6 +124,7 @@ namespace CharacterModule.ModelPart
             SwitchMoveState();
             CanMove = true;
             EndMoveAction?.Invoke(playgroundPresenter);
+            EndStepAction?.Invoke();
         }
     }
 }

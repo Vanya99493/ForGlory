@@ -4,6 +4,6 @@ namespace CharacterModule.PresenterPart.CharacterStates.Base
 {
     public interface ICharacterMoveState : ICharacterState
     {
-        public void Enter(PlaygroundPresenter playgroundPresenter, int heightCoordinate, int widthCoordinate);
+        public void Enter(TeamPresenter teamPresenter, PlaygroundPresenter playgroundPresenter, int heightCoordinate, int widthCoordinate);
     }
 }
