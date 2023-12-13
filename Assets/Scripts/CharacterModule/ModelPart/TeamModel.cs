@@ -20,7 +20,8 @@ namespace CharacterModule.ModelPart
         private int _teamEnergy;
         private CharacterPresenter[] _characters;
 
-        public int RoutLength => _route.Count; 
+        public int RoutLength => _route.Count;
+        public int CharactersCount => _characters.Length;
         
         public bool MoveState { get; private set; }
         public bool CanMove { get; private set; }
@@ -48,6 +49,8 @@ namespace CharacterModule.ModelPart
             
             TeamEnergy = _teamEnergy;
         }
+
+        public CharacterPresenter GetCharacterPresenter(int index) => _characters[index];
 
         public void SwitchMoveState()
         {

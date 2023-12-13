@@ -27,6 +27,7 @@ namespace Infrastructure.GameStateMachineModule.States
             
             SubscribeOnUIActions();
             SubscribeStepChangingActions();
+            SubscribeLevelBattleActions();
         }
         
         public void Enter()
@@ -53,6 +54,22 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _currentLevel.StartStepChangingAction += _uiController.gameHudBasePanel.BlockNextStepButton;
             _currentLevel.EndStepChangingAction += _uiController.gameHudBasePanel.UnblockNextStepButton;
+        }
+
+        private void SubscribeLevelBattleActions()
+        {
+            _currentLevel.BattleStartAction += OnBattleStart;
+            _currentLevel.BattleEndAction += OnBattleEnd;
+        }
+
+        private void OnBattleStart()
+        {
+            _mainCamera.StayAtZero();
+        }
+
+        private void OnBattleEnd()
+        {
+            _mainCamera.FollowTarget();
         }
     }
 }

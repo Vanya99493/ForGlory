@@ -7,7 +7,6 @@ using CharacterModule.ViewPart;
 using CustomClasses;
 using Infrastructure.InputHandlerModule;
 using PlaygroundModule.PresenterPart;
-using UnityEngine;
 
 namespace CharacterModule.PresenterPart
 {

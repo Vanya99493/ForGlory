@@ -4,27 +4,28 @@ using CharacterModule.PresenterPart;
 using Infrastructure.Providers;
 using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
+using PlaygroundModule.ViewPart;
 using UnityEngine;
 
 namespace PlaygroundModule.PresenterPart
 {
     public class PlaygroundPresenter
     {
-        public event Action DestroyPlayground; 
-
         public readonly PlaygroundModel Model;
+        public readonly PlaygroundView View;
 
         private CellFactory _cellFactory;
 
-        public PlaygroundPresenter(PlaygroundModel model, CellDataProvider cellDataProvider)
+        public PlaygroundPresenter(PlaygroundModel model, PlaygroundView view, CellDataProvider cellDataProvider)
         {
             Model = model;
+            View = view;
             _cellFactory = new CellFactory(cellDataProvider);
         }
 
         public void Destroy()
         {
-            DestroyPlayground?.Invoke();
+            View.DestroyPlayground();
         }
 
         public void CreateAndSpawnPlayground(Transform parent, int height, int width, int lengthOfWater, int lengthOfCoast, 
@@ -51,6 +52,16 @@ namespace PlaygroundModule.PresenterPart
         {
             // need to add remove character from cell after his destroying in battle
             Model.RemoveCharacterFromCell(team, heightCellIndex, widthCellIndex);
+        }
+
+        public void ShowPlayground()
+        {
+            View.ActivatePlayground();
+        }
+
+        public void HidePlayground()
+        {
+            View.DeactivatePlayground();
         }
 
         public void SetAciveCells(List<Node> cells)

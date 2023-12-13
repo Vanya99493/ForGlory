@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
+using BattleModule.ViewPart;
 using CameraModule;
 using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
@@ -14,7 +16,6 @@ using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace LevelModule
@@ -23,12 +24,15 @@ namespace LevelModule
     {
         public event Action StartStepChangingAction;
         public event Action EndStepChangingAction;
+        public event Action BattleStartAction;
+        public event Action BattleEndAction;
         
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
         
         private readonly WideSearch _bfsSearch;
+        private readonly TeamFactory _teamFactory;
         
         private PlaygroundPresenter _playgroundPresenter;
         private PlayerTeamPresenter _playerTeamPresenter;
@@ -50,6 +54,9 @@ namespace LevelModule
             _bfsSearch = new WideSearch(cellDataProvider);
             ServiceLocator.Instance.RegisterService(_bfsSearch);
 
+            _teamFactory = new TeamFactory();
+            _teamFactory.CreateParent();
+            
             _enemyBehaviour = new EnemyBehaviour();
         }
 
@@ -76,6 +83,7 @@ namespace LevelModule
         public void RemoveLevel()
         {
             _playgroundPresenter.Destroy();
+            _battlegroundPresenter.Destroy();
             _playerTeamPresenter.Destroy();
             foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
@@ -123,8 +131,7 @@ namespace LevelModule
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel();
-            _playgroundPresenter = new PlaygroundPresenter(model, _cellDataProvider);
-            view.Initialize(_playgroundPresenter);
+            _playgroundPresenter = new PlaygroundPresenter(model, view, _cellDataProvider);
 
             int height = 10;
             int width = 10;
@@ -140,7 +147,10 @@ namespace LevelModule
 
         private void CreateBattleground()
         {
-            _battlegroundPresenter = new BattlegroundPresenter();
+            BattlegroundView view = new BattlegroundFactory().InstantiateBattleground(_gameScenePrefabsProvider.GetBattlgroundView());
+            BattlegroundModel model = new BattlegroundModel();
+            _battlegroundPresenter = new BattlegroundPresenter(model, view);
+            _battlegroundPresenter.EndBattle += OnEndBattle;
         }
 
         private void CreatePlayer()
@@ -154,7 +164,7 @@ namespace LevelModule
                      _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain &&
                      !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
-            (TeamView view, CharacterView[] characters) = new TeamFactory().InstantiateTeam(
+            (TeamView view, CharacterView[] characters) = _teamFactory.InstantiateTeam(
                 _gameScenePrefabsProvider.GetTeamView(), 
                 _gameScenePrefabsProvider.GetCharacterByName("Player1"),
                 _gameScenePrefabsProvider.GetCharacterByName("Player2")
@@ -192,7 +202,7 @@ namespace LevelModule
                              _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain &&
                              !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
-                    (TeamView view, CharacterView[] characters) = new TeamFactory().InstantiateTeam(
+                    (TeamView view, CharacterView[] characters) = _teamFactory.InstantiateTeam(
                         _gameScenePrefabsProvider.GetTeamView(), 
                         _gameScenePrefabsProvider.GetCharacterByName("Enemy1"),
                         _gameScenePrefabsProvider.GetCharacterByName("Enemy2"),
@@ -242,7 +252,7 @@ namespace LevelModule
             if (_enemiesStepCounter <= 0 && _playerStepCounter <= 0)
             {
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
-                _playerStepCounter = 1;
+                _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
                 _isStepChanging = false;
             }
         }
@@ -334,7 +344,64 @@ namespace LevelModule
 
         private void OnTeamsCollision(List<TeamPresenter> teams)
         {
+            HidePlayground();
+            BattleStartAction?.Invoke();
+
+            var factory = new TeamFactory();
+            foreach (TeamPresenter team in teams)
+            {
+                team.View.gameObject.SetActive(true);
+                factory.UpScaleTeam(team);
+            }
+            _battlegroundPresenter.ShowBattleground();
+            
             _battlegroundPresenter.StartBattle(teams);
+        }
+
+        private void OnEndBattle(bool isWin, PlayerTeamPresenter playerTeamPresenter, EnemyTeamPresenter enemyTeamPresenter)
+        {
+            if (isWin)
+            {
+                new TeamFactory().DownScale(playerTeamPresenter);
+                new TeamFactory().ResetTeamPosition(playerTeamPresenter);
+                _enemiesTeamPresenters.Remove(enemyTeamPresenter);
+                --_enemiesStepCounter;
+                _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter,
+                    enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex);
+                enemyTeamPresenter.Destroy();
+            }
+            else
+            {
+                new TeamFactory().DownScale(enemyTeamPresenter);
+                new TeamFactory().ResetTeamPosition(enemyTeamPresenter);
+                --_playerStepCounter;
+                playerTeamPresenter.Destroy();
+                _playgroundPresenter.RemoveCharacterFromCell(playerTeamPresenter,
+                    playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
+                _playerTeamPresenter = null;
+            }
+            
+            BattleEndAction?.Invoke();
+            _battlegroundPresenter.HideBattleground();
+            ShowPlayground();
+        }
+
+        private void HidePlayground()
+        {
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.View.gameObject.SetActive(false);
+            }
+            _playgroundPresenter.HidePlayground();
+        }
+
+        private void ShowPlayground()
+        {
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.View.gameObject.SetActive(true);
+            }
+            _playgroundPresenter.ShowPlayground();
         }
     }
 }

@@ -4,13 +4,13 @@ namespace BattleModule.ModelPart
 {
     public class BattlegroundModel
     {
-        private PlayerCharacterPresenter[] _playersTeam;
-        private EnemyCharacterPresenter[] _enemiesTeam;
+        public PlayerTeamPresenter PlayerTeam;
+        public EnemyTeamPresenter EnemyTeam;
 
-        public BattlegroundModel(PlayerCharacterPresenter[] playersTeam, EnemyCharacterPresenter[] enemiesTeam)
+        public void SetTeams(PlayerTeamPresenter playersTeam, EnemyTeamPresenter enemiesTeam)
         {
-            _playersTeam = playersTeam;
-            _enemiesTeam = enemiesTeam;
+            PlayerTeam = playersTeam;
+            EnemyTeam = enemiesTeam;
         }
     }
 }
