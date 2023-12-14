@@ -43,6 +43,7 @@ namespace CharacterModule.ModelPart
                 _characters[i] = characters[i];
                 if (_characters[i].Model.MaxEnergy < _teamEnergy)
                     _teamEnergy = _characters[i].Model.MaxEnergy;
+                _characters[i].DeathAction += OnKillCharacter;
             }
 
             _route = new Queue<Pair<int, int>>();
@@ -128,6 +129,22 @@ namespace CharacterModule.ModelPart
             CanMove = true;
             EndMoveAction?.Invoke(playgroundPresenter);
             EndStepAction?.Invoke();
+        }
+
+        private void OnKillCharacter(int id)
+        {
+            CharacterPresenter[] newCharacters = new CharacterPresenter[_characters.Length - 1];
+
+            for (int i = 0, k = 0; i < _characters.Length; i++)
+            {
+                if (_characters[i].Model.Id != id)
+                {
+                    newCharacters[k] = _characters[i];
+                    k++;
+                }
+            }
+
+            _characters = newCharacters;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CharacterModule.PresenterPart
             
             TeamView teamView = Object.Instantiate(teamPrefab, new Vector3(), Quaternion.identity);
             teamView.transform.parent = _parent;
-            teamView.Destroy += OnDestroy;
+            teamView.Destroy += OnDestroyTeam;
 
             CharacterView[] instantiatedCharacters = new CharacterView[characters.Length];
             
@@ -33,6 +33,7 @@ namespace CharacterModule.PresenterPart
                     );
 
                 instantiatedCharacters[i].transform.position = teamView.characterPositions[i].position;
+                instantiatedCharacters[i].Destroy += OnDestroyCharacter;
             }
             
             return (teamView, instantiatedCharacters);
@@ -73,7 +74,12 @@ namespace CharacterModule.PresenterPart
             }
         }
 
-        private void OnDestroy(TeamView gameObject)
+        private void OnDestroyTeam(TeamView gameObject)
+        {
+            Object.Destroy(gameObject.gameObject);
+        }
+        
+        private void OnDestroyCharacter(CharacterView gameObject)
         {
             Object.Destroy(gameObject.gameObject);
         }

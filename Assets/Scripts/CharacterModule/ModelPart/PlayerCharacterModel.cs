@@ -2,7 +2,7 @@
 {
     public class PlayerCharacterModel : CharacterModel
     {
-        public PlayerCharacterModel(string name, int maxHealth, int maxEnergy, int damage) : base(name, maxHealth, maxEnergy, damage)
+        public PlayerCharacterModel(int id, string name, int maxHealth, int maxEnergy, int initiative, int damage) : base(id, name, maxHealth, maxEnergy, initiative, damage)
         {
         }
     }

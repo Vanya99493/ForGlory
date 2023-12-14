@@ -43,6 +43,7 @@ namespace LevelModule
 
         private EnemyBehaviour _enemyBehaviour;
         private bool _isStepChanging;
+        private CharacterIdSetter _characterIdSetter;
 
         private int _enemiesStepCounter;
         private int _playerStepCounter;
@@ -65,6 +66,7 @@ namespace LevelModule
             _isStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             _enemyBehaviour = new EnemyBehaviour();
+            _characterIdSetter = new CharacterIdSetter(0);
             
             CreatePlayground();
             CreateBattleground();
@@ -176,7 +178,7 @@ namespace LevelModule
             PlayerCharacterPresenter[] players = new PlayerCharacterPresenter[characters.Length];
             for (int i = 0; i < players.Length; i++)
             {
-                players[i] = new PlayerCharacterPresenter(new PlayerCharacterModel("Player", 100, 5, 10), (PlayerCharacterView)characters[i]);
+                players[i] = new PlayerCharacterPresenter(new PlayerCharacterModel(_characterIdSetter.GetNewId(), "Player", 100, 5, Random.Range(1, 10), 20), (PlayerCharacterView)characters[i]);
             }
             
             TeamModel model = new PlayerTeamModel(heightSpawnCellIndex, widthSpawnCellIndex, players);
@@ -215,7 +217,7 @@ namespace LevelModule
                     EnemyCharacterPresenter[] enemies = new EnemyCharacterPresenter[characters.Length];
                     for (int j = 0; j < enemies.Length; j++)
                     {
-                        enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel("Enemy", 50, 3, 2, 5), (EnemyCharacterView)characters[j]);
+                        enemies[j] = new EnemyCharacterPresenter(new EnemyCharacterModel(_characterIdSetter.GetNewId(), "Enemy", 50, 3, 2, Random.Range(1, 10), 10), (EnemyCharacterView)characters[j]);
                     }
             
                     TeamModel model = new EnemyTeamModel(heightSpawnCellIndex, widthSpawnCellIndex, enemies);
@@ -241,14 +243,14 @@ namespace LevelModule
         private void OnEndPlayerMove()
         {
             --_playerStepCounter;
-            Debug.Log("P: " + _playerStepCounter);
+            //Debug.Log("P: " + _playerStepCounter);
             CheckStepMovement();
         }
 
         private void OnEndEnemyMove()
         {
             --_enemiesStepCounter;
-            Debug.Log("E: " + _enemiesStepCounter);
+            //Debug.Log("E: " + _enemiesStepCounter);
             CheckStepMovement();
         }
 
@@ -258,7 +260,7 @@ namespace LevelModule
             {
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
                 _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
-                Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
+                //Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
                 _isStepChanging = false;
             }
         }

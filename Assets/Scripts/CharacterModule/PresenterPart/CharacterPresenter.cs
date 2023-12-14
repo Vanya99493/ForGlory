@@ -1,10 +1,14 @@
-﻿using CharacterModule.ModelPart;
+﻿using System;
+using CharacterModule.ModelPart;
 using CharacterModule.ViewPart;
 
 namespace CharacterModule.PresenterPart
 {
     public abstract class CharacterPresenter
     {
+        public event Action<CharacterPresenter> ClickedAction;
+        public event Action<int> DeathAction;
+        
         public readonly CharacterModel Model;
         public readonly CharacterView View;
 
@@ -12,6 +16,19 @@ namespace CharacterModule.PresenterPart
         {
             Model = model;
             View = view;
+            Model.Death += OnDeath;
+            View.ClickedAction += OnClick;
+        }
+
+        private void OnDeath()
+        {
+            View.DestroyView();
+            DeathAction?.Invoke(Model.Id);
+        }
+
+        private void OnClick()
+        {
+            ClickedAction?.Invoke(this);
         }
     }
 }

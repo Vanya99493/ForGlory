@@ -1,16 +1,19 @@
 ﻿using System;
 using CharacterModule.PresenterPart;
+using Infrastructure.CoroutineRunnerModule;
 using UnityEngine;
 
 namespace BattleModule.ViewPart
 {
-    public class BattlegroundView : MonoBehaviour
+    public class BattlegroundView : MonoBehaviour, ICoroutineRunner
     {
         public event Action<BattlegroundView> Destroy;
 
         [SerializeField] private Transform[] playerSidePositions;
         [SerializeField] private Transform[] enemiesSidePositions;
         [SerializeField] private Transform attackStepPosition;
+
+        private Vector3 _lastPosition;
 
         public void SetCharactersOnBattleground(PlayerTeamPresenter players, EnemyTeamPresenter enemies)
         {
@@ -23,6 +26,18 @@ namespace BattleModule.ViewPart
             {
                 enemies.Model.GetCharacterPresenter(i).View.transform.position = enemiesSidePositions[i].position;
             }
+        }
+
+        public void SetAttackPosition(CharacterPresenter attackCharacter)
+        {
+            _lastPosition = attackCharacter.View.transform.position;
+            attackCharacter.View.transform.position = attackStepPosition.position;
+        }
+
+        public void ResetAttackPosition(CharacterPresenter attackCharacter)
+        {
+            attackCharacter.View.transform.position = _lastPosition;
+            _lastPosition = new Vector3(0, 0, 0);
         }
 
         public void ActivateBattleground()
