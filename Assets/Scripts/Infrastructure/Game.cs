@@ -4,6 +4,7 @@ using Infrastructure.GameStateMachineModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
+using Infrastructure.ServiceLocatorModule;
 using UIModule;
 using UnityEngine;
 
@@ -13,18 +14,17 @@ namespace Infrastructure
     {
         private readonly GameStateMachine _gameStateMachine;
         
-        private UIController _uiController;
         private CameraFollower _mainCamera;
         private InputHandler _inputHandler;
 
         public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
-            _uiController = uiController;
+            ServiceLocator.Instance.RegisterService(uiController);
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;
-            _gameStateMachine = new GameStateMachine(_uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
+            _gameStateMachine = new GameStateMachine(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
             
-            InitializeUIActions();
+            InitializeUIActions(uiController);
         }
 
         public void StartGame()
@@ -32,11 +32,12 @@ namespace Infrastructure
             _gameStateMachine.Enter<MainMenuState>();
         }
 
-        private void InitializeUIActions()
+        private void InitializeUIActions(UIController uiController)
         {
-            _uiController.mainMenuBasePanel.StartGameAction += () => _gameStateMachine.Enter<GameState>();
-            _uiController.mainMenuBasePanel.EndGameAction += Application.Quit;
-            _uiController.gameHudBasePanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>();
+            uiController.mainMenuPanel.StartGameAction += () => _gameStateMachine.Enter<GameState>();
+            uiController.mainMenuPanel.EndGameAction += Application.Quit;
+            uiController.gameHudPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>();
+            uiController.gameOverMenuPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>();
         }
     }
 }

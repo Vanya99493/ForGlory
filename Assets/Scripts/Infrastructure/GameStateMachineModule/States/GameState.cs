@@ -42,34 +42,42 @@ namespace Infrastructure.GameStateMachineModule.States
             _currentLevel.ResetLevel();
             _mainCamera.ResetTarget();
             _currentLevel.RemoveLevel();
-            _uiController.gameHudBasePanel.ResetNextStepButton();
+            _uiController.gameHudPanel.ResetNextStepButton();
         }
 
         private void SubscribeOnUIActions()
         {
-            _uiController.gameHudBasePanel.NextStepAction += _currentLevel.NextStep;
+            _uiController.gameHudPanel.NextStepAction += _currentLevel.NextStep;
         }
 
         private void SubscribeStepChangingActions()
         {
-            _currentLevel.StartStepChangingAction += _uiController.gameHudBasePanel.BlockNextStepButton;
-            _currentLevel.EndStepChangingAction += _uiController.gameHudBasePanel.UnblockNextStepButton;
+            _currentLevel.StartStepChangingAction += _uiController.gameHudPanel.BlockNextStepButton;
+            _currentLevel.EndStepChangingAction += _uiController.gameHudPanel.UnblockNextStepButton;
         }
 
         private void SubscribeLevelBattleActions()
         {
             _currentLevel.BattleStartAction += OnBattleStart;
             _currentLevel.BattleEndAction += OnBattleEnd;
+            _currentLevel.EndGameAction += OnGameEnd;
         }
 
         private void OnBattleStart()
         {
             _mainCamera.StayAtZero();
+            _uiController.ActivateBattleHud();
         }
 
         private void OnBattleEnd()
         {
             _mainCamera.FollowTarget();
+            _uiController.ActivateGameHud();
+        }
+
+        private void OnGameEnd()
+        {
+            _uiController.ActivateGameOverMenu();
         }
     }
 }

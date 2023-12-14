@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using BattleModule.ModelPart;
 using BattleModule.ViewPart;
 using CharacterModule.PresenterPart;
+using Infrastructure.ServiceLocatorModule;
+using UIModule;
+using UnityEngine;
 
 namespace BattleModule.PresenterPart
 {
@@ -34,9 +37,9 @@ namespace BattleModule.PresenterPart
             
             _view.SetCharactersOnBattleground(_model.PlayerTeam, _model.EnemyTeam);
 
-            
+            SubscribeUIActions();
 
-            //EndBattle?.Invoke(isWin, _model.PlayerTeam, _model.EnemyTeam);
+            // EndBattle?.Invoke(isWin, _model.PlayerTeam, _model.EnemyTeam);
         }
 
         public void ShowBattleground()
@@ -52,6 +55,32 @@ namespace BattleModule.PresenterPart
         public void Destroy()
         {
             _view.DestroyView();
+        }
+
+        private void SubscribeUIActions()
+        {
+            var uiController = ServiceLocator.Instance.GetService<UIController>();
+            uiController.battleHudPanel.AvoidAction += OnAvoidBattle;
+            uiController.battleHudPanel.WinAction += OnWinBattle;
+        }
+
+        private void UnsubscribeUIActions()
+        {
+            var uiController = ServiceLocator.Instance.GetService<UIController>();
+            uiController.battleHudPanel.AvoidAction -= OnAvoidBattle;
+            uiController.battleHudPanel.WinAction -= OnWinBattle;
+        }
+
+        private void OnAvoidBattle()
+        {
+            UnsubscribeUIActions();
+            EndBattle?.Invoke(false, _model.PlayerTeam, _model.EnemyTeam);
+        }
+
+        private void OnWinBattle()
+        {
+            UnsubscribeUIActions();
+            EndBattle?.Invoke(true, _model.PlayerTeam, _model.EnemyTeam);
         }
     }
 }

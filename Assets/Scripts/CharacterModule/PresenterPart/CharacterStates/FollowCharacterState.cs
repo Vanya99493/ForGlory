@@ -55,7 +55,6 @@ namespace CharacterModule.PresenterPart.CharacterStates
             }
             
             Enter(teamPresenter, playgroundPresenter, TargetTeamPresenter);
-            StepEndedAction?.Invoke();
             return false;
         }
 

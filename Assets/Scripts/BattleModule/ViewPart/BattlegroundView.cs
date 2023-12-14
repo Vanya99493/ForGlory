@@ -1,6 +1,5 @@
 ﻿using System;
 using CharacterModule.PresenterPart;
-using CharacterModule.ViewPart;
 using UnityEngine;
 
 namespace BattleModule.ViewPart

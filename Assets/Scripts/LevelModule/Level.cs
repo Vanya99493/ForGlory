@@ -16,6 +16,7 @@ using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace LevelModule
@@ -26,6 +27,7 @@ namespace LevelModule
         public event Action EndStepChangingAction;
         public event Action BattleStartAction;
         public event Action BattleEndAction;
+        public event Action EndGameAction;
         
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
@@ -56,14 +58,13 @@ namespace LevelModule
 
             _teamFactory = new TeamFactory();
             _teamFactory.CreateParent();
-            
-            _enemyBehaviour = new EnemyBehaviour();
         }
 
         public void StartLevel(int enemiesCount)
         {
             _isStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
+            _enemyBehaviour = new EnemyBehaviour();
             
             CreatePlayground();
             CreateBattleground();
@@ -83,8 +84,10 @@ namespace LevelModule
         public void RemoveLevel()
         {
             _playgroundPresenter.Destroy();
+            _playgroundPresenter = null;
             _battlegroundPresenter.Destroy();
-            _playerTeamPresenter.Destroy();
+            _battlegroundPresenter = null;
+            _playerTeamPresenter?.Destroy();
             foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
                 enemyTeamPresenter.Destroy();
@@ -238,12 +241,14 @@ namespace LevelModule
         private void OnEndPlayerMove()
         {
             --_playerStepCounter;
+            Debug.Log("P: " + _playerStepCounter);
             CheckStepMovement();
         }
 
         private void OnEndEnemyMove()
         {
             --_enemiesStepCounter;
+            Debug.Log("E: " + _enemiesStepCounter);
             CheckStepMovement();
         }
 
@@ -253,6 +258,7 @@ namespace LevelModule
             {
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
                 _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
+                Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
                 _isStepChanging = false;
             }
         }
@@ -328,9 +334,9 @@ namespace LevelModule
             if (_isStepChanging)
                 return;
 
-            _playgroundPresenter.DeactivateCells();
-            _playgroundPresenter.ResetActiveCells();
-            _playerTeamPresenter.Model.ResetMovementSettings();
+            _playgroundPresenter?.DeactivateCells();
+            _playgroundPresenter?.ResetActiveCells();
+            _playerTeamPresenter?.Model.ResetMovementSettings();
         }
 
         private void OnMoveCellClicked(int heightIndex, int widthIndex)
@@ -360,6 +366,10 @@ namespace LevelModule
 
         private void OnEndBattle(bool isWin, PlayerTeamPresenter playerTeamPresenter, EnemyTeamPresenter enemyTeamPresenter)
         {
+            _battlegroundPresenter.HideBattleground();
+            ShowPlayground();
+            BattleEndAction?.Invoke();
+            
             if (isWin)
             {
                 new TeamFactory().DownScale(playerTeamPresenter);
@@ -379,11 +389,8 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(playerTeamPresenter,
                     playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
                 _playerTeamPresenter = null;
+                EndGameAction?.Invoke();
             }
-            
-            BattleEndAction?.Invoke();
-            _battlegroundPresenter.HideBattleground();
-            ShowPlayground();
         }
 
         private void HidePlayground()

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.ServiceLocatorModule;
 using UIModule.Panels;
 using UIModule.Panels.Base;
 using UnityEngine;
 
 namespace UIModule
 {
-    public class UIController : MonoBehaviour
+    public class UIController : MonoBehaviour, IService
     {
-        public MainMenuBasePanel mainMenuBasePanel;
-        public GameHudBasePanel gameHudBasePanel;
+        public MainMenuPanel mainMenuPanel;
+        public GameHudPanel gameHudPanel;
+        public BattleHudPanel battleHudPanel;
+        public GameOverMenuPanel gameOverMenuPanel;
         
         private Dictionary<Type, BasePanel> _panels;
         private BasePanel _currentPanel;
@@ -18,8 +21,10 @@ namespace UIModule
         {
             _panels = new Dictionary<Type, BasePanel>
             {
-                { mainMenuBasePanel.GetType(), mainMenuBasePanel },
-                { gameHudBasePanel.GetType(), gameHudBasePanel }
+                { mainMenuPanel.GetType(), mainMenuPanel },
+                { gameHudPanel.GetType(), gameHudPanel },
+                { battleHudPanel.GetType(), battleHudPanel },
+                { gameOverMenuPanel.GetType(), gameOverMenuPanel }
             };
             
             foreach (var panel in _panels)
@@ -28,10 +33,11 @@ namespace UIModule
             }
         }
 
-        public void ActivateMainMenu() => ActivatePanel<MainMenuBasePanel>();
-        public void ActivateGameHud() => ActivatePanel<GameHudBasePanel>();
-        //public void ActivateBattleHud() => ActivatePanel<BattleHudBasePanel>();
-        //public void ActivatePause() => ActivatePanel<PauseBasePanel>();
+        public void ActivateMainMenu() => ActivatePanel<MainMenuPanel>();
+        public void ActivateGameHud() => ActivatePanel<GameHudPanel>();
+        public void ActivateBattleHud() => ActivatePanel<BattleHudPanel>();
+        public void ActivateGameOverMenu() => ActivatePanel<GameOverMenuPanel>();
+        //public void ActivatePause() => ActivatePanel<PauseMenuPanel>();
         
         private void ActivatePanel<TPanel>() where TPanel : BasePanel
         {

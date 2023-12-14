@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4304e86e03cc48f1ac05c7184a89c4db, type: 3}
   m_Name: GameScenePrefabsContainer
   m_EditorClassIdentifier: 
+  BattlegroundView: {fileID: 5331461545691233434, guid: c930409e21376204f9f36d9eafee61d8, type: 3}
   TeamView: {fileID: 5450282438131917672, guid: d4b908b1eec981442b079611fc38c08a, type: 3}
   CharacterPrefabsMap:
     list:

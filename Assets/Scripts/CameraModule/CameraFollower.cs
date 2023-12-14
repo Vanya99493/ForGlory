@@ -7,18 +7,16 @@ namespace CameraModule
         [SerializeField] private Vector3 offset;
 
         private Transform _target;
-        private bool _haveTarget = false;
         private bool _isLocked = false;
 
         public void SetTarget(Transform target)
         {
             _target = target;
-            _haveTarget = true;
         }
 
         public void ResetTarget()
         {
-            _haveTarget = false;
+            _isLocked = false;
             _target = null;
         }
 
@@ -34,7 +32,7 @@ namespace CameraModule
         
         private void LateUpdate()
         {
-            if (!_haveTarget)
+            if (_target == null)
             {
                 return;
             }
