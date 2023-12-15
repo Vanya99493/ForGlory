@@ -171,8 +171,8 @@ namespace LevelModule
 
             (TeamView view, CharacterView[] characters) = _teamFactory.InstantiateTeam(
                 _gameScenePrefabsProvider.GetTeamView(), 
-                _gameScenePrefabsProvider.GetCharacterByName("Player1"),
-                _gameScenePrefabsProvider.GetCharacterByName("Player2")
+                _gameScenePrefabsProvider.GetCharacterByName("PlayerMale"),
+                _gameScenePrefabsProvider.GetCharacterByName("PlayerFemale")
                 );
 
             PlayerCharacterPresenter[] players = new PlayerCharacterPresenter[characters.Length];
@@ -194,6 +194,22 @@ namespace LevelModule
 
         private void CreateEnemies(int enemyTeamsCount)
         {
+            CharacterView[] skeletonsPrefabs = new[]
+            {
+                _gameScenePrefabsProvider.GetCharacterByName("Skeleton")
+            };
+            CharacterView[] spidersPrefabs = new[]
+            {
+                _gameScenePrefabsProvider.GetCharacterByName("Spider1"),
+                _gameScenePrefabsProvider.GetCharacterByName("Spider2")
+            };
+            CharacterView[] ghostsPrefabs = new[]
+            {
+                _gameScenePrefabsProvider.GetCharacterByName("Ghost1"),
+                _gameScenePrefabsProvider.GetCharacterByName("Ghost2"),
+                _gameScenePrefabsProvider.GetCharacterByName("Ghost3")
+            };
+            
             for (int i = 0; i < enemyTeamsCount; i++)
             {
                 while (true)
@@ -207,11 +223,20 @@ namespace LevelModule
                              _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.CellType != CellType.Plain &&
                              !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
+                    int enemiesCount = Random.Range(1, 4);
+                    CharacterView[] enemiesPrefabs = new CharacterView[enemiesCount];
+                    int enemiesType = Random.Range(0, 4);
+                    
+                    for (int j = 0; j < enemiesPrefabs.Length; j++)
+                    {
+                        enemiesPrefabs[j] = enemiesType == 0 ? skeletonsPrefabs[0] :
+                            enemiesType == 1 ? spidersPrefabs[Random.Range(0, spidersPrefabs.Length)] :
+                            ghostsPrefabs[Random.Range(0, ghostsPrefabs.Length)];
+                    }
+                    
                     (TeamView view, CharacterView[] characters) = _teamFactory.InstantiateTeam(
                         _gameScenePrefabsProvider.GetTeamView(), 
-                        _gameScenePrefabsProvider.GetCharacterByName("Enemy1"),
-                        _gameScenePrefabsProvider.GetCharacterByName("Enemy2"),
-                        _gameScenePrefabsProvider.GetCharacterByName("Enemy3")
+                        enemiesPrefabs
                     );
 
                     EnemyCharacterPresenter[] enemies = new EnemyCharacterPresenter[characters.Length];

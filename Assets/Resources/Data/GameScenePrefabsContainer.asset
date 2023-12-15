@@ -16,16 +16,20 @@ MonoBehaviour:
   TeamView: {fileID: 5450282438131917672, guid: d4b908b1eec981442b079611fc38c08a, type: 3}
   CharacterPrefabsMap:
     list:
-    - Key: Player1
-      Value: {fileID: -6367836372760818034, guid: ec6c17bc4c2d1e44b80dc7f4b5b5b8bd, type: 3}
-    - Key: Player2
-      Value: {fileID: 7942053812125113841, guid: bb65e9d1631884144b9d4e5f66cc2ca4, type: 3}
-    - Key: Player3
-      Value: {fileID: 7709856755251082505, guid: 74c66c74ea59e53439c802dbc12a1db3, type: 3}
-    - Key: Enemy1
-      Value: {fileID: 5291244145808550373, guid: f69285ff17a16c14d9a6aa6ba252d20d, type: 3}
-    - Key: Enemy2
-      Value: {fileID: -1925442147609141807, guid: df6d0e861f87af3428da9ba2ad7344b1, type: 3}
-    - Key: Enemy3
-      Value: {fileID: 2388797026154983584, guid: 829cc55cbae00714586d144fbc43d1aa, type: 3}
+    - Key: PlayerMale
+      Value: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
+    - Key: PlayerFemale
+      Value: {fileID: 73327585664465529, guid: f32108651fa934b42b52a4caed809307, type: 3}
+    - Key: Spider1
+      Value: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}
+    - Key: Spider2
+      Value: {fileID: 6067927307954777840, guid: 5c4ec640bebbeb943a71b873998a986a, type: 3}
+    - Key: Ghost1
+      Value: {fileID: 5774848599246418716, guid: 69bf79eb2ce1fdb4cb0e1d4429b4e460, type: 3}
+    - Key: Ghost2
+      Value: {fileID: 6813855635219573417, guid: 8e49c01130c2bd444ada18b4dfb6d57e, type: 3}
+    - Key: Ghost3
+      Value: {fileID: 1332959700545535262, guid: 87c9d6fff20aced4baa01c6299ab7cff, type: 3}
+    - Key: Skeleton
+      Value: {fileID: 5437140783749305979, guid: a02d6f7ee67f47e4a856f63eeb9cf541, type: 3}
     keyCollision: 0
