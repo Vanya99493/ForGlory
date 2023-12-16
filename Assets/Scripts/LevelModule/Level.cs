@@ -122,10 +122,12 @@ namespace LevelModule
 
         private IEnumerator BlockCoroutine()
         {
-            while (_isStepChanging)
+            /*while (_isStepChanging)
             {
                 yield return null;
-            }
+            }*/
+
+            yield return new WaitForSeconds(1f);
             
             _playerTeamPresenter.Model.ResetEnergy();
             _playerTeamPresenter.Model.ResetMovementSettings();

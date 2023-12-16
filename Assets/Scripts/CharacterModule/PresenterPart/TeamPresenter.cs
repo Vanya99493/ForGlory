@@ -109,7 +109,7 @@ namespace CharacterModule.PresenterPart
 
         private void OnMove(PlaygroundPresenter playgroundPresenter)
         {
-            Model.Move(View, playgroundPresenter, this as PlayerTeamPresenter);
+            Model.Move(View, playgroundPresenter, this);
         }
 
         private void OnEndMoveAction(PlaygroundPresenter playgroundPresenter)
