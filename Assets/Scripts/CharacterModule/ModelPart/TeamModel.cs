@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using CharacterModule.PresenterPart;
 using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
@@ -43,7 +44,7 @@ namespace CharacterModule.ModelPart
                 _characters[i] = characters[i];
                 if (_characters[i].Model.MaxEnergy < _teamEnergy)
                     _teamEnergy = _characters[i].Model.MaxEnergy;
-                _characters[i].DeathAction += OnKillCharacter;
+                //_characters[i].DeathAction += OnKillCharacter;
             }
 
             _route = new Queue<Pair<int, int>>();
@@ -78,13 +79,12 @@ namespace CharacterModule.ModelPart
             CanMove = true;
         }
 
-        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter, TeamPresenter playerTeam)
+        public void Move(ICoroutineRunner coroutineRunner, PlaygroundPresenter playgroundPresenter, TeamPresenter teamPresenter)
         {
             if (_route.Count > 0)
             {
                 CanMove = false;
-                playgroundPresenter.RemoveCharacterFromCell(playerTeam, HeightCellIndex, WidthCellIndex);
-                coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter));
+                coroutineRunner.StartCoroutine(MovementCoroutine(playgroundPresenter, teamPresenter));
             }
             else
             {
@@ -97,11 +97,17 @@ namespace CharacterModule.ModelPart
             MoveAction?.Invoke(playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition);
         }
 
-        private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter)
+        private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter, TeamPresenter teamPresenter)
         {
             while (_route.Count > 0 && TeamEnergy > 0)
             {
                 Pair<int, int> checkPoint = _route.Dequeue();
+                if (playgroundPresenter.PreSetCharacterOnCell(teamPresenter, checkPoint.FirstValue, checkPoint.SecondValue) == false)
+                {
+                    _route.Clear();
+                    break;
+                }
+                playgroundPresenter.RemoveCharacterFromCell(teamPresenter, HeightCellIndex, WidthCellIndex);
                 TeamEnergy--;
                     
                 Vector3 targetPosition = playgroundPresenter.Model.GetCellPresenter(checkPoint.FirstValue, checkPoint.SecondValue).Model.MoveCellPosition;
@@ -123,6 +129,8 @@ namespace CharacterModule.ModelPart
                 }
                 HeightCellIndex = checkPoint.FirstValue;
                 WidthCellIndex = checkPoint.SecondValue;
+                
+                playgroundPresenter.SetCharacterOnCell(teamPresenter, HeightCellIndex, WidthCellIndex);
             }
 
             SwitchMoveState();

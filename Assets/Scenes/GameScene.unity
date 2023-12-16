@@ -177,10 +177,10 @@ MonoBehaviour:
     GeneralData:
       LastId: 0
     PlaygroundData:
-      Height: 35
-      Width: 35
-      LengthOfWaterLine: 10
-      LengthOfCoast: 3
+      Height: 5
+      Width: 5
+      LengthOfWaterLine: 0
+      LengthOfCoast: 0
     TeamsData:
       PlayerTeam:
         CharactersData:
@@ -209,9 +209,6 @@ MonoBehaviour:
         HeightCellIndex: 0
         WidthCellIndex: 0
       EnemyTeams:
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
       - CharactersData: []
         HeightCellIndex: 0
         WidthCellIndex: 0

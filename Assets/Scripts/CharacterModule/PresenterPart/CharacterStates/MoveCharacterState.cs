@@ -32,7 +32,6 @@ namespace CharacterModule.PresenterPart.CharacterStates
                     out route
                 ))
             {
-                playgroundPresenter.RemoveCharacterFromCell(teamPresenter, teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex);
                 AddRouteAction?.Invoke(route);
                 MoveAction?.Invoke(playgroundPresenter);
             }

@@ -12,6 +12,7 @@ namespace PlaygroundModule.ModelPart
         
         private CellType _cellType;
         private CellView _view;
+        private TeamPresenter _preTeamOnCell; 
 
         public CellType CellType => _cellType;
         
@@ -34,6 +35,29 @@ namespace PlaygroundModule.ModelPart
             _view = view;
         }
 
+        public bool PreSetCharacterOnCell(TeamPresenter team)
+        {
+            Debug.Log($"TRY set on {CellHeightId}:{CellWidthId}");
+            if (team is PlayerTeamPresenter && _preTeamOnCell == null)
+            {
+                if (TeamsOnCell.Count == 0 || (TeamsOnCell.Count == 1 && TeamsOnCell[0] is EnemyTeamPresenter))
+                {
+                    _preTeamOnCell = team;
+                    return true;
+                }
+            }
+            else if (team is EnemyTeamPresenter && _preTeamOnCell == null)
+            {
+                if (TeamsOnCell.Count == 0 || (TeamsOnCell.Count == 1 && TeamsOnCell[0] is PlayerTeamPresenter))
+                {
+                    _preTeamOnCell = team;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool SetCharacterOnCell(TeamPresenter team, bool isFirstInitialization = false)
         {
             if (isFirstInitialization && TeamsOnCell.Count > 0)
@@ -42,6 +66,8 @@ namespace PlaygroundModule.ModelPart
             }
             
             TeamsOnCell.Add(team);
+            _preTeamOnCell = null;
+            Debug.Log($"Set on {CellHeightId}:{CellWidthId}");
 
             if (TeamsOnCell.Count >= 2)
             {

@@ -33,6 +33,11 @@ namespace PlaygroundModule.ModelPart
 
         public CellPresenter GetCellPresenter(int heightIndex, int widthIndex) => _playground[heightIndex, widthIndex];
 
+        public bool PreSetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
+        {
+            return _playground[heightCellIndex, widthCellIndex].PreSetCharacterOnCell(team);
+        }
+
         public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex, bool isFirstInitialization = false)
         {
             return _playground[heightCellIndex, widthCellIndex].SetCharacterOnCell(team, isFirstInitialization);

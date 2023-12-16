@@ -20,6 +20,11 @@ namespace PlaygroundModule.PresenterPart
             _view = view;
         }
 
+        public bool PreSetCharacterOnCell(TeamPresenter team)
+        {
+            return Model.PreSetCharacterOnCell(team);
+        }
+
         public bool SetCharacterOnCell(TeamPresenter team, bool isFirstInitialization = false)
         {
             return Model.SetCharacterOnCell(team, isFirstInitialization);

@@ -28,7 +28,7 @@ namespace CharacterModule.PresenterPart
             Model = model;
             View = view;
             Model.MoveAction += View.Move;
-            Model.EndMoveAction += OnEndMoveAction;
+            //Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
 

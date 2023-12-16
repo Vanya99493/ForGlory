@@ -66,7 +66,8 @@ namespace BattleModule.PresenterPart
         {
             Queue<CharacterPresenter> attackQueue = MakeAttackQueue();
             
-            while (_model.PlayerTeam.Model.CharactersCount > 0 && _model.EnemyTeam.Model.CharactersCount > 0 && attackQueue.Count > 0)
+            //while (_model.PlayerTeam.Model.CharactersCount > 0 && _model.EnemyTeam.Model.CharactersCount > 0 && attackQueue.Count > 0)
+            while (IsTeamAlive(_model.PlayerTeam) && IsTeamAlive(_model.EnemyTeam) && attackQueue.Count > 0)
             {
                 CharacterPresenter attackCharacter = attackQueue.Dequeue();
                 if (attackCharacter.Model.Health <= 0)
@@ -88,7 +89,14 @@ namespace BattleModule.PresenterPart
                 else if (attackCharacter is EnemyCharacterPresenter)
                 {
                     yield return new WaitForSeconds(1f);
-                    _model.PlayerTeam.Model.GetCharacterPresenter(Random.Range(0, _model.PlayerTeam.Model.CharactersCount)).Model.TakeDamage(attackCharacter.Model.Damage);
+                    int randomIndex;
+                    while (true)
+                    {
+                        randomIndex = Random.Range(0, _model.PlayerTeam.Model.CharactersCount);
+                        if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
+                            break;
+                    }
+                    _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackCharacter.Model.Damage);
                     yield return new WaitForSeconds(1f);
                 }
                 
@@ -102,11 +110,11 @@ namespace BattleModule.PresenterPart
             UnsubscribeUIActions();
             UnsubscribeOnClickActions();
 
-            if (_model.PlayerTeam.Model.CharactersCount == 0)
+            if (IsTeamAlive(_model.EnemyTeam))
             {
                 EndBattle?.Invoke(false, _model.PlayerTeam, _model.EnemyTeam);
             }
-            else if (_model.EnemyTeam.Model.CharactersCount == 0)
+            else if (IsTeamAlive(_model.PlayerTeam))
             {
                 EndBattle?.Invoke(true, _model.PlayerTeam, _model.EnemyTeam);
             }
@@ -130,6 +138,17 @@ namespace BattleModule.PresenterPart
             }
 
             return attackQueue;
+        }
+
+        private bool IsTeamAlive(TeamPresenter team)
+        {
+            for (int i = 0; i < team.Model.CharactersCount; i++)
+            {
+                if (team.Model.GetCharacterPresenter(i).Model.Health > 0)
+                    return true;
+            }
+
+            return false;
         }
 
         private void SubscribeUIActions()

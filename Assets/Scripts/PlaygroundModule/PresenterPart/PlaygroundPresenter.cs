@@ -38,6 +38,11 @@ namespace PlaygroundModule.PresenterPart
             SubscribeOnTeamsCollision(OnTeamsCollision);
         }
 
+        public bool PreSetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
+        {
+            return Model.PreSetCharacterOnCell(team, heightCellIndex, widthCellIndex);
+        }
+
         public bool SetCharacterOnCell(TeamPresenter team, int heightCellIndex, int widthCellIndex, bool isFirstInitialization = false)
         {
             return Model.SetCharacterOnCell(team, heightCellIndex, widthCellIndex, isFirstInitialization);

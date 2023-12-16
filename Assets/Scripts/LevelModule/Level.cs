@@ -138,6 +138,8 @@ namespace LevelModule
                 enemyTeamPresenter.Model.ResetMovementSettings();
             }
             EndStepChangingAction?.Invoke();
+            
+            _isStepChanging = false;
         }
         
         private void CreatePlayground(PlaygroundData emptyPlaygroundData)
@@ -149,7 +151,8 @@ namespace LevelModule
             _playgroundPresenter.CreateAndSpawnPlayground(view.transform, emptyPlaygroundData.Height, emptyPlaygroundData.Width, 
                 emptyPlaygroundData.LengthOfWaterLine, emptyPlaygroundData.LengthOfCoast, 
                 emptyPlaygroundData.Height * 1f, emptyPlaygroundData.Width * 1f, _cellDataProvider, 
-                OnMoveCellClicked, OnCellClicked, OnTeamsCollision);
+                OnMoveCellClicked, OnCellClicked, /*OnTeamsCollision*/ 
+                (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
         }
 
         private void CreateBattleground()
@@ -185,8 +188,8 @@ namespace LevelModule
             
             for (int i = 0; i < enemyTeamsData.Length; i++)
             {
-                //while (true)
-                //{
+                while (true)
+                {
                     (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
 
                     enemyTeamsData[i].HeightCellIndex = heightSpawnCellIndex;
@@ -196,22 +199,22 @@ namespace LevelModule
                         _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i]) as EnemyTeamPresenter;
                     
                     enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
-                    _playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true);
+                    //_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true);
                     
                     enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
                     enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
 
                     enemyTeamPresenter.EnterIdleState(_playgroundPresenter);
                     
-                    //if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true))
-                    //{
+                    if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true))
+                    {
                         enemyTeamPresenter.Model.EndStepAction += OnEndEnemyMove;
                         _enemiesTeamPresenters.Add(enemyTeamPresenter);
-                    //    break;
-                    //}
+                        break;
+                    }
 
-                    //enemyTeamPresenter.Destroy();
-                //}
+                    enemyTeamPresenter.Destroy();
+                }
             }
         }
 
@@ -337,6 +340,15 @@ namespace LevelModule
 
             _playgroundPresenter.DeactivateCells();
             _playerTeamPresenter.EnterMoveState(_playgroundPresenter, heightIndex, widthIndex);
+        }
+
+        private IEnumerator WaitOnEndStepChanging(List<TeamPresenter> teams)
+        {
+            while (_isStepChanging)
+            {
+                yield return null;
+            }
+            OnTeamsCollision(teams);
         }
 
         private void OnTeamsCollision(List<TeamPresenter> teams)
