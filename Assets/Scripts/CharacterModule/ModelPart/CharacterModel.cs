@@ -16,12 +16,12 @@ namespace CharacterModule.ModelPart
         
         private int _maxHealth;
 
-        public CharacterModel(int id, string name, int maxHealth, int maxEnergy, int initiative, int damage)
+        public CharacterModel(int id, string name, int maxHealth, int maxEnergy, int initiative, int damage, int currentHealth = -1)
         {
             Id = id;
             Name = name;
             _maxHealth = maxHealth;
-            Health = _maxHealth;
+            Health = currentHealth == -1 ? _maxHealth : currentHealth;
             MaxEnergy = maxEnergy;
             Initiative = initiative;
             Damage = damage;

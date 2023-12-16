@@ -2,6 +2,7 @@
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
+using LevelModule.Data;
 using UIModule;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace Infrastructure
         [SerializeField] private HandlersProvider handlersProvider;
         [SerializeField] private GameScenePrefabsProvider gameScenePrefabsProvider;
         [SerializeField] private CellDataProvider cellDataProvider;
+        [Header("New level data")]
+        [SerializeField] private LevelData newLevelData;
         
         private Game _game;
         private CoroutineRunner _coroutineRunner;
@@ -23,7 +26,7 @@ namespace Infrastructure
         {
             InstantiateComponents();
 
-            _game = new Game(_uiController, _mainCamera, _coroutineRunner, _inputHandler, cellDataProvider, gameScenePrefabsProvider);
+            _game = new Game(_uiController, _mainCamera, _coroutineRunner, _inputHandler, cellDataProvider, gameScenePrefabsProvider, newLevelData);
             _game.StartGame();
         }
         

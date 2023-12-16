@@ -1,5 +1,6 @@
 ﻿using System;
 using Infrastructure.GameStateMachineModule.States.Base;
+using LevelModule.Data;
 using UIModule;
 
 namespace Infrastructure.GameStateMachineModule.States
@@ -15,7 +16,7 @@ namespace Infrastructure.GameStateMachineModule.States
             _uiController = uiController;
         }
         
-        public void Enter()
+        public void Enter(LevelData levelData)
         {
             _uiController.ActivateMainMenu();
         }

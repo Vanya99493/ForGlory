@@ -14,22 +14,92 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BattlegroundView: {fileID: 5331461545691233434, guid: c930409e21376204f9f36d9eafee61d8, type: 3}
   TeamView: {fileID: 5450282438131917672, guid: d4b908b1eec981442b079611fc38c08a, type: 3}
-  CharacterPrefabsMap:
-    list:
-    - Key: PlayerMale
-      Value: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
-    - Key: PlayerFemale
-      Value: {fileID: 73327585664465529, guid: f32108651fa934b42b52a4caed809307, type: 3}
-    - Key: Spider1
-      Value: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}
-    - Key: Spider2
-      Value: {fileID: 6067927307954777840, guid: 5c4ec640bebbeb943a71b873998a986a, type: 3}
-    - Key: Ghost1
-      Value: {fileID: 5774848599246418716, guid: 69bf79eb2ce1fdb4cb0e1d4429b4e460, type: 3}
-    - Key: Ghost2
-      Value: {fileID: 6813855635219573417, guid: 8e49c01130c2bd444ada18b4dfb6d57e, type: 3}
-    - Key: Ghost3
-      Value: {fileID: 1332959700545535262, guid: 87c9d6fff20aced4baa01c6299ab7cff, type: 3}
-    - Key: Skeleton
-      Value: {fileID: 5437140783749305979, guid: a02d6f7ee67f47e4a856f63eeb9cf541, type: 3}
-    keyCollision: 0
+  Characters:
+  - CharacterData:
+      Id: 0
+      Name: PlayerMale
+      CurrentHealth: -1
+      MaxHealth: 100
+      MaxEnergy: 5
+      Initiative: 7
+      Damage: 35
+      Vision: 0
+      CharacterType: 0
+    CharacterPrefab: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: PlayerFemale
+      CurrentHealth: -1
+      MaxHealth: 125
+      MaxEnergy: 4
+      Initiative: 5
+      Damage: 25
+      Vision: 0
+      CharacterType: 0
+    CharacterPrefab: {fileID: 73327585664465529, guid: f32108651fa934b42b52a4caed809307, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Ghost1
+      CurrentHealth: -1
+      MaxHealth: 50
+      MaxEnergy: 2
+      Initiative: 3
+      Damage: 5
+      Vision: 2
+      CharacterType: 1
+    CharacterPrefab: {fileID: 5774848599246418716, guid: 69bf79eb2ce1fdb4cb0e1d4429b4e460, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Ghost2
+      CurrentHealth: -1
+      MaxHealth: 65
+      MaxEnergy: 2
+      Initiative: 6
+      Damage: 10
+      Vision: 2
+      CharacterType: 1
+    CharacterPrefab: {fileID: 6813855635219573417, guid: 8e49c01130c2bd444ada18b4dfb6d57e, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Ghost3
+      CurrentHealth: -1
+      MaxHealth: 35
+      MaxEnergy: 2
+      Initiative: 9
+      Damage: 20
+      Vision: 1
+      CharacterType: 1
+    CharacterPrefab: {fileID: 1332959700545535262, guid: 87c9d6fff20aced4baa01c6299ab7cff, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Skeleton
+      CurrentHealth: -1
+      MaxHealth: 100
+      MaxEnergy: 1
+      Initiative: 6
+      Damage: 10
+      Vision: 3
+      CharacterType: 3
+    CharacterPrefab: {fileID: 5437140783749305979, guid: a02d6f7ee67f47e4a856f63eeb9cf541, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Spider1
+      CurrentHealth: -1
+      MaxHealth: 60
+      MaxEnergy: 3
+      Initiative: 4
+      Damage: 15
+      Vision: 2
+      CharacterType: 2
+    CharacterPrefab: {fileID: 6067927307954777840, guid: 5c4ec640bebbeb943a71b873998a986a, type: 3}
+  - CharacterData:
+      Id: 0
+      Name: Spider2
+      CurrentHealth: -1
+      MaxHealth: 120
+      MaxEnergy: 3
+      Initiative: 9
+      Damage: 20
+      Vision: 2
+      CharacterType: 2
+    CharacterPrefab: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}

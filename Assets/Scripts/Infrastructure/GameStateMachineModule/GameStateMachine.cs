@@ -5,6 +5,7 @@ using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
+using LevelModule.Data;
 using UIModule;
 using UnityEngine;
 
@@ -24,11 +25,11 @@ namespace Infrastructure.GameStateMachineModule
             };
         }
 
-        public void Enter<TState>() where TState : IGameState
+        public void Enter<TState>(LevelData levelData) where TState : IGameState
         {
             _currentGameState?.Exit();
             _currentGameState = _states[typeof(TState)];
-            _currentGameState.Enter();
+            _currentGameState.Enter(levelData);
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿using BattleModule.ViewPart;
+﻿using System.Collections.Generic;
+using BattleModule.ViewPart;
+using CharacterModule.ModelPart.Data;
 using CharacterModule.ViewPart;
-using CustomClasses;
 using UnityEngine;
 
 namespace ScriptableObjects
@@ -10,6 +11,6 @@ namespace ScriptableObjects
     {
         public BattlegroundView BattlegroundView;
         public TeamView TeamView;
-        public SerializableDictionary<string, CharacterView> CharacterPrefabsMap;
+        public List<CharacterFullData> Characters;
     }
 }
