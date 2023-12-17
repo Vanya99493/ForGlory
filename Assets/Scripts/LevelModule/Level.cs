@@ -374,6 +374,8 @@ namespace LevelModule
 
         private void OnTeamsCollision(List<TeamPresenter> teams)
         {
+            teams[0].View.Rotate(new Vector3(0, 90, 0));
+            teams[1].View.Rotate(new Vector3(0, -90, 0));
             HidePlayground();
             BattleStartAction?.Invoke();
 
@@ -402,6 +404,7 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter,
                     enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex);
                 enemyTeamPresenter.Destroy();
+                playerTeamPresenter.View.Rotate(Vector3.zero);
             }
             else
             {
@@ -413,6 +416,7 @@ namespace LevelModule
                     playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
                 _playerTeamPresenter = null;
                 EndGameAction?.Invoke();
+                enemyTeamPresenter.View.Rotate(Vector3.zero);
             }
         }
 

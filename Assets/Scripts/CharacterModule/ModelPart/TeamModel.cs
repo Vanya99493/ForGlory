@@ -14,6 +14,7 @@ namespace CharacterModule.ModelPart
     {
         public event Action<Vector3> MoveAction;
         public event Action EndStepAction;
+        public event Action<int, int> MoveToward;
         public event Action<PlaygroundPresenter> EndMoveAction;
         
         private float _speed = 4f;
@@ -107,6 +108,7 @@ namespace CharacterModule.ModelPart
                     break;
                 }
                 playgroundPresenter.RemoveCharacterFromCell(teamPresenter, HeightCellIndex, WidthCellIndex);
+                MoveToward?.Invoke(HeightCellIndex - checkPoint.FirstValue, WidthCellIndex - checkPoint.SecondValue);
                 TeamEnergy--;
                     
                 Vector3 targetPosition = playgroundPresenter.Model.GetCellPresenter(checkPoint.FirstValue, checkPoint.SecondValue).Model.MoveCellPosition;

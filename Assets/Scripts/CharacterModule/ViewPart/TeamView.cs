@@ -31,6 +31,11 @@ namespace CharacterModule.ViewPart
             _canMove = true;
         }
 
+        public void Rotate(Vector3 newRotation)
+        {
+            transform.eulerAngles = newRotation;
+        }
+
         public void Click(InputMouseButtonType mouseButtonType)
         {
             ClickOnCharacter?.Invoke(mouseButtonType);

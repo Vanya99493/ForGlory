@@ -7,6 +7,7 @@ using CharacterModule.ViewPart;
 using CustomClasses;
 using Infrastructure.InputHandlerModule;
 using PlaygroundModule.PresenterPart;
+using UnityEngine;
 
 namespace CharacterModule.PresenterPart
 {
@@ -28,6 +29,7 @@ namespace CharacterModule.PresenterPart
             Model = model;
             View = view;
             Model.MoveAction += View.Move;
+            Model.MoveToward += OnMoveToward;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
 
@@ -80,6 +82,26 @@ namespace CharacterModule.PresenterPart
         public void Destroy()
         {
             DestroyCharacter?.Invoke();
+        }
+
+        private void OnMoveToward(int heightDifference, int widthDifference)
+        {
+            if (heightDifference < 0)
+            {
+                View.Rotate(new Vector3(0, 0, 0));
+            }
+            else if (heightDifference > 0)
+            {
+                View.Rotate(new Vector3(0, 180, 0));
+            }
+            else if (widthDifference > 0)
+            {
+                View.Rotate(new Vector3(0, 90, 0));
+            }
+            else if (widthDifference < 0)
+            {
+                View.Rotate(new Vector3(0, -90, 0));
+            }
         }
 
         private void SubscribeStateMachineActions()
