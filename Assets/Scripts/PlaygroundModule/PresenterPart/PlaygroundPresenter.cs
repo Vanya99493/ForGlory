@@ -55,7 +55,6 @@ namespace PlaygroundModule.PresenterPart
 
         public void RemoveCharacterFromCell(TeamPresenter team, int heightCellIndex, int widthCellIndex)
         {
-            // need to add remove character from cell after his destroying in battle
             Model.RemoveCharacterFromCell(team, heightCellIndex, widthCellIndex);
         }
 

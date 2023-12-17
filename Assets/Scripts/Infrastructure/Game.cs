@@ -23,16 +23,18 @@ namespace Infrastructure
         private InputHandler _inputHandler;
 
         private LevelData _newLevelData;
+        private LevelData _mainMenuBackgroundLevelData;
 
         public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, 
             InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider,
-            LevelData newLevelData)
+            LevelData newLevelData, LevelData mainMenuBackgroundLevelData)
         {
             ServiceLocator.Instance.RegisterService(uiController);
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;
             _newLevelData = newLevelData;
+            _mainMenuBackgroundLevelData = mainMenuBackgroundLevelData;
             _gameStateMachine = new GameStateMachine(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
             
             InitializeUIActions(uiController);
@@ -40,15 +42,22 @@ namespace Infrastructure
 
         public void StartGame()
         {
-            _gameStateMachine.Enter<MainMenuState>(null);
+            LoadMainMenuBackgroundLevel();
         }
 
         private void InitializeUIActions(UIController uiController)
         {
             uiController.mainMenuPanel.StartGameAction += StartNewLevel;
             uiController.mainMenuPanel.EndGameAction += Application.Quit;
-            uiController.gameHudPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
-            uiController.gameOverMenuPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
+            uiController.gameHudPanel.ExitToMainMenuAction += LoadMainMenuBackgroundLevel;
+            uiController.gameOverMenuPanel.ExitToMainMenuAction += LoadMainMenuBackgroundLevel;
+        }
+
+        private void LoadMainMenuBackgroundLevel()
+        {
+            LevelData levelData = new LevelDataBuilder().BuildLevelData(_mainMenuBackgroundLevelData, _gameScenePrefabsProvider);
+
+            _gameStateMachine.Enter<MainMenuState>(levelData);
         }
 
         private void StartNewLevel()

@@ -15,6 +15,8 @@ namespace Infrastructure
         [SerializeField] private CellDataProvider cellDataProvider;
         [Header("New level data")]
         [SerializeField] private LevelData newLevelData;
+        [Header("MainMenu background level simulation")]
+        [SerializeField] private LevelData mainMenuBackgroundLevelData;
         
         private Game _game;
         private CoroutineRunner _coroutineRunner;
@@ -26,7 +28,7 @@ namespace Infrastructure
         {
             InstantiateComponents();
 
-            _game = new Game(_uiController, _mainCamera, _coroutineRunner, _inputHandler, cellDataProvider, gameScenePrefabsProvider, newLevelData);
+            _game = new Game(_uiController, _mainCamera, _coroutineRunner, _inputHandler, cellDataProvider, gameScenePrefabsProvider, newLevelData, mainMenuBackgroundLevelData);
             _game.StartGame();
         }
         

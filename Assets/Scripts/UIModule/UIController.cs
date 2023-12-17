@@ -37,7 +37,6 @@ namespace UIModule
         public void ActivateGameHud() => ActivatePanel<GameHudPanel>();
         public void ActivateBattleHud() => ActivatePanel<BattleHudPanel>();
         public void ActivateGameOverMenu() => ActivatePanel<GameOverMenuPanel>();
-        //public void ActivatePause() => ActivatePanel<PauseMenuPanel>();
         
         private void ActivatePanel<TPanel>() where TPanel : BasePanel
         {

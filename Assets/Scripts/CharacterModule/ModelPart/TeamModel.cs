@@ -44,7 +44,6 @@ namespace CharacterModule.ModelPart
                 _characters[i] = characters[i];
                 if (_characters[i].Model.MaxEnergy < _teamEnergy)
                     _teamEnergy = _characters[i].Model.MaxEnergy;
-                //_characters[i].DeathAction += OnKillCharacter;
             }
 
             _route = new Queue<Pair<int, int>>();

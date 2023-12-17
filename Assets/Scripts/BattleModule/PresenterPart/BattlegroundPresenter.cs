@@ -66,7 +66,6 @@ namespace BattleModule.PresenterPart
         {
             Queue<CharacterPresenter> attackQueue = MakeAttackQueue();
             
-            //while (_model.PlayerTeam.Model.CharactersCount > 0 && _model.EnemyTeam.Model.CharactersCount > 0 && attackQueue.Count > 0)
             while (IsTeamAlive(_model.PlayerTeam) && IsTeamAlive(_model.EnemyTeam) && attackQueue.Count > 0)
             {
                 CharacterPresenter attackCharacter = attackQueue.Dequeue();

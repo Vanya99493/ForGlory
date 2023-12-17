@@ -177,10 +177,10 @@ MonoBehaviour:
     GeneralData:
       LastId: 0
     PlaygroundData:
-      Height: 35
-      Width: 35
+      Height: 30
+      Width: 30
       LengthOfWaterLine: 10
-      LengthOfCoast: 4
+      LengthOfCoast: 3
     TeamsData:
       PlayerTeam:
         CharactersData:
@@ -212,6 +212,35 @@ MonoBehaviour:
       - CharactersData: []
         HeightCellIndex: 0
         WidthCellIndex: 0
+      - CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+      - CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+      - CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+      - CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+      - CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+  mainMenuBackgroundLevelData:
+    GeneralData:
+      LastId: 0
+    PlaygroundData:
+      Height: 25
+      Width: 25
+      LengthOfWaterLine: 9
+      LengthOfCoast: 2
+    TeamsData:
+      PlayerTeam:
+        CharactersData: []
+        HeightCellIndex: 0
+        WidthCellIndex: 0
+      EnemyTeams:
       - CharactersData: []
         HeightCellIndex: 0
         WidthCellIndex: 0

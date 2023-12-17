@@ -5,12 +5,10 @@ using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
 using BattleModule.ViewPart;
 using CameraModule;
-using CharacterModule.ModelPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.FactoryModule;
-using CharacterModule.ViewPart;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
@@ -44,12 +42,13 @@ namespace LevelModule
         private List<EnemyTeamPresenter> _enemiesTeamPresenters;
         private BattlegroundPresenter _battlegroundPresenter;
 
+        private Coroutine _liveCoroutine;
+        
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
         private EnemyBehaviour _enemyBehaviour;
         private bool _isStepChanging;
         
-        // need to rebase it to level data builder
         private CharacterIdSetter _characterIdSetter;
 
         private int _enemiesStepCounter;
@@ -63,6 +62,36 @@ namespace LevelModule
 
             _bfsSearch = new WideSearch(cellDataProvider);
             ServiceLocator.Instance.RegisterService(_bfsSearch);
+        }
+
+        public void StartBackgroundLevel(LevelData levelData)
+        {
+            _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
+            _enemyBehaviour = new EnemyBehaviour();
+            CreatePlayground(levelData.PlaygroundData);
+            CreateEnemies(levelData.TeamsData.EnemyTeams);
+            _liveCoroutine = _coroutineRunner.StartCoroutine(LiveCoroutine());
+        }
+
+        public void RemoveBackgroundLevel()
+        {
+            _coroutineRunner.StopCoroutine(_liveCoroutine);
+            _playgroundPresenter.Destroy();
+            _playgroundPresenter = null;
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.Destroy();
+            }
+            _enemyTeamFactory.RemoveParent();
+        }
+
+        private IEnumerator LiveCoroutine()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(2f);
+                _enemyBehaviour.StartEnemiesBehaviour(_enemiesTeamPresenters, _playgroundPresenter, _playerTeamPresenter);
+            }
         }
 
         public void StartLevel(LevelData levelData)
@@ -122,12 +151,8 @@ namespace LevelModule
 
         private IEnumerator BlockCoroutine()
         {
-            /*while (_isStepChanging)
-            {
-                yield return null;
-            }*/
             float waitSeconds = _playerTeamPresenter.Model.TeamEnergy > 0 && _playerTeamPresenter.Model.RoutLength > 0 ? 2f : 1f;
-            //Debug.Log(waitSeconds);
+            
             yield return new WaitForSeconds(waitSeconds);
             
             _playerTeamPresenter.Model.ResetEnergy();
@@ -152,7 +177,7 @@ namespace LevelModule
             _playgroundPresenter.CreateAndSpawnPlayground(view.transform, emptyPlaygroundData.Height, emptyPlaygroundData.Width, 
                 emptyPlaygroundData.LengthOfWaterLine, emptyPlaygroundData.LengthOfCoast, 
                 emptyPlaygroundData.Height * 1f, emptyPlaygroundData.Width * 1f, _cellDataProvider, 
-                OnMoveCellClicked, OnCellClicked, /*OnTeamsCollision*/ 
+                OnMoveCellClicked, OnCellClicked,
                 (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
         }
 
@@ -200,7 +225,6 @@ namespace LevelModule
                         _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i]) as EnemyTeamPresenter;
                     
                     enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
-                    //_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true);
                     
                     enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
                     enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
@@ -236,14 +260,12 @@ namespace LevelModule
         private void OnEndPlayerMove()
         {
             --_playerStepCounter;
-            //Debug.Log("P: " + _playerStepCounter);
             CheckStepMovement();
         }
 
         private void OnEndEnemyMove()
         {
             --_enemiesStepCounter;
-            //Debug.Log("E: " + _enemiesStepCounter);
             CheckStepMovement();
         }
 
@@ -253,8 +275,6 @@ namespace LevelModule
             {
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
                 _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
-                //Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
-                //_isStepChanging = false;
             }
         }
 

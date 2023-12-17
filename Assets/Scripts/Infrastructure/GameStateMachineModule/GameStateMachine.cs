@@ -20,7 +20,7 @@ namespace Infrastructure.GameStateMachineModule
         {
             _states = new Dictionary<Type, IGameState>
             {
-                { typeof(MainMenuState), new MainMenuState(uiController) },
+                { typeof(MainMenuState), new MainMenuState(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider) },
                 { typeof(GameState), new GameState(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider) }
             };
         }

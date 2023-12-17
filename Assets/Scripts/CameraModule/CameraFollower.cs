@@ -20,24 +20,25 @@ namespace CameraModule
             _target = null;
         }
 
-        public void StayAtZero()
+        public void LockPosition()
         {
             _isLocked = true;
         }
 
-        public void FollowTarget()
+        public void UnlockPosition()
         {
             _isLocked = false;
         }
         
         private void LateUpdate()
         {
-            if (_target == null)
+            if (_target == null || _isLocked)
             {
+                transform.position = Vector3.zero + offset;
                 return;
             }
 
-            transform.position = (_isLocked ? new Vector3(0, 0, 0) : _target.position) + offset;
+            transform.position = _target.position + offset;
         }
     }
 }

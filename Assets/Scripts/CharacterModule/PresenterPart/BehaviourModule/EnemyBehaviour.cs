@@ -20,18 +20,15 @@ namespace CharacterModule.PresenterPart.BehaviourModule
                     enemy.EnterFollowState(playgroundPresenter, playerTeam);
                     continue;
                 }
-                //if (enemy.UpdateCurrentState(playgroundPresenter))
-                //{
-                    if (Random.Range(0, 2) == 0)
-                    {
-                        enemy.EnterIdleState(playgroundPresenter);
-                    }
-                    else
-                    {
-                        Node node = neighborhood[Random.Range(0, neighborhood.Count)];
-                        enemy.EnterMoveState(playgroundPresenter, node.HeightIndex, node.WidthIndex);
-                    }
-                //}
+                if (Random.Range(0, 2) == 0)
+                {
+                    enemy.EnterIdleState(playgroundPresenter);
+                }
+                else
+                {
+                    Node node = neighborhood[Random.Range(0, neighborhood.Count)];
+                    enemy.EnterMoveState(playgroundPresenter, node.HeightIndex, node.WidthIndex);
+                }
             }
         }
 

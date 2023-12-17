@@ -28,7 +28,6 @@ namespace CharacterModule.PresenterPart
             Model = model;
             View = view;
             Model.MoveAction += View.Move;
-            //Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
 
@@ -110,11 +109,6 @@ namespace CharacterModule.PresenterPart
         private void OnMove(PlaygroundPresenter playgroundPresenter)
         {
             Model.Move(View, playgroundPresenter, this);
-        }
-
-        private void OnEndMoveAction(PlaygroundPresenter playgroundPresenter)
-        {
-            playgroundPresenter.SetCharacterOnCell(this, Model.HeightCellIndex, Model.WidthCellIndex);
         }
     }
 }

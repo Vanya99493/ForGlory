@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using CameraModule;
-using CharacterModule.ModelPart.Data;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
 using LevelModule;
 using LevelModule.Data;
-using LevelModule.LevelDataBuilderModule;
-using PlaygroundModule.ModelPart.Data;
 using UIModule;
 
 namespace Infrastructure.GameStateMachineModule.States
@@ -19,7 +15,6 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private readonly UIController _uiController;
         private readonly CameraFollower _mainCamera;
-        private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
 
         private Level _currentLevel;
         
@@ -28,7 +23,6 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _uiController = uiController;
             _mainCamera = mainCamera;
-            _gameScenePrefabsProvider = gameScenePrefabsProvider;
             
             _currentLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
             
@@ -72,13 +66,13 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private void OnBattleStart()
         {
-            _mainCamera.StayAtZero();
+            _mainCamera.LockPosition();
             _uiController.ActivateBattleHud();
         }
 
         private void OnBattleEnd()
         {
-            _mainCamera.FollowTarget();
+            _mainCamera.UnlockPosition();
             _uiController.ActivateGameHud();
         }
 
