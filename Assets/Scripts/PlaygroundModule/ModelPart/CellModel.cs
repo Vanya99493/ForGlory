@@ -37,7 +37,7 @@ namespace PlaygroundModule.ModelPart
 
         public bool PreSetCharacterOnCell(TeamPresenter team)
         {
-            Debug.Log($"TRY set on {CellHeightId}:{CellWidthId}");
+            //Debug.Log($"TRY set on {CellHeightId}:{CellWidthId}");
             if (team is PlayerTeamPresenter && _preTeamOnCell == null)
             {
                 if (TeamsOnCell.Count == 0 || (TeamsOnCell.Count == 1 && TeamsOnCell[0] is EnemyTeamPresenter))
@@ -67,7 +67,7 @@ namespace PlaygroundModule.ModelPart
             
             TeamsOnCell.Add(team);
             _preTeamOnCell = null;
-            Debug.Log($"Set on {CellHeightId}:{CellWidthId}");
+            //Debug.Log($"Set on {CellHeightId}:{CellWidthId}");
 
             if (TeamsOnCell.Count >= 2)
             {

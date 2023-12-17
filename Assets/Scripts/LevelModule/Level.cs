@@ -126,8 +126,9 @@ namespace LevelModule
             {
                 yield return null;
             }*/
-
-            yield return new WaitForSeconds(1f);
+            float waitSeconds = _playerTeamPresenter.Model.TeamEnergy > 0 && _playerTeamPresenter.Model.RoutLength > 0 ? 2f : 1f;
+            //Debug.Log(waitSeconds);
+            yield return new WaitForSeconds(waitSeconds);
             
             _playerTeamPresenter.Model.ResetEnergy();
             _playerTeamPresenter.Model.ResetMovementSettings();
@@ -253,7 +254,7 @@ namespace LevelModule
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
                 _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
                 //Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
-                _isStepChanging = false;
+                //_isStepChanging = false;
             }
         }
 
