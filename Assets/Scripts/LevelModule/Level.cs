@@ -112,8 +112,11 @@ namespace LevelModule
             _isStepChanging = true;
             StartStepChangingAction?.Invoke();
 
-            new PlayerBehaviour().StartPlayerBehaviour(_playerTeamPresenter, _playgroundPresenter);
-            _enemyBehaviour.StartEnemiesBehaviour(_enemiesTeamPresenters, _playgroundPresenter, _playerTeamPresenter);
+            _playerTeamPresenter.StartBehave(_playgroundPresenter);
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.StartBehave(_playgroundPresenter);
+            }
             
             _playgroundPresenter.DeactivateCells();
 
@@ -172,7 +175,7 @@ namespace LevelModule
             playerTeamData.WidthCellIndex = widthSpawnCellIndex;
 
             _playerTeamFactory = new PlayerTeamFactory();
-            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData) as PlayerTeamPresenter;
+            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData, new PlayerBehaviour()) as PlayerTeamPresenter;
             
             _playerTeamPresenter.Model.SetPosition(_playgroundPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
@@ -197,7 +200,7 @@ namespace LevelModule
                     enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
                     
                     EnemyTeamPresenter enemyTeamPresenter = 
-                        _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i]) as EnemyTeamPresenter;
+                        _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
                     
                     enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
                     //_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true);

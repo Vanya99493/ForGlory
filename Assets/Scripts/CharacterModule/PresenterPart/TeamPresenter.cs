@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CharacterModule.ModelPart;
+using CharacterModule.PresenterPart.BehaviourModule.Base;
 using CharacterModule.PresenterPart.CharacterStates;
 using CharacterModule.PresenterPart.CharacterStates.Base;
 using CharacterModule.ViewPart;
@@ -20,13 +21,16 @@ namespace CharacterModule.PresenterPart
         public readonly TeamModel Model;
         public readonly TeamView View;
 
+        private IBehaviour _characterBehaviour;
         private Dictionary<Type, ICharacterState> _characterStates;
         private ICharacterState _currentState;
 
-        protected TeamPresenter(TeamModel model, TeamView view)
+        protected TeamPresenter(TeamModel model, TeamView view, IBehaviour characterBehaviour)
         {
             Model = model;
             View = view;
+            _characterBehaviour = characterBehaviour;
+            
             Model.MoveAction += View.Move;
             //Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
@@ -40,6 +44,11 @@ namespace CharacterModule.PresenterPart
             };
             
             SubscribeStateMachineActions();
+        }
+
+        public void StartBehave(PlaygroundPresenter playgroundPresenter)
+        {
+            _characterBehaviour.Start(this, playgroundPresenter);
         }
 
         public bool UpdateCurrentState(PlaygroundPresenter playgroundPresenter)

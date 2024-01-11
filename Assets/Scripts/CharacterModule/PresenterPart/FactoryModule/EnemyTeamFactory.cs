@@ -1,6 +1,8 @@
 ﻿using System;
 using CharacterModule.ModelPart;
 using CharacterModule.ModelPart.Data;
+using CharacterModule.PresenterPart.BehaviourModule;
+using CharacterModule.PresenterPart.BehaviourModule.Base;
 using CharacterModule.ViewPart;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -14,7 +16,7 @@ namespace CharacterModule.PresenterPart.FactoryModule
             return null;
         }
 
-        public override TeamPresenter InstantiateTeam(TeamView teamPrefab, TeamData teamData)
+        public override TeamPresenter InstantiateTeam(TeamView teamPrefab, TeamData teamData, IBehaviour enemyBehaviour)
         {
             EnemyCharacterFactory characterFactory = new EnemyCharacterFactory();
             
@@ -37,7 +39,7 @@ namespace CharacterModule.PresenterPart.FactoryModule
             }
             
             TeamModel teamModel = new EnemyTeamModel(teamData.HeightCellIndex, teamData.WidthCellIndex, instantiatedCharacters);
-            TeamPresenter teamPresenter = new EnemyTeamPresenter(teamModel, teamView);
+            TeamPresenter teamPresenter = new EnemyTeamPresenter(teamModel, teamView, enemyBehaviour as EnemyBehaviour);
             
             DownScaleTeam(teamPresenter);
             

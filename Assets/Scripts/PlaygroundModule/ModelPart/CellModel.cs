@@ -81,6 +81,21 @@ namespace PlaygroundModule.ModelPart
         {
             return TeamsOnCell.Count > 0;
         }
+
+        public bool CheckCellOnPlayer(out PlayerTeamPresenter playerTeamPresenter)
+        {
+            foreach (TeamPresenter teamPresenter in TeamsOnCell)
+            {
+                if (teamPresenter is PlayerTeamPresenter)
+                {
+                    playerTeamPresenter = teamPresenter as PlayerTeamPresenter;
+                    return true;
+                }
+            }
+
+            playerTeamPresenter = null;
+            return false;
+        }
         
         public void RemoveCharacterFromCell(TeamPresenter team)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using CharacterModule.ModelPart;
+using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.ViewPart;
 using Infrastructure.InputHandlerModule;
 
@@ -9,7 +10,7 @@ namespace CharacterModule.PresenterPart
     {
         public override event Action<TeamPresenter> ClickOnCharacterAction;
         
-        public PlayerTeamPresenter(TeamModel model, TeamView view) : base(model, view)
+        public PlayerTeamPresenter(TeamModel model, TeamView view, PlayerBehaviour playerBehaviour) : base(model, view, playerBehaviour)
         {
         }
 

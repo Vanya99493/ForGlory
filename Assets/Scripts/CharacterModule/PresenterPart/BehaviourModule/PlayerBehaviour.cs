@@ -1,14 +1,15 @@
-﻿using PlaygroundModule.PresenterPart;
+﻿using CharacterModule.PresenterPart.BehaviourModule.Base;
+using PlaygroundModule.PresenterPart;
 
 namespace CharacterModule.PresenterPart.BehaviourModule
 {
-    public class PlayerBehaviour
+    public class PlayerBehaviour : IBehaviour
     {
-        public void StartPlayerBehaviour(PlayerTeamPresenter playerTeam, PlaygroundPresenter playgroundPresenter)
+        public void Start(TeamPresenter teamPresenter, PlaygroundPresenter playgroundPresenter)
         {
-            if (playerTeam.UpdateCurrentState(playgroundPresenter))
+            if (teamPresenter.UpdateCurrentState(playgroundPresenter))
             {
-                playerTeam.EnterIdleState(playgroundPresenter);
+                teamPresenter.EnterIdleState(playgroundPresenter);
             }
         }
     }
