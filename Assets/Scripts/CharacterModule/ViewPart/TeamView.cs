@@ -1,7 +1,9 @@
 ﻿using System;
+using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
 using Interfaces;
+using PlaygroundModule.ModelPart;
 using UnityEngine;
 
 namespace CharacterModule.ViewPart
@@ -15,20 +17,29 @@ namespace CharacterModule.ViewPart
         
         private Vector3 _newPosition;
         private bool _canMove = false;
+        private Direction _direction;
         
         private void Update()
         {
             if (_canMove)
             {
+                Rotate(_direction);
                 transform.position = _newPosition;
                 _canMove = false;
             }
         }
 
-        public void Move(Vector3 newPosition)
+        public void Move(Vector3 newPosition, Direction direction)
         {
             _newPosition = newPosition;
             _canMove = true;
+            _direction = direction;
+        }
+
+        public void Rotate(Direction direction)
+        {
+            _direction = direction;
+            transform.eulerAngles = DirectionEulerAngels.GetDirection(_direction);
         }
 
         public void Click(InputMouseButtonType mouseButtonType)

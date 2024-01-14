@@ -5,6 +5,7 @@ using BattleModule.ModelPart;
 using BattleModule.ViewPart;
 using CharacterModule.PresenterPart;
 using Infrastructure.ServiceLocatorModule;
+using PlaygroundModule.ModelPart;
 using UIModule;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -41,6 +42,8 @@ namespace BattleModule.PresenterPart
                 _model.SetTeams(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
             }
             
+            _model.PlayerTeam.View.Rotate(Direction.Right);
+            _model.EnemyTeam.View.Rotate(Direction.Left);
             _view.SetCharactersOnBattleground(_model.PlayerTeam, _model.EnemyTeam);
             SubscribeUIActions();
             SubscribeOnClickActions();

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 766699066257066235}
   - component: {fileID: 3736754510876044869}
   - component: {fileID: 7298227229811063101}
-  - component: {fileID: 2143548466816697549}
+  - component: {fileID: 5799065188444516860}
   - component: {fileID: 626293964962371252}
   m_Layer: 0
   m_Name: UpperGround
@@ -86,7 +86,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2143548466816697549
+--- !u!65 &5799065188444516860
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

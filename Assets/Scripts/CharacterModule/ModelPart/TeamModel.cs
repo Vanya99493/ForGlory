@@ -5,6 +5,7 @@ using System.Linq;
 using CharacterModule.PresenterPart;
 using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
+using PlaygroundModule.ModelPart;
 using PlaygroundModule.PresenterPart;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace CharacterModule.ModelPart
 {
     public abstract class TeamModel
     {
-        public event Action<Vector3> MoveAction;
+        public event Action<Vector3, Direction> MoveAction;
         public event Action EndStepAction;
         public event Action<PlaygroundPresenter> EndMoveAction;
         
@@ -94,7 +95,7 @@ namespace CharacterModule.ModelPart
 
         public void SetPosition(PlaygroundPresenter playgroundPresenter)
         {
-            MoveAction?.Invoke(playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition);
+            MoveAction?.Invoke(playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition, Direction.Down);
         }
 
         private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter, TeamPresenter teamPresenter)
@@ -109,6 +110,13 @@ namespace CharacterModule.ModelPart
                 }
                 playgroundPresenter.RemoveCharacterFromCell(teamPresenter, HeightCellIndex, WidthCellIndex);
                 TeamEnergy--;
+
+                Direction direction = HeightCellIndex - checkPoint.FirstValue == 0
+                    ?
+                    WidthCellIndex - checkPoint.SecondValue == 1 ? Direction.Left : Direction.Right
+                    : HeightCellIndex - checkPoint.FirstValue == -1
+                        ? Direction.Down
+                        : Direction.Up;
                     
                 Vector3 targetPosition = playgroundPresenter.Model.GetCellPresenter(checkPoint.FirstValue, checkPoint.SecondValue).Model.MoveCellPosition;
                 Vector3 currentPosition = playgroundPresenter.Model.GetCellPresenter(HeightCellIndex, WidthCellIndex).Model.MoveCellPosition;
@@ -123,7 +131,7 @@ namespace CharacterModule.ModelPart
                         currentPosition.x + xDifference * deltaTime,
                         currentPosition.y + yDifference * deltaTime,
                         currentPosition.z + zDifference * deltaTime
-                    ));
+                    ), direction);
                     deltaTime += Time.fixedDeltaTime * _speed;
                     yield return new WaitForSeconds(Time.fixedDeltaTime);
                 }
