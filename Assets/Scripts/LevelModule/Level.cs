@@ -125,13 +125,15 @@ namespace LevelModule
 
         private IEnumerator BlockCoroutine()
         {
-            /*while (_isStepChanging)
+            float passedTime = 0f;
+            while (_isStepChanging)
             {
+                passedTime += Time.deltaTime;
                 yield return null;
-            }*/
-            float waitSeconds = _playerTeamPresenter.Model.TeamEnergy > 0 && _playerTeamPresenter.Model.RoutLength > 0 ? 2f : 1f;
-            //Debug.Log(waitSeconds);
-            yield return new WaitForSeconds(waitSeconds);
+                if (passedTime > 5f)
+                    break;
+            }
+            yield return new WaitForSeconds(0.5f);
             
             _playerTeamPresenter.Model.ResetEnergy();
             _playerTeamPresenter.Model.ResetMovementSettings();
@@ -257,7 +259,7 @@ namespace LevelModule
                 _enemiesStepCounter = _enemiesTeamPresenters.Count;
                 _playerStepCounter = _playerTeamPresenter != null ? 1 : 0;
                 //Debug.Log("P: " + _playerStepCounter + " E: " + _enemiesStepCounter);
-                //_isStepChanging = false;
+                _isStepChanging = false;
             }
         }
 

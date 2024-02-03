@@ -95,9 +95,11 @@ namespace PlaygroundModule.PresenterPart
                     nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1]);
                 }
             }
+
+            DeleteRamps(nodes, cellDataProvider);
             
             CellPresenter[,] playground = new CellPresenter[height, width];
-
+            
             for (int i = 0; i < playground.GetLength(0); i++)
             {
                 for (int j = 0; j < playground.GetLength(1); j++)
@@ -105,6 +107,12 @@ namespace PlaygroundModule.PresenterPart
                     playground[i, j] = new CellPresenter(new CellModel(nodes[i, j].CellType, nodes[i, j].HeightIndex, nodes[i, j].WidthIndex));
                 }
             }
+
+            int smoothedCells;
+            do
+            {
+                smoothedCells = SmoothOutPlayground(playground);
+            } while (smoothedCells > 0);
 
             return playground;
         }
@@ -329,12 +337,52 @@ namespace PlaygroundModule.PresenterPart
             
             return CellType.Plain;
         }
+
+        private void DeleteRamps(Node[,] nodes, CellDataProvider cellDataProvider)
+        {
+            for (int i = 0; i < nodes.GetLength(0); i++)
+            {
+                for (int j = 0; j < nodes.GetLength(1); j++)
+                {
+                    if (nodes[i, j].CellType == CellType.RampBT || nodes[i, j].CellType == CellType.RampTB)
+                    {
+                        if (nodes[i - 1, j].CellType == CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i + 1, j].CellType;
+                        }
+                        if (nodes[i + 1, j].CellType == CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i - 1, j].CellType;
+                        }
+                    }
+
+                    if (nodes[i, j].CellType == CellType.RampLR || nodes[i, j].CellType == CellType.RampRL)
+                    {
+                        if (nodes[i, j - 1].CellType == CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i, j + 1].CellType;
+                        }
+                        if (nodes[i, j + 1].CellType == CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i, j - 1].CellType;
+                        }
+                    }
+                }
+            }
+        }
+
+        private int SmoothOutPlayground(CellPresenter[,] playground)
+        {
+            int smoothedCells = 0;
+
+            return smoothedCells;
+        }
         
         
         
         
 
-        private void SmoothOutPlayground(CellPresenter[,] playground)
+        private void SmoothOutPlayground2(CellPresenter[,] playground)
         {
             Dictionary<CellType, double> cellTypes = new Dictionary<CellType, double>();
             

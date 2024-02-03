@@ -132,7 +132,7 @@ namespace BattleModule.PresenterPart
             for (int i = 0; i < _model.EnemyTeam.Model.CharactersCount; i++)
                 list.Add(_model.EnemyTeam.Model.GetCharacterPresenter(i));
             
-            list.Sort((first, second) => first.Model.Id.CompareTo(second.Model.Id));
+            list.Sort((first, second) => first.Model.Initiative.CompareTo(second.Model.Initiative));
 
             Queue<CharacterPresenter> attackQueue = new Queue<CharacterPresenter>();
             foreach (CharacterPresenter characterPresenter in list)
