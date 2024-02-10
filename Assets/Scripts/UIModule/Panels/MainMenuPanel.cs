@@ -1,4 +1,6 @@
 ﻿using System;
+using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using UIModule.Panels.Base;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,9 +14,10 @@ namespace UIModule.Panels
 
         [SerializeField] private Button startButton;
         [SerializeField] private Button endButton;
-
+        
         protected override void SubscribeActions()
         {
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
             startButton.onClick.AddListener(StartGame);
             endButton.onClick.AddListener(EndGame);
         }
@@ -23,6 +26,7 @@ namespace UIModule.Panels
         {
             startButton.onClick.RemoveListener(StartGame);
             endButton.onClick.RemoveListener(EndGame);
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
         }
 
         private void StartGame()

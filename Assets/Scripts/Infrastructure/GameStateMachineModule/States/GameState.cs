@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using CameraModule;
-using CharacterModule.ModelPart.Data;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
+using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using LevelModule;
 using LevelModule.Data;
-using LevelModule.LevelDataBuilderModule;
-using PlaygroundModule.ModelPart.Data;
 using UIModule;
 
 namespace Infrastructure.GameStateMachineModule.States
@@ -29,6 +27,8 @@ namespace Infrastructure.GameStateMachineModule.States
             _uiController = uiController;
             _mainCamera = mainCamera;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
+            
+            ServiceLocator.Instance.RegisterService(new PauseController());
             
             _currentLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
             
@@ -56,6 +56,7 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _uiController.gameHudPanel.NextStepAction += _currentLevel.NextStep;
             _uiController.gameHudPanel.EnterAction += _uiController.ActivateCastleMenuPanel;
+            _uiController.castleMenuPanel.ExitCastleAction += _uiController.ActivateGameHud;
         }
 
         private void SubscribeStepChangingActions()

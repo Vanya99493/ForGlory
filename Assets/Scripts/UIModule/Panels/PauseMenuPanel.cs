@@ -1,4 +1,6 @@
-﻿using UIModule.Panels.Base;
+﻿using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
+using UIModule.Panels.Base;
 
 namespace UIModule.Panels
 {
@@ -6,12 +8,12 @@ namespace UIModule.Panels
     {
         protected override void SubscribeActions()
         {
-            
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
         }
 
         protected override void UnsubscribeActions()
         {
-            
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using Interfaces;
 using UnityEngine;
 
@@ -16,6 +18,9 @@ namespace Infrastructure.InputHandlerModule
 
         private void Update()
         {
+            if (ServiceLocator.Instance.GetService<PauseController>().IsPause)
+                return;
+            
             if (Input.GetMouseButtonDown(0) && _pressedMouseButton == InputMouseButtonType.None)
             {
                 _pressedMouseButton = InputMouseButtonType.LeftMouseButton;
