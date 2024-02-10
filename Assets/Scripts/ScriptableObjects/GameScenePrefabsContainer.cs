@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using BattleModule.ViewPart;
+using CastleModule.ViewPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.ViewPart;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ScriptableObjects
 {
@@ -12,5 +14,6 @@ namespace ScriptableObjects
         public BattlegroundView BattlegroundView;
         public TeamView TeamView;
         public List<CharacterFullData> Characters;
+        public CastleView CastleView;
     }
 }

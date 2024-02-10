@@ -14,7 +14,9 @@ namespace CharacterModule.PresenterPart.BehaviourModule
         {
             List<Node> neighborhood = GetNeighborhood(teamPresenter as EnemyTeamPresenter, playgroundPresenter);
 
-            if (CheckNeighborhood(neighborhood, playgroundPresenter, out var playerTeamPresenter))
+            if (CheckNeighborhood(neighborhood, playgroundPresenter, out var playerTeamPresenter) &&
+                !playgroundPresenter.Model.GetCellPresenter(playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex).
+                    Model.CheckCellOnCastle())
             {
                 teamPresenter.EnterFollowState(playgroundPresenter, playerTeamPresenter);
                 return;
@@ -70,7 +72,8 @@ namespace CharacterModule.PresenterPart.BehaviourModule
             foreach (Node node in neighborhood)
             {
                 if (playgroundPresenter.Model.GetCellPresenter(node.HeightIndex, node.WidthIndex).Model
-                    .CheckCellOnPlayer(out var playerPresenter))
+                    .CheckCellOnPlayer(out var playerPresenter) && !playgroundPresenter.Model.GetCellPresenter(
+                        node.HeightIndex, node.WidthIndex).Model.CheckCellOnCastle())
                 {
                     targetTeam = playerPresenter;
                     return true;

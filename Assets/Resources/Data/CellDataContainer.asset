@@ -239,7 +239,7 @@ MonoBehaviour:
         Value:
           list:
           - Key: 1
-            Value: 0
+            Value: 1
           keyCollision: 0
       keyCollision: 0
   - cellType: 5

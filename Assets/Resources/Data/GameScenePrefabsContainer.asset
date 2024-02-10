@@ -103,3 +103,4 @@ MonoBehaviour:
       Vision: 2
       CharacterType: 2
     CharacterPrefab: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}
+  CastleView: {fileID: 8921622137195285026, guid: ea3b1ca94f3ddb240b6aee534e63c86c, type: 3}

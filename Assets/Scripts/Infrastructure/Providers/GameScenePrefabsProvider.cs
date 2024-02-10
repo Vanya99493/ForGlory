@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BattleModule.ViewPart;
+using CastleModule.ViewPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.ViewPart;
 using ScriptableObjects;
@@ -15,6 +16,8 @@ namespace Infrastructure.Providers
 
         public BattlegroundView GetBattlgroundView() => gameScenePrefabsContainer.BattlegroundView;
         public TeamView GetTeamView() => gameScenePrefabsContainer.TeamView;
+        public CastleView GetCastleView() => gameScenePrefabsContainer.CastleView;
+        
         public CharacterFullData GetCharacterByName(string name)
         {
             foreach (CharacterFullData characterFullData in gameScenePrefabsContainer.Characters)

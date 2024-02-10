@@ -55,6 +55,7 @@ namespace Infrastructure.GameStateMachineModule.States
         private void SubscribeOnUIActions()
         {
             _uiController.gameHudPanel.NextStepAction += _currentLevel.NextStep;
+            _uiController.gameHudPanel.EnterAction += _uiController.ActivateCastleMenuPanel;
         }
 
         private void SubscribeStepChangingActions()

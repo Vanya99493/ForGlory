@@ -13,6 +13,7 @@ namespace UIModule
         public GameHudPanel gameHudPanel;
         public BattleHudPanel battleHudPanel;
         public GameOverMenuPanel gameOverMenuPanel;
+        public CastleMenuPanel castleMenuPanel;
         
         private Dictionary<Type, BasePanel> _panels;
         private BasePanel _currentPanel;
@@ -24,7 +25,8 @@ namespace UIModule
                 { mainMenuPanel.GetType(), mainMenuPanel },
                 { gameHudPanel.GetType(), gameHudPanel },
                 { battleHudPanel.GetType(), battleHudPanel },
-                { gameOverMenuPanel.GetType(), gameOverMenuPanel }
+                { gameOverMenuPanel.GetType(), gameOverMenuPanel },
+                { castleMenuPanel.GetType(), castleMenuPanel }
             };
             
             foreach (var panel in _panels)
@@ -37,6 +39,7 @@ namespace UIModule
         public void ActivateGameHud() => ActivatePanel<GameHudPanel>();
         public void ActivateBattleHud() => ActivatePanel<BattleHudPanel>();
         public void ActivateGameOverMenu() => ActivatePanel<GameOverMenuPanel>();
+        public void ActivateCastleMenuPanel() => ActivatePanel<CastleMenuPanel>();
         //public void ActivatePause() => ActivatePanel<PauseMenuPanel>();
         
         private void ActivatePanel<TPanel>() where TPanel : BasePanel

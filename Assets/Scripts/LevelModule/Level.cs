@@ -5,12 +5,13 @@ using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
 using BattleModule.ViewPart;
 using CameraModule;
-using CharacterModule.ModelPart;
+using CastleModule.ModelPart;
+using CastleModule.PresenterPart;
+using CastleModule.ViewPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.FactoryModule;
-using CharacterModule.ViewPart;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
@@ -20,6 +21,7 @@ using PlaygroundModule.ModelPart.Data;
 using PlaygroundModule.PresenterPart;
 using PlaygroundModule.PresenterPart.WideSearchModule;
 using PlaygroundModule.ViewPart;
+using UIModule;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -46,7 +48,6 @@ namespace LevelModule
 
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
-        private EnemyBehaviour _enemyBehaviour;
         private bool _isStepChanging;
         
         // need to rebase it to level data builder
@@ -69,10 +70,11 @@ namespace LevelModule
         {
             _isStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
-            _enemyBehaviour = new EnemyBehaviour();
             _characterIdSetter = new CharacterIdSetter(0);
             
-            CreatePlayground(levelData.PlaygroundData);
+            (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
+                CreatePlayground(levelData.PlaygroundData);
+            
             CreateBattleground();
 
             _enemiesStepCounter = levelData.TeamsData.EnemyTeams.Length;
@@ -148,7 +150,7 @@ namespace LevelModule
             _isStepChanging = false;
         }
         
-        private void CreatePlayground(PlaygroundData emptyPlaygroundData)
+        private (int, int) CreatePlayground(PlaygroundData emptyPlaygroundData)
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel();
@@ -159,6 +161,34 @@ namespace LevelModule
                 emptyPlaygroundData.Height * 1f, emptyPlaygroundData.Width * 1f, _cellDataProvider, 
                 OnMoveCellClicked, OnCellClicked, /*OnTeamsCollision*/ 
                 (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
+
+            return CreateCastle();
+        }
+
+        private (int, int) CreateCastle()
+        {
+            (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
+
+            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex);
+            CastleView view = new CastleFactory().InstantiateCastle(_gameScenePrefabsProvider.GetCastleView(), _playgroundPresenter.View.transform);
+            CastlePresenter presenter = new CastlePresenter(model, view);
+            _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.SetCastleOnCell(presenter);
+            presenter.SetPosition(_playgroundPresenter);
+
+            presenter.TurnOnEvent += OnEnterCastle;
+            presenter.TurnOffEvent += OnExitCastle;
+
+            return (heightSpawnCellIndex, widthSpawnCellIndex);
+        }
+
+        private void OnEnterCastle()
+        {
+            ServiceLocator.Instance.GetService<UIController>().gameHudPanel.ShowEnterButton();
+        }
+
+        private void OnExitCastle()
+        {
+            ServiceLocator.Instance.GetService<UIController>().gameHudPanel.HideEnterButton();
         }
 
         private void CreateBattleground()
@@ -171,16 +201,11 @@ namespace LevelModule
 
         private void CreatePlayer(TeamData playerTeamData)
         {
-            (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
-
-            playerTeamData.HeightCellIndex = heightSpawnCellIndex;
-            playerTeamData.WidthCellIndex = widthSpawnCellIndex;
-
             _playerTeamFactory = new PlayerTeamFactory();
             _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData, new PlayerBehaviour()) as PlayerTeamPresenter;
             
             _playerTeamPresenter.Model.SetPosition(_playgroundPresenter);
-            _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true);
+            _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, playerTeamData.HeightCellIndex, playerTeamData.WidthCellIndex, true);
             
             _playerTeamPresenter.ClickOnCharacterAction += OnPlayerTeamClicked;
             _playerTeamPresenter.Model.EndStepAction += OnEndPlayerMove;
@@ -241,6 +266,8 @@ namespace LevelModule
         private void OnEndPlayerMove()
         {
             --_playerStepCounter;
+            _playgroundPresenter.Model.GetCellPresenter(_playerTeamPresenter.Model.HeightCellIndex, _playerTeamPresenter.Model.WidthCellIndex).
+                Model.ActivateCastleEvent();
             //Debug.Log("P: " + _playerStepCounter);
             CheckStepMovement();
         }

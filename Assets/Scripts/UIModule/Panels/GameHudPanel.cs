@@ -10,9 +10,11 @@ namespace UIModule.Panels
     {
         public event Action ExitToMainMenuAction;
         public event Action NextStepAction;
+        public event Action EnterAction;
 
         [SerializeField] private Button exitToMainMenuButton;
         [SerializeField] private Button nextStepButton;
+        [SerializeField] private Button enterButton;
 
         private bool _isBlockedNextStepButton = false;
 
@@ -33,17 +35,29 @@ namespace UIModule.Panels
             nextStepButton.GetComponentInChildren<TextMeshProUGUI>().text = "NEXT";
             _isBlockedNextStepButton = false;
         }
+
+        public void ShowEnterButton()
+        {
+            enterButton.gameObject.SetActive(true);
+        }
+
+        public void HideEnterButton()
+        {
+            enterButton.gameObject.SetActive(false);
+        }
         
         protected override void SubscribeActions()
         {
             exitToMainMenuButton.onClick.AddListener(ExitToMainMenu);
             nextStepButton.onClick.AddListener(NextStep);
+            enterButton.onClick.AddListener(Enter);
         }
 
         protected override void UnsubscribeActions()
         {
             exitToMainMenuButton.onClick.RemoveListener(ExitToMainMenu);
             nextStepButton.onClick.RemoveListener(NextStep);
+            enterButton.onClick.RemoveListener(Enter);
         }
 
         private void ExitToMainMenu()
@@ -56,6 +70,11 @@ namespace UIModule.Panels
             if (_isBlockedNextStepButton)
                 return;
             NextStepAction?.Invoke();
+        }
+
+        private void Enter()
+        {
+            EnterAction?.Invoke();
         }
     }
 }

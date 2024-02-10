@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CastleModule.PresenterPart;
 using CharacterModule.PresenterPart;
 using PlaygroundModule.ViewPart;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace PlaygroundModule.ModelPart
         public List<TeamPresenter> TeamsOnCell { get; private set; }
         public Vector3 MoveCellPosition => _view.MoveCellPosition;
 
+        private CastlePresenter _castlePresenter;
+
         public CellModel(CellType cellType, int cellHeightId, int cellWidthId)
         {
             _cellType = cellType;
@@ -33,6 +36,22 @@ namespace PlaygroundModule.ModelPart
         public void IntitializeView(CellView view)
         {
             _view = view;
+        }
+
+        public void SetCastleOnCell(CastlePresenter castlePresenter)
+        {
+            _castlePresenter = castlePresenter;
+        }
+
+        public bool CheckCellOnCastle()
+        {
+            return _castlePresenter != null;
+        }
+
+        public void ActivateCastleEvent()
+        {
+            if(_castlePresenter != null)
+                _castlePresenter.ActivateEvent();
         }
 
         public bool PreSetCharacterOnCell(TeamPresenter team)
@@ -100,6 +119,10 @@ namespace PlaygroundModule.ModelPart
         public void RemoveCharacterFromCell(TeamPresenter team)
         {
             TeamsOnCell.Remove(team);
+            if (team is PlayerTeamPresenter && _castlePresenter != null)
+            {
+                _castlePresenter.DeactivateEvent();
+            }
         }
     }
 }
