@@ -83,6 +83,12 @@ namespace PlaygroundModule.PresenterPart
             }
 
             DeleteRamps(nodes, cellDataProvider);
+
+            int smoothedCells, attempt = 0;
+            do
+            {
+                (smoothedCells, attempt) = SmoothOutPlayground(nodes, cellDataProvider, attempt);
+            } while (smoothedCells > 0);
             
             CellPresenter[,] playground = new CellPresenter[height, width];
             
@@ -93,12 +99,6 @@ namespace PlaygroundModule.PresenterPart
                     playground[i, j] = new CellPresenter(new CellModel(nodes[i, j].CellType, nodes[i, j].HeightIndex, nodes[i, j].WidthIndex));
                 }
             }
-
-            int smoothedCells;
-            do
-            {
-                smoothedCells = SmoothOutPlayground(playground);
-            } while (smoothedCells > 0);
 
             return playground;
         }
@@ -333,82 +333,46 @@ namespace PlaygroundModule.PresenterPart
             }
         }
 
-        private int SmoothOutPlayground(CellPresenter[,] playground)
+        private (int, int) SmoothOutPlayground(Node[,] nodes, CellDataProvider cellDataProvider, int attempt = 0)
         {
             int smoothedCells = 0;
-
-            return smoothedCells;
-        }
-        
-        
-        
-        
-
-        private void SmoothOutPlayground2(CellPresenter[,] playground)
-        {
             Dictionary<CellType, double> cellTypes = new Dictionary<CellType, double>();
-            
-            for (int i = 0; i < playground.GetLength(0); i++)
+
+            for (int i = 0; i < nodes.GetLength(0); i++)
             {
-                for (int j = 0; j < playground.GetLength(1); j++)
+                for (int j = 0; j < nodes.GetLength(1); j++)
                 {
+                    if (nodes[i, j].CellType == CellType.Water)
+                        continue;
+                    
                     cellTypes.Clear();
-                    if (i != 0)
+                    var moveRoots = cellDataProvider.GetCellPixelsMoveRoots(nodes[i, j].CellType);
+                    
+                    if (moveRoots[Direction.Up].Contains(nodes[i - 1, j].CellType) ||
+                        moveRoots[Direction.Down].Contains(nodes[i + 1, j].CellType) ||
+                        moveRoots[Direction.Left].Contains(nodes[i, j - 1].CellType) ||
+                        moveRoots[Direction.Right].Contains(nodes[i, j + 1].CellType))
                     {
-                        if (playground[i, j].Model.CellType == playground[i - 1, j].Model.CellType)
-                            continue; 
-                        cellTypes.TryAdd(playground[i - 1, j].Model.CellType, 1d);
+                        continue;
                     }
 
-                    if (i != playground.GetLength(0) - 1)
+                    if (attempt > 3)
                     {
-                        if (playground[i, j].Model.CellType == playground[i + 1, j].Model.CellType)
-                            continue; 
-                        cellTypes.TryAdd(playground[i + 1, j].Model.CellType, 1d);
+                        nodes[i, j].CellType = CellType.Water;
+                        continue;
                     }
-
-                    if (j != 0)
-                    {
-                        if (playground[i, j].Model.CellType == playground[i, j - 1].Model.CellType)
-                            continue; 
-                        cellTypes.TryAdd(playground[i, j - 1].Model.CellType, 1d);
-                    }
-
-                    if (j != playground.GetLength(1) - 1)
-                    {
-                        if (playground[i, j].Model.CellType == playground[i, j + 1].Model.CellType)
-                            continue; 
-                        cellTypes.TryAdd(playground[i, j + 1].Model.CellType, 1d);
-                    }
-
-                    playground[i, j] = new CellPresenter(new CellModel(GetRandomCellType(cellTypes), i, j));
+                    
+                    nodes[i, j].CellType = nodes[i, j].CellType == CellType.Hill ? CellType.Plain : CellType.Hill;
+                    smoothedCells++;
                 }
             }
+
+            return (smoothedCells, ++attempt);
         }
 
-        private CellType GetRandomCellType(Dictionary<CellType, double> cellTypes)
+        private void SmoothOutPlayground2(Node[,] nodes)
         {
-            CellType selectedCellType = CellType.Plain;
-            float globalChence = 0.0f;
-            foreach (var cellType in cellTypes)
-            {
-                globalChence += (float)cellType.Value;
-            }
-
-            float targetValue = Random.Range(0f, globalChence);
-
-            float currentTargetValue = 0.0f;
-            foreach (var cellType in cellTypes)
-            {
-                currentTargetValue += (float)cellType.Value;
-                if (targetValue <= currentTargetValue)
-                {
-                    selectedCellType = cellType.Key;
-                    break;
-                }
-            }
-
-            return selectedCellType;
+            
         }
     }
 }
