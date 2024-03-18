@@ -6,6 +6,7 @@ using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using LevelModule.Data;
 using LevelModule.LevelDataBuilderModule;
 using UIModule;
@@ -53,6 +54,7 @@ namespace Infrastructure
 
         private void StartNewLevel()
         {
+            ServiceLocator.Instance.RegisterService(new CharacterIdSetter(0));
             LevelData levelData = new LevelDataBuilder().BuildLevelData(_newLevelData, _gameScenePrefabsProvider);
             
             _gameStateMachine.Enter<GameState>(levelData);
@@ -61,7 +63,7 @@ namespace Infrastructure
         private void LoadLevel(int index)
         {
             LevelData levelData = new LevelDataBuilder().SetPrefabs(new DataBaseCover().GetLevelDataById(0), _gameScenePrefabsProvider);
-
+            
             _gameStateMachine.Enter<GameState>(levelData);
         }
     }

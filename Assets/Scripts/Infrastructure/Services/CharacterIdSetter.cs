@@ -1,6 +1,8 @@
-﻿namespace CharacterModule.PresenterPart
+﻿using Infrastructure.ServiceLocatorModule;
+
+namespace Infrastructure.Services
 {
-    public class CharacterIdSetter
+    public class CharacterIdSetter : IService
     {
         private int _currentId;
 

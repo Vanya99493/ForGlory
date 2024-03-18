@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
 using BattleModule.ViewPart;
@@ -15,6 +16,7 @@ using CharacterModule.PresenterPart.FactoryModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using LevelModule.Data;
 using PlaygroundModule.ModelPart;
 using PlaygroundModule.ModelPart.Data;
@@ -102,6 +104,8 @@ namespace LevelModule
             }
             _playerTeamFactory.RemoveParent();
             _enemyTeamFactory.RemoveParent();
+            
+            ServiceLocator.Instance.UnregisterService<CharacterIdSetter>();
         }
 
         public void SetCameraTarget(CameraFollower camera)

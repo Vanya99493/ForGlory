@@ -20,7 +20,7 @@ MonoBehaviour:
       Name: PlayerMale
       CurrentHealth: -1
       MaxHealth: 100
-      MaxEnergy: 5
+      MaxEnergy: 4
       Initiative: 7
       Damage: 35
       Vision: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
       Name: PlayerFemale
       CurrentHealth: -1
       MaxHealth: 125
-      MaxEnergy: 4
+      MaxEnergy: 5
       Initiative: 5
       Damage: 25
       Vision: 0

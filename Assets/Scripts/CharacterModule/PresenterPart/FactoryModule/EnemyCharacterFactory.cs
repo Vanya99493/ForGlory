@@ -13,7 +13,7 @@ namespace CharacterModule.PresenterPart.FactoryModule
             enemyView.transform.position = spawnPosition;
             enemyView.Destroy += OnDestroyCharacter;
             
-            CharacterModel enemyModel = new EnemyCharacterModel(data.Id, data.Name, data.MaxHealth, data.MaxEnergy, data.Vision, data.Initiative, data.Damage, data.CurrentHealth);
+            CharacterModel enemyModel = new EnemyCharacterModel(_characterIdSetter.GetNewId(), data.Name, data.MaxHealth, data.MaxEnergy, data.Vision, data.Initiative, data.Damage, data.CurrentHealth);
             CharacterPresenter characterPresenter = new EnemyCharacterPresenter(enemyModel as EnemyCharacterModel, enemyView as EnemyCharacterView);
             
             return characterPresenter;
