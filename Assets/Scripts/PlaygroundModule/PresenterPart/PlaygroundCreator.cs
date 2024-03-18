@@ -50,9 +50,7 @@ namespace PlaygroundModule.PresenterPart
 
             Queue<Node> nodesQueue = new Queue<Node>();
             nodesQueue.Enqueue(nodes[heightStartIndex, widthStartIndex]);
-            nodes[heightStartIndex, widthStartIndex].Visited = true;
-            nodes[heightStartIndex, widthStartIndex].CellType = CellType.Plain;
-            nodes[heightStartIndex, widthStartIndex].HasType = true;
+            SetCell(nodes, heightStartIndex, widthStartIndex, CellType.Plain);
 
             while (nodesQueue.Count > 0)
             {
@@ -61,37 +59,25 @@ namespace PlaygroundModule.PresenterPart
                 if (pickedNode.HeightIndex > 0 && 
                     !nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].Visited)
                 {
-                    nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].Visited = true;
-                    nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].CellType =
-                        ChooseCellType(cellDataProvider, pickedNode.HeightIndex - 1, pickedNode.WidthIndex, nodes);
-                    nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].HasType = true;
+                    SetNewCell(nodes, pickedNode.HeightIndex - 1, pickedNode.WidthIndex, cellDataProvider);
                     nodesQueue.Enqueue(nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex]);
                 }
                 if (pickedNode.HeightIndex < nodes.GetLength(0) - 1 && 
                     !nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].Visited)
                 {
-                    nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].Visited = true;
-                    nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].CellType =
-                        ChooseCellType(cellDataProvider, pickedNode.HeightIndex + 1, pickedNode.WidthIndex, nodes);
-                    nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].HasType = true;
+                    SetNewCell(nodes, pickedNode.HeightIndex + 1, pickedNode.WidthIndex, cellDataProvider);
                     nodesQueue.Enqueue(nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex]);
                 }
                 if (pickedNode.WidthIndex > 0 && 
                     !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].Visited)
                 {
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].Visited = true;
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].CellType =
-                        ChooseCellType(cellDataProvider, pickedNode.HeightIndex, pickedNode.WidthIndex - 1, nodes);
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].HasType = true;
+                    SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex - 1, cellDataProvider);
                     nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1]);
                 }
                 if (pickedNode.WidthIndex < nodes.GetLength(1) - 1 && 
                     !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].Visited)
                 {
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].Visited = true;
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].CellType =
-                        ChooseCellType(cellDataProvider, pickedNode.HeightIndex, pickedNode.WidthIndex + 1, nodes);
-                    nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].HasType = true;
+                    SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex + 1, cellDataProvider);
                     nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1]);
                 }
             }
@@ -119,39 +105,22 @@ namespace PlaygroundModule.PresenterPart
 
         private void FillWater(Node[,] nodes, int lengthOfWater)
         {
-            for (int i = 0; i < lengthOfWater; i++)
+            for (int masterIterator = 0; masterIterator < lengthOfWater; masterIterator++)
             {
-                for (int j = 0; j < nodes.GetLength(1); j++)
+                for (int topRow = 0, bottomRow = nodes.GetLength(0) - 1, stepIterator = 0;
+                     stepIterator < nodes.GetLength(1);
+                     stepIterator++)
                 {
-                    nodes[i, j].Visited = true;
-                    nodes[i, j].CellType = CellType.Water;
-                    nodes[i, j].HasType = true;
+                    SetWater(nodes, topRow + masterIterator, stepIterator);
+                    SetWater(nodes, bottomRow - masterIterator, stepIterator);
                 }
-                for (int j = 0; j < nodes.GetLength(0); j++)
-                {
-                    nodes[j, i].Visited = true;
-                    nodes[j, i].CellType = CellType.Water;
-                    nodes[j, i].HasType = true;
-                }
-            }
 
-            for (int i = nodes.GetLength(0) - 1, k = 0; k < lengthOfWater; i--, k++)
-            {
-                for (int j = 0; j < nodes.GetLength(1); j++)
+                for (int leftColumn = 0, rightColumn = nodes.GetLength(1) - 1, stepIterator = lengthOfWater;
+                     stepIterator < nodes.GetLength(0) - lengthOfWater;
+                     stepIterator++)
                 {
-                    nodes[i, j].Visited = true;
-                    nodes[i, j].CellType = CellType.Water;
-                    nodes[i, j].HasType = true;
-                }
-            }
-            
-            for (int i = nodes.GetLength(1) - 1, k = 0; k < lengthOfWater; i--, k++)
-            {
-                for (int j = 0; j < nodes.GetLength(0); j++)
-                {
-                    nodes[j, i].Visited = true;
-                    nodes[j, i].CellType = CellType.Water;
-                    nodes[j, i].HasType = true;
+                    SetWater(nodes, stepIterator, leftColumn + masterIterator);
+                    SetWater(nodes, stepIterator, rightColumn - masterIterator);
                 }
             }
         }
@@ -164,28 +133,20 @@ namespace PlaygroundModule.PresenterPart
             // top
             for (int j = lengthOfWater; j < lengthOfCoast + lengthOfWater; j++)
             {
-                nodes[j, lengthOfWater].Visited = true;
-                nodes[j, lengthOfWater].CellType = CellType.Water;
-                nodes[j, lengthOfWater].HasType = true;
+                SetWater(nodes, j, lengthOfWater);
             }
             for (int i = lengthOfWater + 1; i < nodes.GetLength(1) - lengthOfWater - 1; i++)
             {
                 for (int j = lengthOfWater; j < lengthOfCoast + lengthOfWater - coastCurrentPoint; j++)
                 {
-                    nodes[j, i].Visited = true;
-                    nodes[j, i].CellType = CellType.Water;
-                    nodes[j, i].HasType = true;
+                    SetWater(nodes, j, i);
                 }
                 
-                coastCurrentPoint = Random.Range(0, 2) == 0
-                    ? coastCurrentPoint + 1 > lengthOfCoast ? coastCurrentPoint : ++coastCurrentPoint
-                    : coastCurrentPoint - 1 < 0 ? coastCurrentPoint : --coastCurrentPoint;
+                coastCurrentPoint = CalculateCoastCurrentPoint(lengthOfCoast, coastCurrentPoint);
             }
             for (int j = lengthOfWater; j < lengthOfCoast + lengthOfWater; j++)
             {
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].Visited = true;
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].CellType = CellType.Water;
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].HasType = true;
+                SetWater(nodes, j, nodes.GetLength(1) - lengthOfWater - 1);
             }
 
             // left s right
@@ -196,25 +157,17 @@ namespace PlaygroundModule.PresenterPart
             {
                 for (int j = lengthOfWater; j < lengthOfCoast + lengthOfWater - coastCurrentPoint; j++)
                 {
-                    nodes[i, j].Visited = true;
-                    nodes[i, j].CellType = CellType.Water;
-                    nodes[i, j].HasType = true;
+                    SetWater(nodes, i, j);
                 }
                 
-                coastCurrentPoint = Random.Range(0, 2) == 0
-                    ? coastCurrentPoint + 1 > lengthOfCoast ? coastCurrentPoint : ++coastCurrentPoint
-                    : coastCurrentPoint - 1 < 0 ? coastCurrentPoint : --coastCurrentPoint;
+                coastCurrentPoint = CalculateCoastCurrentPoint(lengthOfCoast, coastCurrentPoint);
 
                 for (int j = nodes.GetLength(1) - lengthOfWater; j > nodes.GetLength(1) - (lengthOfWater + lengthOfCoast) + coastCurrentPoint2; j--)
                 {
-                    nodes[i, j].Visited = true;
-                    nodes[i, j].CellType = CellType.Water;
-                    nodes[i, j].HasType = true;
+                    SetWater(nodes, i, j);
                 }
-                
-                coastCurrentPoint2 = Random.Range(0, 2) == 0
-                    ? coastCurrentPoint2 + 1 > lengthOfCoast ? coastCurrentPoint2 : ++coastCurrentPoint2
-                    : coastCurrentPoint2 - 1 < 0 ? coastCurrentPoint2 : --coastCurrentPoint2;
+
+                coastCurrentPoint2 = CalculateCoastCurrentPoint(lengthOfCoast, coastCurrentPoint2);
             }
             
             // bottom
@@ -222,29 +175,47 @@ namespace PlaygroundModule.PresenterPart
             
             for (int j = nodes.GetLength(0) - lengthOfWater - 1; j > nodes.GetLength(0) - (lengthOfCoast + lengthOfWater) - 1; j--)
             {
-                nodes[j, lengthOfWater].Visited = true;
-                nodes[j, lengthOfWater].CellType = CellType.Water;
-                nodes[j, lengthOfWater].HasType = true;
+                SetWater(nodes, j, lengthOfWater);
             }
             for (int i = lengthOfWater + 1; i < nodes.GetLength(1) - lengthOfWater - 1; i++)
             {
                 for (int j = nodes.GetLength(1) - lengthOfWater - 1; j > nodes.GetLength(1) - lengthOfWater - lengthOfCoast - 1 + coastCurrentPoint; j--)
                 {
-                    nodes[j, i].Visited = true;
-                    nodes[j, i].CellType = CellType.Water;
-                    nodes[j, i].HasType = true;
+                    SetWater(nodes, j, i);
                 }
-                
-                coastCurrentPoint = Random.Range(0, 2) == 0
-                    ? coastCurrentPoint + 1 > lengthOfCoast ? coastCurrentPoint : ++coastCurrentPoint
-                    : coastCurrentPoint - 1 < 0 ? coastCurrentPoint : --coastCurrentPoint;
+
+                coastCurrentPoint = CalculateCoastCurrentPoint(lengthOfCoast, coastCurrentPoint);
             }
             for (int j = nodes.GetLength(0) - lengthOfWater - 1; j > nodes.GetLength(0) - (lengthOfCoast + lengthOfWater) - 1; j--)
             {
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].Visited = true;
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].CellType = CellType.Water;
-                nodes[j, nodes.GetLength(1) - lengthOfWater - 1].HasType = true;
+                SetWater(nodes, j, nodes.GetLength(1) - lengthOfWater - 1);
             }
+        }
+
+        private void SetWater(Node[,] nodes, int heightIndex, int widthIndex)
+        {
+            SetCell(nodes, heightIndex, widthIndex, CellType.Water);
+        }
+
+        private void SetNewCell(Node[,] nodes, int heightIndex, int widthIndex, CellDataProvider cellDataProvider)
+        {
+            SetCell(nodes, heightIndex, widthIndex, 
+                ChooseCellType(cellDataProvider, heightIndex, widthIndex, nodes)
+                );
+        }
+
+        private void SetCell(Node[,] nodes, int heightIndex, int widthIndex, CellType cellType)
+        {
+            nodes[heightIndex, widthIndex].Visited = true;
+            nodes[heightIndex, widthIndex].CellType = cellType;
+            nodes[heightIndex, widthIndex].HasType = true;
+        }
+
+        private int CalculateCoastCurrentPoint(int lengthOfCoast, int coastCurrentPoint)
+        {
+            return Random.Range(0, 2) == 0
+                ? coastCurrentPoint + 1 > lengthOfCoast ? coastCurrentPoint : ++coastCurrentPoint
+                : coastCurrentPoint - 1 < 0 ? coastCurrentPoint : --coastCurrentPoint;
         }
 
         private CellType ChooseCellType(CellDataProvider cellDataProvider, int heightIndex, int widthIndex, Node[,] nodes)
@@ -253,67 +224,46 @@ namespace PlaygroundModule.PresenterPart
             
             if (heightIndex > 0 && nodes[heightIndex - 1, widthIndex].HasType)
             {
-                if(new List<CellType>{CellType.RampBT, CellType.RampTB}.Contains(nodes[heightIndex - 1, widthIndex].CellType))
+                if(nodes[heightIndex - 1, widthIndex].CellType == CellType.RampBT || 
+                   nodes[heightIndex - 1, widthIndex].CellType == CellType.RampTB)
                 {
                     return cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex - 1, widthIndex].CellType)[Direction.Down].First().Key;
                 }
                 
-                foreach (var chanceMap in cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex - 1, widthIndex].CellType)[Direction.Down])
-                {
-                    if (possibleCellTypes.ContainsKey(chanceMap.Key))
-                        possibleCellTypes[chanceMap.Key] += chanceMap.Value;
-                    else
-                        possibleCellTypes.Add(chanceMap.Key, chanceMap.Value);
-                }
+                AddPossibleCases(cellDataProvider, nodes, heightIndex - 1, widthIndex, Direction.Down, possibleCellTypes);
             }
 
             if (heightIndex < nodes.GetLength(0) - 1 && nodes[heightIndex + 1, widthIndex].HasType)
             {
-                if(new List<CellType>{CellType.RampBT, CellType.RampTB}.Contains(nodes[heightIndex + 1, widthIndex].CellType))
+                if(nodes[heightIndex + 1, widthIndex].CellType == CellType.RampBT || 
+                   nodes[heightIndex + 1, widthIndex].CellType == CellType.RampTB)
                 {
                     return cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex + 1, widthIndex].CellType)[Direction.Up].First().Key;
                 }
                 
-                foreach (var chanceMap in cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex + 1, widthIndex].CellType)[Direction.Up])
-                {
-                    if (possibleCellTypes.ContainsKey(chanceMap.Key))
-                        possibleCellTypes[chanceMap.Key] += chanceMap.Value;
-                    else
-                        possibleCellTypes.Add(chanceMap.Key, chanceMap.Value);
-                }
+                AddPossibleCases(cellDataProvider, nodes, heightIndex + 1, widthIndex, Direction.Up, possibleCellTypes);
             }
 
             if (widthIndex > 0 && nodes[heightIndex, widthIndex - 1].HasType)
             {
-                if (new List<CellType> { CellType.RampLR, CellType.RampRL }.Contains(nodes[heightIndex, widthIndex - 1]
-                        .CellType))
+                if (nodes[heightIndex, widthIndex - 1].CellType == CellType.RampLR || 
+                    nodes[heightIndex, widthIndex - 1].CellType == CellType.RampRL)
                 {
                     return cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex, widthIndex - 1].CellType)[Direction.Right].First().Key;
                 }
                 
-                foreach (var chanceMap in cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex, widthIndex - 1].CellType)[Direction.Right])
-                {
-                    if (possibleCellTypes.ContainsKey(chanceMap.Key))
-                        possibleCellTypes[chanceMap.Key] += chanceMap.Value;
-                    else
-                        possibleCellTypes.Add(chanceMap.Key, chanceMap.Value);
-                }
+                AddPossibleCases(cellDataProvider, nodes, heightIndex, widthIndex - 1, Direction.Right, possibleCellTypes);
             }
 
             if (widthIndex < nodes.GetLength(1) - 1 && nodes[heightIndex, widthIndex + 1].HasType)
             {
-                if(new List<CellType>{CellType.RampLR, CellType.RampRL}.Contains(nodes[heightIndex, widthIndex + 1].CellType))
+                if(nodes[heightIndex, widthIndex + 1].CellType == CellType.RampLR || 
+                   nodes[heightIndex, widthIndex + 1].CellType == CellType.RampRL)
                 {
                     return cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex, widthIndex + 1].CellType)[Direction.Left].First().Key;
                 }
                 
-                foreach (var chanceMap in cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex, widthIndex + 1].CellType)[Direction.Left])
-                {
-                    if (possibleCellTypes.ContainsKey(chanceMap.Key))
-                        possibleCellTypes[chanceMap.Key] += chanceMap.Value;
-                    else
-                        possibleCellTypes.Add(chanceMap.Key, chanceMap.Value);
-                }
+                AddPossibleCases(cellDataProvider, nodes, heightIndex, widthIndex + 1, Direction.Left, possibleCellTypes);
             }
 
             double globalChance = 0f;
@@ -336,6 +286,18 @@ namespace PlaygroundModule.PresenterPart
             }
             
             return CellType.Plain;
+        }
+
+        private void AddPossibleCases(CellDataProvider cellDataProvider, Node[,] nodes, int heightIndex, int widthIndex, 
+            Direction direction, Dictionary<CellType, double> possibleCellTypes)
+        {
+            foreach (var chanceMap in cellDataProvider.GetCellPixelsSpawnRoot(nodes[heightIndex, widthIndex].CellType)[direction])
+            {
+                if (possibleCellTypes.ContainsKey(chanceMap.Key))
+                    possibleCellTypes[chanceMap.Key] += chanceMap.Value;
+                else
+                    possibleCellTypes.Add(chanceMap.Key, chanceMap.Value);
+            }
         }
 
         private void DeleteRamps(Node[,] nodes, CellDataProvider cellDataProvider)

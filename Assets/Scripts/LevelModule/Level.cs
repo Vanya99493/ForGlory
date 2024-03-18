@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
 using BattleModule.ViewPart;
@@ -51,9 +50,6 @@ namespace LevelModule
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
         private bool _isStepChanging;
-        
-        // need to rebase it to level data builder
-        private CharacterIdSetter _characterIdSetter;
 
         private int _enemiesStepCounter;
         private int _playerStepCounter;
@@ -72,7 +68,6 @@ namespace LevelModule
         {
             _isStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
-            _characterIdSetter = new CharacterIdSetter(0);
             
             (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
                 CreatePlayground(levelData.PlaygroundData);
@@ -163,7 +158,7 @@ namespace LevelModule
             _playgroundPresenter.CreateAndSpawnPlayground(view.transform, emptyPlaygroundData.Height, emptyPlaygroundData.Width, 
                 emptyPlaygroundData.LengthOfWaterLine, emptyPlaygroundData.LengthOfCoast, 
                 emptyPlaygroundData.Height * 1f, emptyPlaygroundData.Width * 1f, _cellDataProvider, 
-                OnMoveCellClicked, OnCellClicked, /*OnTeamsCollision*/ 
+                OnMoveCellClicked, OnCellClicked, 
                 (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
 
             return CreateCastle();

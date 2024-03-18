@@ -2,8 +2,6 @@
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
-using Infrastructure.ServiceLocatorModule;
-using Infrastructure.Services;
 using LevelModule.Data;
 using UIModule;
 using UnityEngine;
