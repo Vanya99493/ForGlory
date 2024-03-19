@@ -24,35 +24,35 @@ namespace PlaygroundModule.PresenterPart
             {
                 HeightIndex = heightIndex;
                 WidthIndex = widthIndex;
+                CellType = CellType.Water;
                 HasType = false;
                 Visited = false;
             }
         }
         
-        // ReSharper disable Unity.PerformanceAnalysis
         public CellPresenter[,] CreatePlaygroundByNewRootSpawnSystem(CellDataProvider cellDataProvider, int height, int width, int lengthOfWater, int lengthOfCoast)
         {
-            Node[,] nodes = new Node[height, width];
-
-            for (int i = 0; i < nodes.GetLength(0); i++)
-            {
-                for (int j = 0; j < nodes.GetLength(1); j++)
-                {
-                    nodes[i, j] = new Node(i, j);
-                }
-            }
-
             if (height - (lengthOfWater + lengthOfCoast) <= 0 || width - (lengthOfWater + lengthOfCoast) <= 0)
                 throw new Exception("Height or width too small");
-
-            FillWater(nodes, lengthOfWater);
-            FillCoast(nodes, lengthOfCoast, lengthOfWater);
             
-            int heightStartIndex = Random.Range(lengthOfWater + lengthOfCoast, height - (lengthOfWater + lengthOfCoast));
-            int widthStartIndex = Random.Range(lengthOfWater + lengthOfCoast, width - (lengthOfWater + lengthOfCoast));
+            Node[,] nodes = new Node[height, width];
 
             do
             {
+                for (int i = 0; i < nodes.GetLength(0); i++)
+                {
+                    for (int j = 0; j < nodes.GetLength(1); j++)
+                    {
+                        nodes[i, j] = new Node(i, j);
+                    }
+                }
+
+                FillWater(nodes, lengthOfWater);
+                FillCoast(nodes, lengthOfCoast, lengthOfWater);
+                
+                int heightStartIndex = Random.Range(lengthOfWater + lengthOfCoast, height - (lengthOfWater + lengthOfCoast));
+                int widthStartIndex = Random.Range(lengthOfWater + lengthOfCoast, width - (lengthOfWater + lengthOfCoast));
+            
                 Queue<Node> nodesQueue = new Queue<Node>();
                 nodesQueue.Enqueue(nodes[heightStartIndex, widthStartIndex]);
                 SetCell(nodes, heightStartIndex, widthStartIndex, CellType.Plain);
@@ -323,6 +323,10 @@ namespace PlaygroundModule.PresenterPart
                         {
                             nodes[i, j].CellType = nodes[i - 1, j].CellType;
                         }
+                        if (nodes[i - 1, j].CellType == nodes[i + 1, j].CellType && nodes[i - 1, j].CellType != CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i - 1, j].CellType;
+                        }
                     }
 
                     if (nodes[i, j].CellType == CellType.RampLR || nodes[i, j].CellType == CellType.RampRL)
@@ -332,6 +336,10 @@ namespace PlaygroundModule.PresenterPart
                             nodes[i, j].CellType = nodes[i, j + 1].CellType;
                         }
                         if (nodes[i, j + 1].CellType == CellType.Water)
+                        {
+                            nodes[i, j].CellType = nodes[i, j - 1].CellType;
+                        }
+                        if (nodes[i, j - 1].CellType == nodes[i, j + 1].CellType && nodes[i, j - 1].CellType != CellType.Water)
                         {
                             nodes[i, j].CellType = nodes[i, j - 1].CellType;
                         }
