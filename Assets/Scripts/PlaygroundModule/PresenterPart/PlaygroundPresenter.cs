@@ -69,14 +69,14 @@ namespace PlaygroundModule.PresenterPart
             View.DeactivatePlayground();
         }
 
-        public void SetAciveCells(List<Node> cells)
+        public void SetAciveCells(List<MoveNode> cells)
         {
             Model.ActiveCells = cells;
         }
         
         public void ActivateCells()
         {
-            foreach (Node cell in Model.ActiveCells)
+            foreach (MoveNode cell in Model.ActiveCells)
             {
                 Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).ActivateCell();
             }
@@ -84,7 +84,7 @@ namespace PlaygroundModule.PresenterPart
 
         public void ActivateRedCells()
         {
-            foreach (Node cell in Model.ActiveCells)
+            foreach (MoveNode cell in Model.ActiveCells)
             {
                 Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).ActivateRedCell();
             }
@@ -92,7 +92,7 @@ namespace PlaygroundModule.PresenterPart
 
         public void DeactivateCells()
         {
-            foreach (Node cell in Model.ActiveCells)
+            foreach (MoveNode cell in Model.ActiveCells)
             {
                 Model.GetCellPresenter(cell.HeightIndex, cell.WidthIndex).DeactivateCell();
             }

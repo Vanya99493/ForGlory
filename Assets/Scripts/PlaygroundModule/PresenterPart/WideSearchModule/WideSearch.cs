@@ -14,85 +14,175 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
         {
             _cellDataProvider = cellDataProvider;
         }
-        
-        public List<Node> GetCellsByLength(int length, Node startNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters)
-        {
-            List<Node> cells = new List<Node>();
-            
-            Node[,] bfsArray = TranslatePlayground(playgroundPresenter);
 
-            Queue<Node> bfsQueue = new Queue<Node>();
-            bfsQueue.Enqueue(startNode);
-            bfsArray[startNode.HeightIndex, startNode.WidthIndex].Visited = true;
-            cells.Add(bfsArray[startNode.HeightIndex, startNode.WidthIndex]);
+        public Dictionary<int, int> DividePlaygroundByZones(MoveNode[,] playgroundMoveNodes)
+        {
+            Dictionary<int, int> zones = new Dictionary<int, int>();
+            int currentZoneIndex = 1;
+            
+            for (int i = 0; i < playgroundMoveNodes.GetLength(0); i++)
+            {
+                for (int j = 0; j < playgroundMoveNodes.GetLength(1); j++)
+                {
+                    if (playgroundMoveNodes[i, j].CellType == CellType.Water)
+                    {
+                        playgroundMoveNodes[i, j].Zone = -1;
+                        continue;
+                    }
+
+                    if (playgroundMoveNodes[i, j].Zone == 0)
+                    {
+                        zones.Add(currentZoneIndex, 1);
+                        
+                        Queue<MoveNode> bfsQueue = new Queue<MoveNode>();
+                        bfsQueue.Enqueue(playgroundMoveNodes[i, j]);
+                        playgroundMoveNodes[i, j].Visited = true;
+                        playgroundMoveNodes[i, j].Zone = currentZoneIndex;
+                        
+                        while (bfsQueue.Count > 0)
+                        {
+                            MoveNode currentMoveNode = bfsQueue.Dequeue();
+                            
+                            if (!IsExtreme(currentMoveNode, playgroundMoveNodes, Direction.Up) && 
+                                !playgroundMoveNodes[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited && 
+                                CanMove(
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex],
+                                    Direction.Up
+                                ))
+                            {
+                                playgroundMoveNodes[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited = true;
+                                playgroundMoveNodes[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Zone = currentZoneIndex;
+                                zones[currentZoneIndex]++;
+                                bfsQueue.Enqueue(playgroundMoveNodes[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex]);
+                            }
+                            if (!IsExtreme(currentMoveNode, playgroundMoveNodes, Direction.Down) && 
+                                !playgroundMoveNodes[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited && 
+                                CanMove(
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex],
+                                    Direction.Down
+                                ))
+                            {
+                                playgroundMoveNodes[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited = true;
+                                playgroundMoveNodes[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Zone = currentZoneIndex;
+                                zones[currentZoneIndex]++;
+                                bfsQueue.Enqueue(playgroundMoveNodes[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex]);
+                            }
+                            if (!IsExtreme(currentMoveNode, playgroundMoveNodes, Direction.Left) && 
+                                !playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited && 
+                                CanMove(
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1],
+                                    Direction.Left
+                                ))
+                            {
+                                playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited = true;
+                                playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Zone = currentZoneIndex;
+                                zones[currentZoneIndex]++;
+                                bfsQueue.Enqueue(playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1]);
+                            }
+                            if (!IsExtreme(currentMoveNode, playgroundMoveNodes, Direction.Right) && 
+                                !playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited && 
+                                CanMove(
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                                    playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1],
+                                    Direction.Right
+                                ))
+                            {
+                                playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited = true;
+                                playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Zone = currentZoneIndex;
+                                zones[currentZoneIndex]++;
+                                bfsQueue.Enqueue(playgroundMoveNodes[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1]);
+                            }
+                        }
+
+                        currentZoneIndex++;
+                    }
+                }
+            }
+
+            return zones;
+        }
+        
+        public List<MoveNode> GetCellsByLength(int length, MoveNode startMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters)
+        {
+            List<MoveNode> cells = new List<MoveNode>();
+            
+            MoveNode[,] bfsArray = TranslatePlayground(playgroundPresenter);
+
+            Queue<MoveNode> bfsQueue = new Queue<MoveNode>();
+            bfsQueue.Enqueue(startMoveNode);
+            bfsArray[startMoveNode.HeightIndex, startMoveNode.WidthIndex].Visited = true;
+            cells.Add(bfsArray[startMoveNode.HeightIndex, startMoveNode.WidthIndex]);
             
             while (bfsQueue.Count > 0)
             {
-                Node currentNode = bfsQueue.Dequeue();
+                MoveNode currentMoveNode = bfsQueue.Dequeue();
 
-                if (currentNode.Distance >= length)
+                if (currentMoveNode.Distance >= length)
                 {
                     continue;
                 }
 
-                if (!IsExtreme(currentNode, bfsArray, Direction.Up) && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex],
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Up) && !bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex],
                         Direction.Up,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Distance = currentNode.Distance + 1;
-                    cells.Add(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
-                    if (!bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].IsBusy)
+                    bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Distance = currentMoveNode.Distance + 1;
+                    cells.Add(bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex]);
+                    if (!bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].IsBusy)
                     {
-                        bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
+                        bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex]);
                     }
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Down) && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex],
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Down) && !bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex],
                         Direction.Down,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Distance = currentNode.Distance + 1;
-                    cells.Add(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
-                    if (!bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].IsBusy)
+                    bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Distance = currentMoveNode.Distance + 1;
+                    cells.Add(bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex]);
+                    if (!bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].IsBusy)
                     {
-                        bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
+                        bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex]);
                     }
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Left) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1],
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Left) && !bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1],
                         Direction.Left,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Distance = currentNode.Distance + 1;
-                    cells.Add(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
-                    if (!bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].IsBusy)
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Distance = currentMoveNode.Distance + 1;
+                    cells.Add(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1]);
+                    if (!bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].IsBusy)
                     {
-                        bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
+                        bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1]);
                     }
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Right) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1],
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Right) && !bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1],
                         Direction.Right,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Distance = currentNode.Distance + 1;
-                    cells.Add(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1]);
-                    if (!bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].IsBusy)
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Distance = currentMoveNode.Distance + 1;
+                    cells.Add(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1]);
+                    if (!bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].IsBusy)
                     {
-                        bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1]);
+                        bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1]);
                     }
                 }
             }
@@ -100,77 +190,77 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return cells;
         }
         
-        public bool TryBuildRoute(Node startNode, Node targetNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters, out List<Pair<int, int>> route)
+        public bool TryBuildRoute(MoveNode startMoveNode, MoveNode targetMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters, out List<Pair<int, int>> route)
         {
-            if (targetNode.CellType == CellType.Water)
+            if (targetMoveNode.CellType == CellType.Water)
             {
                 route = new List<Pair<int, int>>();
                 return false;
             }
             
-            Node[,] bfsArray = TranslatePlayground(playgroundPresenter);
+            MoveNode[,] bfsArray = TranslatePlayground(playgroundPresenter);
 
-            Queue<Node> bfsQueue = new Queue<Node>();
-            bfsQueue.Enqueue(startNode);
-            bfsArray[startNode.HeightIndex, startNode.WidthIndex].Visited = true;
+            Queue<MoveNode> bfsQueue = new Queue<MoveNode>();
+            bfsQueue.Enqueue(startMoveNode);
+            bfsArray[startMoveNode.HeightIndex, startMoveNode.WidthIndex].Visited = true;
             
             while (bfsQueue.Count > 0)
             {
-                Node currentNode = bfsQueue.Dequeue();
+                MoveNode currentMoveNode = bfsQueue.Dequeue();
 
-                if (currentNode == targetNode)
+                if (currentMoveNode == targetMoveNode)
                 {
-                    route = BuildRoute(startNode, currentNode);
+                    route = BuildRoute(startMoveNode, currentMoveNode);
                     return true;
                 }
 
-                if (!IsExtreme(currentNode, bfsArray, Direction.Up) && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex],
-                        targetNode,
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Up) && !bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex],
+                        targetMoveNode,
                         Direction.Up,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].PrevNode = currentNode;
-                    bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
+                    bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex].PrevMoveNode = currentMoveNode;
+                    bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex - 1, currentMoveNode.WidthIndex]);
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Down) && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex],
-                        targetNode,
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Down) && !bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex],
+                        targetMoveNode,
                         Direction.Down,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].PrevNode = currentNode;
-                    bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
+                    bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex].PrevMoveNode = currentMoveNode;
+                    bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex + 1, currentMoveNode.WidthIndex]);
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Left) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1],
-                        targetNode,
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Left) && !bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1],
+                        targetMoveNode,
                         Direction.Left,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].PrevNode = currentNode;
-                    bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1].PrevMoveNode = currentMoveNode;
+                    bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex - 1]);
                 }
-                if (!IsExtreme(currentNode, bfsArray, Direction.Right) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
-                        bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1],
-                        targetNode,
+                if (!IsExtreme(currentMoveNode, bfsArray, Direction.Right) && !bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited && CanMove(
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex],
+                        bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1],
+                        targetMoveNode,
                         Direction.Right,
                         considerCharacters
                     ))
                 {
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].PrevNode = currentNode;
-                    bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1]);
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].Visited = true;
+                    bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1].PrevMoveNode = currentMoveNode;
+                    bfsQueue.Enqueue(bfsArray[currentMoveNode.HeightIndex, currentMoveNode.WidthIndex + 1]);
                 }
             }
 
@@ -178,15 +268,15 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return false;
         }
 
-        private Node[,] TranslatePlayground(PlaygroundPresenter playgroundPresenter)
+        private MoveNode[,] TranslatePlayground(PlaygroundPresenter playgroundPresenter)
         {
-            Node[,] bfsArray = new Node[playgroundPresenter.Model.PlaygroundHeight, playgroundPresenter.Model.PlaygroundWidth];
+            MoveNode[,] bfsArray = new MoveNode[playgroundPresenter.Model.PlaygroundHeight, playgroundPresenter.Model.PlaygroundWidth];
 
             for (int i = 0; i < bfsArray.GetLength(0); i++)
             {
                 for (int j = 0; j < bfsArray.GetLength(1); j++)
                 {
-                    bfsArray[i, j] = new Node(i, j, 
+                    bfsArray[i, j] = new MoveNode(i, j, 
                         playgroundPresenter.Model.GetCellPresenter(i, j).Model.CellType, 
                         playgroundPresenter.CheckCellOnCharacter(i, j));
                 }
@@ -195,24 +285,24 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return bfsArray;
         }
 
-        private bool IsExtreme(Node node, Node[,] bfsArray, Direction direction)
+        private bool IsExtreme(MoveNode moveNode, MoveNode[,] bfsArray, Direction direction)
         {
             switch (direction)
             {
                 case Direction.Up:
-                    if (node.HeightIndex == 0)
+                    if (moveNode.HeightIndex == 0)
                         return true;
                     break;
                 case Direction.Down:
-                    if (node.HeightIndex == bfsArray.GetLength(0) - 1)
+                    if (moveNode.HeightIndex == bfsArray.GetLength(0) - 1)
                         return true;
                     break;
                 case Direction.Left:
-                    if (node.WidthIndex == 0)
+                    if (moveNode.WidthIndex == 0)
                         return true;
                     break;
                 case Direction.Right:
-                    if (node.WidthIndex == bfsArray.GetLength(1) - 1)
+                    if (moveNode.WidthIndex == bfsArray.GetLength(1) - 1)
                         return true; 
                     break;
             }
@@ -220,35 +310,38 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return false;
         }
 
-        private List<Pair<int, int>> BuildRoute(Node startNode, Node lastRouteNode)
+        private List<Pair<int, int>> BuildRoute(MoveNode startMoveNode, MoveNode lastRouteMoveNode)
         {
             List<Pair<int, int>> route = new List<Pair<int, int>>();
 
-            Node currentNode = lastRouteNode;
+            MoveNode currentMoveNode = lastRouteMoveNode;
 
-            while (currentNode != startNode)
+            while (currentMoveNode != startMoveNode)
             {
-                route.Add(new Pair<int, int>(currentNode.HeightIndex, currentNode.WidthIndex));
-                currentNode = currentNode.PrevNode;
+                route.Add(new Pair<int, int>(currentMoveNode.HeightIndex, currentMoveNode.WidthIndex));
+                currentMoveNode = currentMoveNode.PrevMoveNode;
             }
             
             route.Reverse();
             
             return route;
         }
+
+        private bool CanMove(MoveNode start, MoveNode target, Direction direction)
+        {
+            return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType);
+        }
         
-        private bool CanMove(Node start, Node target, Direction direction, bool considerCharacters)
+        private bool CanMove(MoveNode start, MoveNode target, Direction direction, bool considerCharacters)
         {
             return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType) && 
                    (!target.IsBusy || !considerCharacters);
         }
 
-        private bool CanMove(Node start, Node target, Node finalTarget, Direction direction, bool considerCharacters)
+        private bool CanMove(MoveNode start, MoveNode target, MoveNode finalTarget, Direction direction, bool considerCharacters)
         {
             return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType) && 
-                   (!target.IsBusy || (!considerCharacters && IsFinalPoint(target, finalTarget)));
+                   (!target.IsBusy || (!considerCharacters && target == finalTarget));
         }
-
-        private bool IsFinalPoint(Node node, Node finalPoint) => node.HeightIndex == finalPoint.HeightIndex && node.WidthIndex == finalPoint.WidthIndex;
     }
 }

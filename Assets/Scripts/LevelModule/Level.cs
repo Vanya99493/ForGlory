@@ -300,7 +300,7 @@ namespace LevelModule
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
                     playerTeamPresenter.Model.TeamEnergy, 
-                    new Node(
+                    new MoveNode(
                         playerTeamPresenter.Model.HeightCellIndex, 
                         playerTeamPresenter.Model.WidthCellIndex, 
                         _playgroundPresenter.Model.GetCellPresenter(playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex).Model.CellType,
@@ -329,7 +329,7 @@ namespace LevelModule
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
                     enemyTeamPresenter.Model.TeamEnergy, 
-                    new Node(
+                    new MoveNode(
                         enemyTeamPresenter.Model.HeightCellIndex, 
                         enemyTeamPresenter.Model.WidthCellIndex, 
                         _playgroundPresenter.Model.GetCellPresenter(enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex).Model.CellType,

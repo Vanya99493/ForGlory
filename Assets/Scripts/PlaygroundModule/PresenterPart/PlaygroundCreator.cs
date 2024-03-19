@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Providers;
+using Infrastructure.ServiceLocatorModule;
 using PlaygroundModule.ModelPart;
+using PlaygroundModule.PresenterPart.WideSearchModule;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,8 +14,8 @@ namespace PlaygroundModule.PresenterPart
     {
         class Node
         {
-            public int HeightIndex;
-            public int WidthIndex;
+            public readonly int HeightIndex;
+            public readonly int WidthIndex;
             public CellType CellType;
             public bool HasType;
             public bool Visited;
@@ -27,6 +29,7 @@ namespace PlaygroundModule.PresenterPart
             }
         }
         
+        // ReSharper disable Unity.PerformanceAnalysis
         public CellPresenter[,] CreatePlaygroundByNewRootSpawnSystem(CellDataProvider cellDataProvider, int height, int width, int lengthOfWater, int lengthOfCoast)
         {
             Node[,] nodes = new Node[height, width];
@@ -48,47 +51,51 @@ namespace PlaygroundModule.PresenterPart
             int heightStartIndex = Random.Range(lengthOfWater + lengthOfCoast, height - (lengthOfWater + lengthOfCoast));
             int widthStartIndex = Random.Range(lengthOfWater + lengthOfCoast, width - (lengthOfWater + lengthOfCoast));
 
-            Queue<Node> nodesQueue = new Queue<Node>();
-            nodesQueue.Enqueue(nodes[heightStartIndex, widthStartIndex]);
-            SetCell(nodes, heightStartIndex, widthStartIndex, CellType.Plain);
-
-            while (nodesQueue.Count > 0)
-            {
-                Node pickedNode = nodesQueue.Dequeue();
-
-                if (pickedNode.HeightIndex > 0 && 
-                    !nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].Visited)
-                {
-                    SetNewCell(nodes, pickedNode.HeightIndex - 1, pickedNode.WidthIndex, cellDataProvider);
-                    nodesQueue.Enqueue(nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex]);
-                }
-                if (pickedNode.HeightIndex < nodes.GetLength(0) - 1 && 
-                    !nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].Visited)
-                {
-                    SetNewCell(nodes, pickedNode.HeightIndex + 1, pickedNode.WidthIndex, cellDataProvider);
-                    nodesQueue.Enqueue(nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex]);
-                }
-                if (pickedNode.WidthIndex > 0 && 
-                    !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].Visited)
-                {
-                    SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex - 1, cellDataProvider);
-                    nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1]);
-                }
-                if (pickedNode.WidthIndex < nodes.GetLength(1) - 1 && 
-                    !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].Visited)
-                {
-                    SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex + 1, cellDataProvider);
-                    nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1]);
-                }
-            }
-
-            DeleteRamps(nodes, cellDataProvider);
-
-            int smoothedCells, attempt = 0;
             do
             {
-                (smoothedCells, attempt) = SmoothOutPlayground(nodes, cellDataProvider, attempt);
-            } while (smoothedCells > 0);
+                Queue<Node> nodesQueue = new Queue<Node>();
+                nodesQueue.Enqueue(nodes[heightStartIndex, widthStartIndex]);
+                SetCell(nodes, heightStartIndex, widthStartIndex, CellType.Plain);
+
+                while (nodesQueue.Count > 0)
+                {
+                    Node pickedNode = nodesQueue.Dequeue();
+
+                    if (pickedNode.HeightIndex > 0 && 
+                        !nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex].Visited)
+                    {
+                        SetNewCell(nodes, pickedNode.HeightIndex - 1, pickedNode.WidthIndex, cellDataProvider);
+                        nodesQueue.Enqueue(nodes[pickedNode.HeightIndex - 1, pickedNode.WidthIndex]);
+                    }
+                    if (pickedNode.HeightIndex < nodes.GetLength(0) - 1 && 
+                        !nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex].Visited)
+                    {
+                        SetNewCell(nodes, pickedNode.HeightIndex + 1, pickedNode.WidthIndex, cellDataProvider);
+                        nodesQueue.Enqueue(nodes[pickedNode.HeightIndex + 1, pickedNode.WidthIndex]);
+                    }
+                    if (pickedNode.WidthIndex > 0 && 
+                        !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1].Visited)
+                    {
+                        SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex - 1, cellDataProvider);
+                        nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex - 1]);
+                    }
+                    if (pickedNode.WidthIndex < nodes.GetLength(1) - 1 && 
+                        !nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1].Visited)
+                    {
+                        SetNewCell(nodes, pickedNode.HeightIndex, pickedNode.WidthIndex + 1, cellDataProvider);
+                        nodesQueue.Enqueue(nodes[pickedNode.HeightIndex, pickedNode.WidthIndex + 1]);
+                    }
+                }
+
+                DeleteRamps(nodes, cellDataProvider);
+
+                int smoothedCells, attempt = 0;
+                do
+                {
+                    (smoothedCells, attempt) = SmoothOutPlayground(nodes, cellDataProvider, attempt);
+                } while (smoothedCells > 0);
+                
+            } while (!SmoothOutPlayground2(nodes));
             
             CellPresenter[,] playground = new CellPresenter[height, width];
             
@@ -370,9 +377,54 @@ namespace PlaygroundModule.PresenterPart
             return (smoothedCells, ++attempt);
         }
 
-        private void SmoothOutPlayground2(Node[,] nodes)
+        private bool SmoothOutPlayground2(Node[,] nodes)
         {
+            MoveNode[,] moveNodes = new MoveNode[nodes.GetLength(0), nodes.GetLength(1)];
             
+            for (int i = 0; i < nodes.GetLength(0); i++)
+            {
+                for (int j = 0; j < nodes.GetLength(1); j++)
+                {
+                    moveNodes[i, j] = new MoveNode(i, j, nodes[i, j].CellType, false);
+                }
+            }
+
+            Dictionary<int, int> zones = ServiceLocator.Instance.GetService<WideSearch>().DividePlaygroundByZones(moveNodes);
+            int continentSize = 0;
+            int mainZone = 0;
+
+            foreach (var zone in zones)
+            {
+                continentSize += zone.Value;
+                Debug.Log($"Zone {zone.Key}; cells: {zone.Value}");
+            }
+
+            foreach (var zone in zones)
+            {
+                if (100.0 * zone.Value / continentSize >= 60.0)
+                {
+                    mainZone = zone.Key;
+                }
+            }
+
+            if (mainZone == 0)
+            {
+                Debug.Log($"Playground was created wrong. Number of zones: {zones.Count}");
+                return false;
+            }
+
+            for (int i = 0; i < moveNodes.GetLength(0); i++)
+            {
+                for (int j = 0; j < moveNodes.GetLength(1); j++)
+                {
+                    if (moveNodes[i, j].Zone != -1 && moveNodes[i, j].Zone != mainZone)
+                    {
+                        nodes[i, j].CellType = CellType.Water;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace PlaygroundModule.ModelPart
 {
     public class PlaygroundModel
     {
-        public List<Node> ActiveCells;
+        public List<MoveNode> ActiveCells;
         
         private CellPresenter[,] _playground;
 
@@ -16,7 +16,7 @@ namespace PlaygroundModule.ModelPart
 
         public PlaygroundModel()
         {
-            ActiveCells = new List<Node>();
+            ActiveCells = new List<MoveNode>();
         }
         
         public void InitializePlayground(CellPresenter[,] playground)

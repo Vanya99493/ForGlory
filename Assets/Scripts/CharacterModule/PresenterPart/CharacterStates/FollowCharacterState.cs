@@ -21,13 +21,13 @@ namespace CharacterModule.PresenterPart.CharacterStates
             TargetTeamPresenter = targetTeamPresenter;
             List<Pair<int, int>> route = new List<Pair<int, int>>();
             if (teamPresenter.Model.CanMove && ServiceLocator.Instance.GetService<WideSearch>().TryBuildRoute(
-                    new Node(
+                    new MoveNode(
                         teamPresenter.Model.HeightCellIndex, 
                         teamPresenter.Model.WidthCellIndex, 
                         playgroundPresenter.Model.GetCellPresenter(teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex).Model.CellType,
                         true
                     ),
-                    new Node(
+                    new MoveNode(
                         targetTeamPresenter.Model.HeightCellIndex, 
                         targetTeamPresenter.Model.WidthCellIndex,
                         playgroundPresenter.Model.GetCellPresenter(targetTeamPresenter.Model.HeightCellIndex, targetTeamPresenter.Model.WidthCellIndex).Model.CellType,

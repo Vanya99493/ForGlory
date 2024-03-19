@@ -12,7 +12,7 @@ namespace CharacterModule.PresenterPart.BehaviourModule
     {
         public void Start(TeamPresenter teamPresenter, PlaygroundPresenter playgroundPresenter)
         {
-            List<Node> neighborhood = GetNeighborhood(teamPresenter as EnemyTeamPresenter, playgroundPresenter);
+            List<MoveNode> neighborhood = GetNeighborhood(teamPresenter as EnemyTeamPresenter, playgroundPresenter);
 
             if (CheckNeighborhood(neighborhood, playgroundPresenter, out var playerTeamPresenter) &&
                 !playgroundPresenter.Model.GetCellPresenter(playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex).
@@ -24,25 +24,25 @@ namespace CharacterModule.PresenterPart.BehaviourModule
 
             if (Random.Range(0, 2) == 0)
             {
-                Node node;
+                MoveNode moveNode;
                 for (int i = 0; i < 3; i++)
                 {
-                    node = neighborhood[Random.Range(0, neighborhood.Count)];
+                    moveNode = neighborhood[Random.Range(0, neighborhood.Count)];
 
-                    if (!playgroundPresenter.CheckCellOnCharacter(node.HeightIndex, node.WidthIndex) && 
+                    if (!playgroundPresenter.CheckCellOnCharacter(moveNode.HeightIndex, moveNode.WidthIndex) && 
                         ServiceLocator.Instance.GetService<WideSearch>().TryBuildRoute(
-                            new Node(
+                            new MoveNode(
                                 teamPresenter.Model.HeightCellIndex, 
                                 teamPresenter.Model.WidthCellIndex, 
                                 playgroundPresenter.Model.GetCellPresenter(teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex).Model.CellType,
                                 true),
-                            node,
+                            moveNode,
                             playgroundPresenter,
                             true,
                             out var route
                         ))
                     {
-                        teamPresenter.EnterMoveState(playgroundPresenter, node.HeightIndex, node.WidthIndex);
+                        teamPresenter.EnterMoveState(playgroundPresenter, moveNode.HeightIndex, moveNode.WidthIndex);
                         return;
                     }
                 }
@@ -50,11 +50,11 @@ namespace CharacterModule.PresenterPart.BehaviourModule
             teamPresenter.EnterIdleState(playgroundPresenter);
         }
 
-        private List<Node> GetNeighborhood(EnemyTeamPresenter teamPresenter, PlaygroundPresenter playgroundPresenter)
+        private List<MoveNode> GetNeighborhood(EnemyTeamPresenter teamPresenter, PlaygroundPresenter playgroundPresenter)
         {
-            List<Node> neighborhood = ServiceLocator.Instance.GetService<WideSearch>().GetCellsByLength(
+            List<MoveNode> neighborhood = ServiceLocator.Instance.GetService<WideSearch>().GetCellsByLength(
                 ((EnemyTeamModel)teamPresenter.Model).TeamVision, 
-                new Node(
+                new MoveNode(
                     teamPresenter.Model.HeightCellIndex, 
                     teamPresenter.Model.WidthCellIndex, 
                     playgroundPresenter.Model.GetCellPresenter(teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex).Model.CellType,
@@ -67,9 +67,9 @@ namespace CharacterModule.PresenterPart.BehaviourModule
             return neighborhood;
         }
 
-        private bool CheckNeighborhood(List<Node> neighborhood, PlaygroundPresenter playgroundPresenter, out PlayerTeamPresenter targetTeam)
+        private bool CheckNeighborhood(List<MoveNode> neighborhood, PlaygroundPresenter playgroundPresenter, out PlayerTeamPresenter targetTeam)
         {
-            foreach (Node node in neighborhood)
+            foreach (MoveNode node in neighborhood)
             {
                 if (playgroundPresenter.Model.GetCellPresenter(node.HeightIndex, node.WidthIndex).Model
                     .CheckCellOnPlayer(out var playerPresenter) && !playgroundPresenter.Model.GetCellPresenter(
