@@ -114,6 +114,17 @@ namespace LevelModule
             StartStepChangingAction?.Invoke();
 
             _playerTeamPresenter.StartBehave(_playgroundPresenter);
+
+            _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
+        }
+
+        private IEnumerator EnemiesBehaveStarter()
+        {
+            while (_playerTeamPresenter.Model.TeamEnergy != 0 && _playerTeamPresenter.Model.RoutLength != 0)
+            {
+                yield return null;
+            }
+            
             foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
                 enemyTeamPresenter.StartBehave(_playgroundPresenter);
