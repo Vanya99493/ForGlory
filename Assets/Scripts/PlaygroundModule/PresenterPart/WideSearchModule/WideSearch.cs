@@ -35,7 +35,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     continue;
                 }
 
-                if (currentNode.HeightIndex != 0 && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Up) && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex],
                         Direction.Up,
@@ -43,15 +43,14 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     ))
                 {
                     bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].PrevNode = currentNode;
-                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Distance = bfsArray[currentNode.HeightIndex, currentNode.WidthIndex].Distance + 1;
+                    bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Distance = currentNode.Distance + 1;
                     cells.Add(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
                     if (!bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].IsBusy)
                     {
                         bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
                     }
                 }
-                if (currentNode.HeightIndex != bfsArray.GetLength(0) - 1 && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Down) && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex],
                         Direction.Down,
@@ -59,15 +58,14 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     ))
                 {
                     bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited = true;
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].PrevNode = currentNode;
-                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Distance = bfsArray[currentNode.HeightIndex, currentNode.WidthIndex].Distance + 1;
+                    bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Distance = currentNode.Distance + 1;
                     cells.Add(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
                     if (!bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].IsBusy)
                     {
                         bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
                     }
                 }
-                if (currentNode.WidthIndex != 0 && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Left) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1],
                         Direction.Left,
@@ -75,15 +73,14 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     ))
                 {
                     bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].PrevNode = currentNode;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Distance = bfsArray[currentNode.HeightIndex, currentNode.WidthIndex].Distance + 1;
+                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Distance = currentNode.Distance + 1;
                     cells.Add(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
                     if (!bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].IsBusy)
                     {
                         bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
                     }
                 }
-                if (currentNode.WidthIndex != bfsArray.GetLength(1) - 1 && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Right) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1],
                         Direction.Right,
@@ -91,8 +88,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     ))
                 {
                     bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited = true;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].PrevNode = currentNode;
-                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex+ 1].Distance = bfsArray[currentNode.HeightIndex, currentNode.WidthIndex].Distance + 1;
+                    bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Distance = currentNode.Distance + 1;
                     cells.Add(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1]);
                     if (!bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].IsBusy)
                     {
@@ -128,9 +124,10 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     return true;
                 }
 
-                if (currentNode.HeightIndex != 0 && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Up) && !bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex],
+                        targetNode,
                         Direction.Up,
                         considerCharacters
                     ))
@@ -139,9 +136,10 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex].PrevNode = currentNode;
                     bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex - 1, currentNode.WidthIndex]);
                 }
-                if (currentNode.HeightIndex != bfsArray.GetLength(0) - 1 && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Down) && !bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex],
+                        targetNode,
                         Direction.Down,
                         considerCharacters
                     ))
@@ -150,9 +148,10 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex].PrevNode = currentNode;
                     bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex + 1, currentNode.WidthIndex]);
                 }
-                if (currentNode.WidthIndex != 0 && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Left) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1],
+                        targetNode,
                         Direction.Left,
                         considerCharacters
                     ))
@@ -161,9 +160,10 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
                     bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1].PrevNode = currentNode;
                     bfsQueue.Enqueue(bfsArray[currentNode.HeightIndex, currentNode.WidthIndex - 1]);
                 }
-                if (currentNode.WidthIndex != bfsArray.GetLength(1) - 1 && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
+                if (!IsExtreme(currentNode, bfsArray, Direction.Right) && !bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1].Visited && CanMove(
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex],
                         bfsArray[currentNode.HeightIndex, currentNode.WidthIndex + 1],
+                        targetNode,
                         Direction.Right,
                         considerCharacters
                     ))
@@ -195,6 +195,31 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return bfsArray;
         }
 
+        private bool IsExtreme(Node node, Node[,] bfsArray, Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Up:
+                    if (node.HeightIndex == 0)
+                        return true;
+                    break;
+                case Direction.Down:
+                    if (node.HeightIndex == bfsArray.GetLength(0) - 1)
+                        return true;
+                    break;
+                case Direction.Left:
+                    if (node.WidthIndex == 0)
+                        return true;
+                    break;
+                case Direction.Right:
+                    if (node.WidthIndex == bfsArray.GetLength(1) - 1)
+                        return true; 
+                    break;
+            }
+
+            return false;
+        }
+
         private List<Pair<int, int>> BuildRoute(Node startNode, Node lastRouteNode)
         {
             List<Pair<int, int>> route = new List<Pair<int, int>>();
@@ -211,10 +236,19 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             
             return route;
         }
-
+        
         private bool CanMove(Node start, Node target, Direction direction, bool considerCharacters)
         {
-            return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType) && (!target.IsBusy || !considerCharacters);
+            return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType) && 
+                   (!target.IsBusy || !considerCharacters);
         }
+
+        private bool CanMove(Node start, Node target, Node finalTarget, Direction direction, bool considerCharacters)
+        {
+            return _cellDataProvider.GetCellPixelsMoveRoots(start.CellType)[direction].Contains(target.CellType) && 
+                   (!target.IsBusy || (!considerCharacters && IsFinalPoint(target, finalTarget)));
+        }
+
+        private bool IsFinalPoint(Node node, Node finalPoint) => node.HeightIndex == finalPoint.HeightIndex && node.WidthIndex == finalPoint.WidthIndex;
     }
 }
