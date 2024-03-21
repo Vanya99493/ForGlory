@@ -80,11 +80,17 @@ namespace BattleModule.PresenterPart
 
                 if (attackCharacter is PlayerCharacterPresenter)
                 {
-                    while (_clickedCharacter == null)
+                    do
                     {
-                        yield return null;
-                    }
-
+                        _clickedCharacter = null;
+                        while (_clickedCharacter == null)
+                        {
+                            yield return null;
+                        }
+                    } while (_model.EnemyTeam.Model.GetCharacterPresenter(2) != null &&
+                             _clickedCharacter.Model.Id == _model.EnemyTeam.Model.GetCharacterPresenter(2).Model.Id && 
+                             _model.EnemyTeam.Model.GetAliveCharactersCount() != 1);
+                    
                     _clickedCharacter.Model.TakeDamage(attackCharacter.Model.Damage);
                     _clickedCharacter = null;
                     yield return new WaitForSeconds(0.5f);
@@ -98,7 +104,11 @@ namespace BattleModule.PresenterPart
                         do
                         {
                             randomIndex = Random.Range(0, _model.PlayerTeam.Model.CharactersCount);
-                        } while (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex) == null);
+                            
+                        } while (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex) == null || 
+                                 (_model.PlayerTeam.Model.GetCharacterPresenter(2) != null &&
+                                  _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Id == _model.PlayerTeam.Model.GetCharacterPresenter(2).Model.Id && 
+                                  _model.PlayerTeam.Model.GetAliveCharactersCount() != 1));
                         if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
                             break;
                     }

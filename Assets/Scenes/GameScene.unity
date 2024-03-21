@@ -182,11 +182,23 @@ MonoBehaviour:
       LengthOfWaterLine: 10
       LengthOfCoast: 4
     TeamsData:
+      Players: []
       PlayerTeam:
         CharactersData:
         - CharacterData:
             Id: 0
             Name: PlayerMale
+            CurrentHealth: 0
+            MaxHealth: 0
+            MaxEnergy: 0
+            Initiative: 0
+            Damage: 0
+            Vision: 0
+            CharacterType: 0
+          CharacterPrefab: {fileID: 0}
+        - CharacterData:
+            Id: 0
+            Name: PlayerFemale
             CurrentHealth: 0
             MaxHealth: 0
             MaxEnergy: 0

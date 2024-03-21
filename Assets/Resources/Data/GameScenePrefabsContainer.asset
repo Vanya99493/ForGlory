@@ -21,7 +21,7 @@ MonoBehaviour:
       CurrentHealth: -1
       MaxHealth: 100
       MaxEnergy: 5
-      Initiative: 7
+      Initiative: 5
       Damage: 35
       Vision: 0
       CharacterType: 0
@@ -32,7 +32,7 @@ MonoBehaviour:
       CurrentHealth: -1
       MaxHealth: 125
       MaxEnergy: 4
-      Initiative: 5
+      Initiative: 7
       Damage: 25
       Vision: 0
       CharacterType: 0

@@ -137,6 +137,20 @@ namespace CharacterModule.ModelPart
             return characters;
         }
 
+        public int GetAliveCharactersCount()
+        {
+            int aliveCharactersCount = 0;
+
+            if (_leftVanguard != null)
+                aliveCharactersCount++;
+            if (_rightVanguard != null)
+                aliveCharactersCount++;
+            if (_rearguard != null)
+                aliveCharactersCount++;
+
+            return aliveCharactersCount;
+        }
+
         public void SwitchMoveState()
         {
             MoveState = !MoveState;
