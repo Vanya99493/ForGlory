@@ -1,18 +1,32 @@
-﻿using CharacterModule.PresenterPart;
+﻿using System.Collections.Generic;
+using CharacterModule.PresenterPart;
 
 namespace CharacterModule.ModelPart
 {
     public class EnemyTeamModel : TeamModel
     {
         public int TeamVision { get; private set; }
-        
-        public EnemyTeamModel(int heightCellIndex, int widthCellIndex, CharacterPresenter[] enemies) : base(enemies, heightCellIndex, widthCellIndex)
+
+        public EnemyTeamModel(int heightCellIndex, int widthCellIndex) : base(heightCellIndex, widthCellIndex)
         {
-            TeamVision = ((EnemyCharacterModel)enemies[0].Model).MaxVision;
-            for (int i = 0; i < enemies.Length; i++)
+        }
+
+        public void SetVision()
+        {
+            List<CharacterPresenter> characters = new List<CharacterPresenter>();
+
+            if(_leftVanguard != null)
+                characters.Add(_leftVanguard);
+            if(_rightVanguard != null)
+                characters.Add(_rightVanguard);
+            if(_rearguard != null)
+                characters.Add(_rearguard);
+
+            TeamVision = ((EnemyCharacterModel)characters[0].Model).MaxVision;
+            foreach (var character in characters)
             {
-                if (((EnemyCharacterModel)enemies[i].Model).MaxVision > TeamVision)
-                    TeamVision = ((EnemyCharacterModel)enemies[0].Model).MaxVision;
+                if (((EnemyCharacterModel)character.Model).MaxVision > TeamVision)
+                    TeamVision = ((EnemyCharacterModel)character.Model).MaxVision;
             }
         }
     }

@@ -20,10 +20,12 @@ namespace CharacterModule.ModelPart
         private float _speed = 4f;
         private Queue<Pair<int, int>> _route;
         private int _teamEnergy;
-        private CharacterPresenter[] _characters;
+        protected CharacterPresenter _leftVanguard;
+        protected CharacterPresenter _rightVanguard;
+        protected CharacterPresenter _rearguard;
 
+        public int CharactersCount => 3;
         public int RoutLength => _route.Count;
-        public int CharactersCount => _characters.Length;
         
         public bool MoveState { get; private set; }
         public bool CanMove { get; private set; }
@@ -31,29 +33,109 @@ namespace CharacterModule.ModelPart
         public int WidthCellIndex { get; private set; }
         public int TeamEnergy { get; private set; }
 
-        protected TeamModel(CharacterPresenter[] characters, int heightCellIndex, int widthCellIndex)
+        protected TeamModel(int heightCellIndex, int widthCellIndex)
         {
             HeightCellIndex = heightCellIndex;
             WidthCellIndex = widthCellIndex;
             MoveState = false;
             CanMove = true;
+            _route = new Queue<Pair<int, int>>();
+        }
 
-            _teamEnergy = characters[0].Model.MaxEnergy;
-            _characters = new CharacterPresenter[characters.Length];
-            for (int i = 0; i < characters.Length; i++)
+        public void SetCharacters(CharacterPresenter[] characters)
+        {
+            if (characters.Length == 0)
+                throw new Exception("Characters length can not be zero");
+
+            if (characters.Length > 0)
             {
-                _characters[i] = characters[i];
-                if (_characters[i].Model.MaxEnergy < _teamEnergy)
-                    _teamEnergy = _characters[i].Model.MaxEnergy;
-                //_characters[i].DeathAction += OnKillCharacter;
+                _leftVanguard = characters[0];
+                _leftVanguard.DeathAction += OnKillCharacter;
             }
 
-            _route = new Queue<Pair<int, int>>();
+            if (characters.Length > 1)
+            {
+                _rightVanguard = characters[1];
+                _rightVanguard.DeathAction += OnKillCharacter;
+            }
+
+            if (characters.Length > 2)
+            {
+                _rearguard = characters[2];
+                _rearguard.DeathAction += OnKillCharacter;
+            }
             
+            _teamEnergy = characters[0].Model.MaxEnergy;
+            for (int i = 0; i < characters.Length; i++)
+            {
+                if (characters[i].Model.MaxEnergy < _teamEnergy)
+                    _teamEnergy = characters[i].Model.MaxEnergy;
+            }
             TeamEnergy = _teamEnergy;
         }
 
-        public CharacterPresenter GetCharacterPresenter(int index) => _characters[index];
+        public void SetCharacters(CharacterPresenter leftVanguard, CharacterPresenter rightVanguard, CharacterPresenter rearguard)
+        {
+            _leftVanguard = leftVanguard;
+            _rightVanguard = rightVanguard;
+            _rearguard = rearguard;
+
+            List<CharacterPresenter> characters = new List<CharacterPresenter>();
+
+            if (leftVanguard != null)
+            {
+                characters.Add(leftVanguard);
+                _leftVanguard = leftVanguard;
+                _leftVanguard.DeathAction += OnKillCharacter;
+            }
+            if (rightVanguard != null)
+            {
+                characters.Add(rightVanguard);
+                _rightVanguard = rightVanguard;
+                _rightVanguard.DeathAction += OnKillCharacter;
+            }
+            if (rearguard != null)
+            {
+                characters.Add(rearguard);
+                _rearguard = rearguard;
+                _rearguard.DeathAction += OnKillCharacter;
+            }
+            
+            _teamEnergy = characters[0].Model.MaxEnergy;
+            foreach (var character in characters)
+            {
+                if (character.Model.MaxEnergy < _teamEnergy)
+                    _teamEnergy = character.Model.MaxEnergy;
+            }
+            TeamEnergy = _teamEnergy;
+        }
+
+        public CharacterPresenter GetCharacterPresenter(int index)
+        {
+            switch (index)
+            {
+                case 0: return _leftVanguard;
+                case 1: return _rightVanguard;
+                case 2: return _rearguard;
+                default: 
+                    Debug.Log($"Cannot get character by index {index}");
+                    return null;
+            }
+        }
+
+        public List<CharacterPresenter> GetCharacters()
+        {
+            List<CharacterPresenter> characters = new List<CharacterPresenter>();
+            
+            if (_leftVanguard != null)
+                characters.Add(_leftVanguard);
+            if (_rightVanguard != null)
+                characters.Add(_rightVanguard);
+            if (_rearguard != null)
+                characters.Add(_rearguard);
+
+            return characters;
+        }
 
         public void SwitchMoveState()
         {
@@ -149,18 +231,12 @@ namespace CharacterModule.ModelPart
 
         private void OnKillCharacter(int id)
         {
-            CharacterPresenter[] newCharacters = new CharacterPresenter[_characters.Length - 1];
-
-            for (int i = 0, k = 0; i < _characters.Length; i++)
-            {
-                if (_characters[i].Model.Id != id)
-                {
-                    newCharacters[k] = _characters[i];
-                    k++;
-                }
-            }
-
-            _characters = newCharacters;
+            if (_leftVanguard?.Model.Id == id)
+                _leftVanguard = null;
+            if (_rightVanguard?.Model.Id == id)
+                _rightVanguard = null;
+            if (_rearguard?.Model.Id == id)
+                _rearguard = null;
         }
     }
 }

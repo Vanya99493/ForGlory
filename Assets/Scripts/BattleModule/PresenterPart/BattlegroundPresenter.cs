@@ -95,7 +95,10 @@ namespace BattleModule.PresenterPart
                     int randomIndex;
                     while (true)
                     {
-                        randomIndex = Random.Range(0, _model.PlayerTeam.Model.CharactersCount);
+                        do
+                        {
+                            randomIndex = Random.Range(0, _model.PlayerTeam.Model.CharactersCount);
+                        } while (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex) == null);
                         if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
                             break;
                     }
@@ -127,12 +130,20 @@ namespace BattleModule.PresenterPart
         {
             List<CharacterPresenter> list = new List<CharacterPresenter>();
             for (int i = 0; i < _model.PlayerTeam.Model.CharactersCount; i++)
+            {
+                if (_model.PlayerTeam.Model.GetCharacterPresenter(i) == null)
+                    continue;
                 list.Add(_model.PlayerTeam.Model.GetCharacterPresenter(i));
+            }
 
             for (int i = 0; i < _model.EnemyTeam.Model.CharactersCount; i++)
+            {
+                if (_model.EnemyTeam.Model.GetCharacterPresenter(i) == null)
+                    continue;
                 list.Add(_model.EnemyTeam.Model.GetCharacterPresenter(i));
+            }
             
-            list.Sort((first, second) => first.Model.Initiative.CompareTo(second.Model.Initiative));
+            list.Sort((first, second) => second.Model.Initiative.CompareTo(first.Model.Initiative));
 
             Queue<CharacterPresenter> attackQueue = new Queue<CharacterPresenter>();
             foreach (CharacterPresenter characterPresenter in list)
@@ -145,11 +156,11 @@ namespace BattleModule.PresenterPart
 
         private bool IsTeamAlive(TeamPresenter team)
         {
-            for (int i = 0; i < team.Model.CharactersCount; i++)
-            {
-                if (team.Model.GetCharacterPresenter(i).Model.Health > 0)
+            var characters = team.Model.GetCharacters();
+
+            foreach (var character in characters)
+                if (character.Model.Health > 0)
                     return true;
-            }
 
             return false;
         }
@@ -163,9 +174,11 @@ namespace BattleModule.PresenterPart
 
         private void SubscribeOnClickActions()
         {
-            for (int i = 0; i < _model.EnemyTeam.Model.CharactersCount; i++)
+            var characters = _model.EnemyTeam.Model.GetCharacters();
+
+            foreach (var character in characters)
             {
-                _model.EnemyTeam.Model.GetCharacterPresenter(i).ClickedAction += OnClickEnemy;
+                character.ClickedAction += OnClickEnemy;
             }
         }
 
@@ -178,9 +191,11 @@ namespace BattleModule.PresenterPart
 
         private void UnsubscribeOnClickActions()
         {
-            for (int i = 0; i < _model.EnemyTeam.Model.CharactersCount; i++)
+            var characters = _model.EnemyTeam.Model.GetCharacters();
+
+            foreach (var character in characters)
             {
-                _model.EnemyTeam.Model.GetCharacterPresenter(i).ClickedAction -= OnClickEnemy;
+                character.ClickedAction -= OnClickEnemy;
             }
         }
 

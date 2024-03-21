@@ -32,7 +32,9 @@ namespace CharacterModule.PresenterPart.FactoryModule
         {
             for (int i = 0; i < teamPresenter.Model.CharactersCount; i++)
             {
-                var character = teamPresenter.Model.GetCharacterPresenter(i).View;
+                var character = teamPresenter.Model.GetCharacterPresenter(i)?.View;
+                if (character == null)
+                    continue;
                 character.transform.localScale = new Vector3(
                     character.transform.localScale.x * 1.5f,
                     character.transform.localScale.y * 1.5f,
@@ -45,7 +47,9 @@ namespace CharacterModule.PresenterPart.FactoryModule
         {
             for (int i = 0; i < teamPresenter.Model.CharactersCount; i++)
             {
-                var character = teamPresenter.Model.GetCharacterPresenter(i).View;
+                var character = teamPresenter.Model.GetCharacterPresenter(i)?.View;
+                if (character == null)
+                    continue;
                 character.transform.localScale = new Vector3(
                     character.transform.localScale.x / 1.5f,
                     character.transform.localScale.y / 1.5f,
@@ -58,7 +62,10 @@ namespace CharacterModule.PresenterPart.FactoryModule
         {
             for (int i = 0; i < teamPresenter.Model.CharactersCount; i++)
             {
-                teamPresenter.Model.GetCharacterPresenter(i).View.transform.position = 
+                var character = teamPresenter.Model.GetCharacterPresenter(i);
+                if (character == null)
+                    continue;
+                character.View.transform.position = 
                     teamPresenter.View.characterPositions[i].position;
             }
         }

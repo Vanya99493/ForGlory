@@ -9,6 +9,11 @@ namespace CharacterModule.ViewPart
     {
         public event Action ClickedAction;
         public event Action<CharacterView> Destroy;
+
+        public void HideView()
+        {
+            gameObject.SetActive(false);
+        }
         
         public void DestroyView()
         {

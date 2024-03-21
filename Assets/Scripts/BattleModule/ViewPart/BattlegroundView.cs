@@ -19,12 +19,18 @@ namespace BattleModule.ViewPart
         {
             for (int i = 0; i < players.Model.CharactersCount; i++)
             {
-                players.Model.GetCharacterPresenter(i).View.transform.position = playerSidePositions[i].position;
+                var player = players.Model.GetCharacterPresenter(i);
+                if (player == null)
+                    continue;
+                player.View.transform.position = playerSidePositions[i].position;
             }
 
             for (int i = 0; i < enemies.Model.CharactersCount; i++)
             {
-                enemies.Model.GetCharacterPresenter(i).View.transform.position = enemiesSidePositions[i].position;
+                var enemy = enemies.Model.GetCharacterPresenter(i);
+                if (enemy == null)
+                    continue;
+                enemy.View.transform.position = enemiesSidePositions[i].position;
             }
         }
 

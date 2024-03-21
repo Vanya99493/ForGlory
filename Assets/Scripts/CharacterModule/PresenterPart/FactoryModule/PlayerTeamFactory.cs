@@ -37,7 +37,8 @@ namespace CharacterModule.PresenterPart.FactoryModule
                     );
             }
             
-            TeamModel teamModel = new PlayerTeamModel(teamData.HeightCellIndex, teamData.WidthCellIndex, instantiatedCharacters);
+            TeamModel teamModel = new PlayerTeamModel(teamData.HeightCellIndex, teamData.WidthCellIndex);
+            teamModel.SetCharacters(instantiatedCharacters);
             TeamPresenter teamPresenter = new PlayerTeamPresenter(teamModel, teamView, playerBehaviour as PlayerBehaviour);
             
             DownScaleTeam(teamPresenter);

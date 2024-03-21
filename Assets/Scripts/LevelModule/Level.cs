@@ -70,7 +70,7 @@ namespace LevelModule
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
             (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
-                CreatePlayground(levelData.PlaygroundData);
+                CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.Players);
             
             CreateBattleground();
 
@@ -160,26 +160,32 @@ namespace LevelModule
             _isStepChanging = false;
         }
         
-        private (int, int) CreatePlayground(PlaygroundData emptyPlaygroundData)
+        private (int, int) CreatePlayground(PlaygroundData playgroundData, CharacterFullData[] playersData)
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel();
             _playgroundPresenter = new PlaygroundPresenter(model, view, _cellDataProvider);
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, emptyPlaygroundData.Height, emptyPlaygroundData.Width, 
-                emptyPlaygroundData.LengthOfWaterLine, emptyPlaygroundData.LengthOfCoast, 
-                emptyPlaygroundData.Height * 1f, emptyPlaygroundData.Width * 1f, _cellDataProvider, 
+            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, playgroundData.Height, playgroundData.Width, 
+                playgroundData.LengthOfWaterLine, playgroundData.LengthOfCoast, 
+                playgroundData.Height * 1f, playgroundData.Width * 1f, _cellDataProvider, 
                 OnMoveCellClicked, OnCellClicked, 
                 (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
 
-            return CreateCastle();
+            return CreateCastle(playersData);
         }
 
-        private (int, int) CreateCastle()
+        private (int, int) CreateCastle(CharacterFullData[] playersData)
         {
             (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
 
-            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex);
+            PlayerCharacterPresenter[] players = new PlayerCharacterPresenter[playersData.Length];
+            for (int i = 0; i < playersData.Length; i++)
+            {
+                
+            }
+            
+            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex, players);
             CastleView view = new CastleFactory().InstantiateCastle(_gameScenePrefabsProvider.GetCastleView(), _playgroundPresenter.View.transform);
             CastlePresenter presenter = new CastlePresenter(model, view);
             _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.SetCastleOnCell(presenter);
