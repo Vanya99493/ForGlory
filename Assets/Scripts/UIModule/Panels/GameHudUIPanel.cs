@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace UIModule.Panels
 {
-    public class GameHudPanel : BasePanel
+    public class GameHudUIPanel : BaseUIPanel
     {
         public event Action ExitToMainMenuAction;
         public event Action NextStepAction;

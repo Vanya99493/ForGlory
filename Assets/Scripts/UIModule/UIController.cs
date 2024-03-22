@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using Infrastructure.ServiceLocatorModule;
 using UIModule.Panels;
 using UIModule.Panels.Base;
+using UIModule.Panels.BattleHudModule;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UIModule
 {
     public class UIController : MonoBehaviour, IService
     {
-        public MainMenuPanel mainMenuPanel;
-        public GameHudPanel gameHudPanel;
-        public BattleHudPanel battleHudPanel;
-        public GameOverMenuPanel gameOverMenuPanel;
-        public CastleMenuPanel castleMenuPanel;
+        public MainMenuUIPanel mainMenuUIPanel;
+        public GameHudUIPanel gameHudUIPanel;
+        public BattleHudUIPanel battleHudUIPanel;
+        public GameOverMenuUIPanel gameOverMenuUIPanel;
+        public CastleMenuUIPanel castleMenuUIPanel;
         
-        private Dictionary<Type, BasePanel> _panels;
-        private BasePanel _currentPanel;
+        private Dictionary<Type, BaseUIPanel> _panels;
+        private BaseUIPanel _currentUIPanel;
 
         private void Awake()
         {
-            _panels = new Dictionary<Type, BasePanel>
+            _panels = new Dictionary<Type, BaseUIPanel>
             {
-                { mainMenuPanel.GetType(), mainMenuPanel },
-                { gameHudPanel.GetType(), gameHudPanel },
-                { battleHudPanel.GetType(), battleHudPanel },
-                { gameOverMenuPanel.GetType(), gameOverMenuPanel },
-                { castleMenuPanel.GetType(), castleMenuPanel }
+                { mainMenuUIPanel.GetType(), mainMenuUIPanel },
+                { gameHudUIPanel.GetType(), gameHudUIPanel },
+                { battleHudUIPanel.GetType(), battleHudUIPanel },
+                { gameOverMenuUIPanel.GetType(), gameOverMenuUIPanel },
+                { castleMenuUIPanel.GetType(), castleMenuUIPanel }
             };
             
             foreach (var panel in _panels)
@@ -35,18 +37,18 @@ namespace UIModule
             }
         }
 
-        public void ActivateMainMenu() => ActivatePanel<MainMenuPanel>();
-        public void ActivateGameHud() => ActivatePanel<GameHudPanel>();
-        public void ActivateBattleHud() => ActivatePanel<BattleHudPanel>();
-        public void ActivateGameOverMenu() => ActivatePanel<GameOverMenuPanel>();
-        public void ActivateCastleMenuPanel() => ActivatePanel<CastleMenuPanel>();
+        public void ActivateMainMenu() => ActivatePanel<MainMenuUIPanel>();
+        public void ActivateGameHud() => ActivatePanel<GameHudUIPanel>();
+        public void ActivateBattleHud() => ActivatePanel<BattleHudUIPanel>();
+        public void ActivateGameOverMenu() => ActivatePanel<GameOverMenuUIPanel>();
+        public void ActivateCastleMenuUIPanel() => ActivatePanel<CastleMenuUIPanel>();
         //public void ActivatePause() => ActivatePanel<PauseMenuPanel>();
         
-        private void ActivatePanel<TPanel>() where TPanel : BasePanel
+        private void ActivatePanel<TPanel>() where TPanel : BaseUIPanel
         {
-            _currentPanel?.Exit();
-            _currentPanel = _panels[typeof(TPanel)];
-            _currentPanel.Enter();
+            _currentUIPanel?.Exit();
+            _currentUIPanel = _panels[typeof(TPanel)];
+            _currentUIPanel.Enter();
         }
     }
 }

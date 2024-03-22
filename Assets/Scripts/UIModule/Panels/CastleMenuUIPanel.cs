@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace UIModule.Panels
 {
-    public class CastleMenuPanel : BasePanel
+    public class CastleMenuUIPanel : BaseUIPanel
     {
         public event Action ExitCastleAction;
 

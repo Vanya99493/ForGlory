@@ -33,13 +33,17 @@ namespace BattleModule.PresenterPart
         {
             bool isWin = true;
             
+            var uiController = ServiceLocator.Instance.GetService<UIController>();
+            
             if (teams[0] is PlayerTeamPresenter)
             {
                 _model.SetTeams(teams[0] as PlayerTeamPresenter, teams[1] as EnemyTeamPresenter);
+                uiController.battleHudUIPanel.SubscribeInfoPanel(teams[0] as PlayerTeamPresenter, teams[1] as EnemyTeamPresenter);
             }
             else
             {
                 _model.SetTeams(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
+                uiController.battleHudUIPanel.SubscribeInfoPanel(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
             }
             
             _model.PlayerTeam.View.Rotate(Direction.Right);
@@ -72,13 +76,13 @@ namespace BattleModule.PresenterPart
             //while (_model.PlayerTeam.Model.CharactersCount > 0 && _model.EnemyTeam.Model.CharactersCount > 0 && attackQueue.Count > 0)
             while (IsTeamAlive(_model.PlayerTeam) && IsTeamAlive(_model.EnemyTeam) && attackQueue.Count > 0)
             {
-                CharacterPresenter attackCharacter = attackQueue.Dequeue();
-                if (attackCharacter.Model.Health <= 0)
+                CharacterPresenter attackingCharacter = attackQueue.Dequeue();
+                if (attackingCharacter.Model.Health <= 0)
                     continue;
                 
-                _view.SetAttackPosition(attackCharacter);
+                _view.SetAttackPosition(attackingCharacter);
 
-                if (attackCharacter is PlayerCharacterPresenter)
+                if (attackingCharacter is PlayerCharacterPresenter)
                 {
                     do
                     {
@@ -90,12 +94,29 @@ namespace BattleModule.PresenterPart
                     } while (_model.EnemyTeam.Model.GetCharacterPresenter(2) != null &&
                              _clickedCharacter.Model.Id == _model.EnemyTeam.Model.GetCharacterPresenter(2).Model.Id && 
                              _model.EnemyTeam.Model.GetAliveCharactersCount() != 1);
+
+                    int enemyIndex = -1;
+
+                    for (int i = 0; i < _model.EnemyTeam.Model.CharactersCount; i++)
+                    {
+                        var enemy = _model.EnemyTeam.Model.GetCharacterPresenter(i);
+                        if (enemy != null && enemy.Model.Id == _clickedCharacter.Model.Id)
+                        {
+                            enemyIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (enemyIndex == -1)
+                        throw new Exception("Impossible clicked character");
                     
-                    _clickedCharacter.Model.TakeDamage(attackCharacter.Model.Damage);
+                    _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex);
+                    yield return new WaitForSeconds(0.5f);
+                    _clickedCharacter.Model.TakeDamage(attackingCharacter.Model.Damage);
                     _clickedCharacter = null;
                     yield return new WaitForSeconds(0.5f);
                 }
-                else if (attackCharacter is EnemyCharacterPresenter)
+                else if (attackingCharacter is EnemyCharacterPresenter)
                 {
                     yield return new WaitForSeconds(1f);
                     int randomIndex;
@@ -104,7 +125,6 @@ namespace BattleModule.PresenterPart
                         do
                         {
                             randomIndex = Random.Range(0, _model.PlayerTeam.Model.CharactersCount);
-                            
                         } while (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex) == null || 
                                  (_model.PlayerTeam.Model.GetCharacterPresenter(2) != null &&
                                   _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Id == _model.PlayerTeam.Model.GetCharacterPresenter(2).Model.Id && 
@@ -112,12 +132,14 @@ namespace BattleModule.PresenterPart
                         if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
                             break;
                     }
-                    _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackCharacter.Model.Damage);
-                    yield return new WaitForSeconds(1f);
+                    _view.SetAttackPlayerPosition(attackingCharacter, randomIndex);
+                    yield return new WaitForSeconds(0.5f);
+                    _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackingCharacter.Model.Damage);
+                    yield return new WaitForSeconds(0.5f);
                 }
                 
-                _view.ResetAttackPosition(attackCharacter);
-                attackQueue.Enqueue(attackCharacter);
+                _view.ResetAttackPosition(attackingCharacter);
+                attackQueue.Enqueue(attackingCharacter);
                 
                 yield return new WaitForSeconds(0.5f);
             }
@@ -178,8 +200,8 @@ namespace BattleModule.PresenterPart
         private void SubscribeUIActions()
         {
             var uiController = ServiceLocator.Instance.GetService<UIController>();
-            uiController.battleHudPanel.AvoidAction += OnAvoidBattle;
-            uiController.battleHudPanel.WinAction += OnWinBattle;
+            uiController.battleHudUIPanel.AvoidAction += OnAvoidBattle;
+            uiController.battleHudUIPanel.WinAction += OnWinBattle;
         }
 
         private void SubscribeOnClickActions()
@@ -195,8 +217,8 @@ namespace BattleModule.PresenterPart
         private void UnsubscribeUIActions()
         {
             var uiController = ServiceLocator.Instance.GetService<UIController>();
-            uiController.battleHudPanel.AvoidAction -= OnAvoidBattle;
-            uiController.battleHudPanel.WinAction -= OnWinBattle;
+            uiController.battleHudUIPanel.AvoidAction -= OnAvoidBattle;
+            uiController.battleHudUIPanel.WinAction -= OnWinBattle;
         }
 
         private void UnsubscribeOnClickActions()

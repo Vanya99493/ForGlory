@@ -46,10 +46,10 @@ namespace Infrastructure
 
         private void InitializeUIActions(UIController uiController)
         {
-            uiController.mainMenuPanel.StartGameAction += StartNewLevel;
-            uiController.mainMenuPanel.EndGameAction += Application.Quit;
-            uiController.gameHudPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
-            uiController.gameOverMenuPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
+            uiController.mainMenuUIPanel.StartGameAction += StartNewLevel;
+            uiController.mainMenuUIPanel.EndGameAction += Application.Quit;
+            uiController.gameHudUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
+            uiController.gameOverMenuUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(null);
         }
 
         private void StartNewLevel()

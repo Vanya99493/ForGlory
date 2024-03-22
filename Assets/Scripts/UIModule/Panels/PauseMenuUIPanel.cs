@@ -4,7 +4,7 @@ using UIModule.Panels.Base;
 
 namespace UIModule.Panels
 {
-    public class PauseMenuPanel : BasePanel
+    public class PauseMenuUIPanel : BaseUIPanel
     {
         protected override void SubscribeActions()
         {

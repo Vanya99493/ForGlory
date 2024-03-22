@@ -8,10 +8,12 @@ namespace BattleModule.ViewPart
     public class BattlegroundView : MonoBehaviour, ICoroutineRunner
     {
         public event Action<BattlegroundView> Destroy;
-
+        
         [SerializeField] private Transform[] playerSidePositions;
         [SerializeField] private Transform[] enemiesSidePositions;
         [SerializeField] private Transform attackStepPosition;
+        [SerializeField] private Transform[] attackPlayersPositions;
+        [SerializeField] private Transform[] attackEnemiesPositions;
 
         private Vector3 _lastPosition;
 
@@ -34,15 +36,25 @@ namespace BattleModule.ViewPart
             }
         }
 
-        public void SetAttackPosition(CharacterPresenter attackCharacter)
+        public void SetAttackPosition(CharacterPresenter attackingCharacter)
         {
-            _lastPosition = attackCharacter.View.transform.position;
-            attackCharacter.View.transform.position = attackStepPosition.position;
+            _lastPosition = attackingCharacter.View.transform.position;
+            attackingCharacter.View.transform.position = attackStepPosition.position;
         }
 
-        public void ResetAttackPosition(CharacterPresenter attackCharacter)
+        public void SetAttackPlayerPosition(CharacterPresenter attackingCharacter, int attackedPlayerNumber)
         {
-            attackCharacter.View.transform.position = _lastPosition;
+            attackingCharacter.View.transform.position = attackPlayersPositions[attackedPlayerNumber].position;
+        }
+
+        public void SetAttackEnemyPosition(CharacterPresenter attackingCharacter, int attackedEnemyNumber)
+        {
+            attackingCharacter.View.transform.position = attackEnemiesPositions[attackedEnemyNumber].position;
+        }
+
+        public void ResetAttackPosition(CharacterPresenter attackingCharacter)
+        {
+            attackingCharacter.View.transform.position = _lastPosition;
             _lastPosition = new Vector3(0, 0, 0);
         }
 

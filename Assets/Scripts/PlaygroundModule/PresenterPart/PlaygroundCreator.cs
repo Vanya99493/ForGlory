@@ -404,7 +404,7 @@ namespace PlaygroundModule.PresenterPart
             foreach (var zone in zones)
             {
                 continentSize += zone.Value;
-                Debug.Log($"Zone {zone.Key}; cells: {zone.Value}");
+                //Debug.Log($"Zone {zone.Key}; cells: {zone.Value}");
             }
 
             foreach (var zone in zones)

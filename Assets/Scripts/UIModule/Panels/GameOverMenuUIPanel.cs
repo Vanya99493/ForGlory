@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace UIModule.Panels
 {
-    public class GameOverMenuPanel : BasePanel
+    public class GameOverMenuUIPanel : BaseUIPanel
     {
         public event Action ExitToMainMenuAction;
 

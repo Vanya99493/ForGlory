@@ -199,12 +199,12 @@ namespace LevelModule
 
         private void OnEnterCastle()
         {
-            ServiceLocator.Instance.GetService<UIController>().gameHudPanel.ShowEnterButton();
+            ServiceLocator.Instance.GetService<UIController>().gameHudUIPanel.ShowEnterButton();
         }
 
         private void OnExitCastle()
         {
-            ServiceLocator.Instance.GetService<UIController>().gameHudPanel.HideEnterButton();
+            ServiceLocator.Instance.GetService<UIController>().gameHudUIPanel.HideEnterButton();
         }
 
         private void CreateBattleground()
