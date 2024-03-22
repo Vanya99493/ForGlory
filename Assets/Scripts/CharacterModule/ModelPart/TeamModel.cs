@@ -199,6 +199,12 @@ namespace CharacterModule.ModelPart
             while (_route.Count > 0 && TeamEnergy > 0)
             {
                 Pair<int, int> checkPoint = _route.Dequeue();
+                if (playgroundPresenter.CheckCellOnCharacter(checkPoint.FirstValue, checkPoint.SecondValue) &&
+                    _route.Count != 0)
+                {
+                    _route.Clear();
+                    break;
+                }
                 if (playgroundPresenter.PreSetCharacterOnCell(teamPresenter, checkPoint.FirstValue, checkPoint.SecondValue) == false)
                 {
                     _route.Clear();
