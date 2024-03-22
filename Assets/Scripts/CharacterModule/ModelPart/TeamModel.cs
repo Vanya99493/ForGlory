@@ -198,7 +198,7 @@ namespace CharacterModule.ModelPart
         {
             while (_route.Count > 0 && TeamEnergy > 0)
             {
-                Pair<int, int> checkPoint = _route.Dequeue();
+                Pair<int, int> checkPoint = _route.Peek();
                 if (playgroundPresenter.CheckCellOnCharacter(checkPoint.FirstValue, checkPoint.SecondValue) &&
                     _route.Count != 0)
                 {
@@ -211,7 +211,6 @@ namespace CharacterModule.ModelPart
                     break;
                 }
                 playgroundPresenter.RemoveCharacterFromCell(teamPresenter, HeightCellIndex, WidthCellIndex);
-                TeamEnergy--;
 
                 Direction direction = HeightCellIndex - checkPoint.FirstValue == 0
                     ?
@@ -241,6 +240,8 @@ namespace CharacterModule.ModelPart
                 WidthCellIndex = checkPoint.SecondValue;
                 
                 playgroundPresenter.SetCharacterOnCell(teamPresenter, HeightCellIndex, WidthCellIndex);
+                _route.Dequeue();
+                TeamEnergy--;
             }
 
             SwitchMoveState();

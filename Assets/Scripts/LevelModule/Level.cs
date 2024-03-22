@@ -50,6 +50,7 @@ namespace LevelModule
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
         private bool _isStepChanging;
+        private bool _isWaitingOnEndStepChanging;
 
         private int _enemiesStepCounter;
         private int _playerStepCounter;
@@ -67,6 +68,7 @@ namespace LevelModule
         public void StartLevel(LevelData levelData)
         {
             _isStepChanging = false;
+            _isWaitingOnEndStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
             (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
@@ -113,24 +115,37 @@ namespace LevelModule
             _isStepChanging = true;
             StartStepChangingAction?.Invoke();
 
-            _playerTeamPresenter.StartBehave(_playgroundPresenter);
+            _playgroundPresenter.DeactivateCells();
+            
+            _coroutineRunner.StartCoroutine(StepBehaveStarter());
+        }
 
-            _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
+        private IEnumerator StepBehaveStarter()
+        {
+            _playerTeamPresenter.StartBehave(_playgroundPresenter);
+            
+            if (_playerTeamPresenter.Model.RoutLength > 0)
+            {
+                while (_playerTeamPresenter.Model.TeamEnergy != 0 && _playerTeamPresenter.Model.RoutLength != 0)
+                    yield return null;
+
+                if (_playerTeamPresenter.Model.TeamEnergy > 0 || _isWaitingOnEndStepChanging)
+                    EndStepChanging();
+                else
+                    _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
+            }
+            else
+                _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
         }
 
         private IEnumerator EnemiesBehaveStarter()
         {
-            while (_playerTeamPresenter.Model.TeamEnergy != 0 && _playerTeamPresenter.Model.RoutLength != 0)
-            {
-                yield return null;
-            }
+            yield return new WaitForSeconds(0.5f);
             
             foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
                 enemyTeamPresenter.StartBehave(_playgroundPresenter);
             }
-            
-            _playgroundPresenter.DeactivateCells();
 
             _coroutineRunner.StartCoroutine(BlockCoroutine());
         }
@@ -155,8 +170,13 @@ namespace LevelModule
                 enemyTeamPresenter.Model.ResetEnergy();
                 enemyTeamPresenter.Model.ResetMovementSettings();
             }
+
+            EndStepChanging();
+        }
+
+        private void EndStepChanging()
+        {
             EndStepChangingAction?.Invoke();
-            
             _isStepChanging = false;
         }
         
@@ -393,10 +413,14 @@ namespace LevelModule
 
         private IEnumerator WaitOnEndStepChanging(List<TeamPresenter> teams)
         {
+            _isWaitingOnEndStepChanging = true;
+            
             while (_isStepChanging)
             {
                 yield return null;
             }
+
+            _isWaitingOnEndStepChanging = false;
             OnTeamsCollision(teams);
         }
 
