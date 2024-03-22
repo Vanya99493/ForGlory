@@ -4,13 +4,14 @@ using BattleModule.ViewPart;
 using CastleModule.ViewPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.ViewPart;
+using Infrastructure.ServiceLocatorModule;
 using ScriptableObjects;
 using UnityEngine;
 
 namespace Infrastructure.Providers
 {
     [Serializable]
-    public class GameScenePrefabsProvider
+    public class GameScenePrefabsProvider : IService
     {
         [SerializeField] private GameScenePrefabsContainer gameScenePrefabsContainer;
 

@@ -9,7 +9,7 @@ namespace UIModule.Panels.BattleHudModule
         private GridLayoutGroup _gridLayoutGroup;
         private float _standartSize;
 
-        private void Awake()
+        public void Initialize()
         {
             _gridLayoutGroup = gameObject.GetComponent<GridLayoutGroup>();
             _standartSize = _gridLayoutGroup.cellSize.x;

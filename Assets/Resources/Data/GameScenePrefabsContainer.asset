@@ -25,6 +25,7 @@ MonoBehaviour:
       Damage: 35
       Vision: 0
       CharacterType: 0
+      Icon: {fileID: 1770688426668741574, guid: 28bb55d6e1ca8b14ba61658ab4a3e341, type: 3}
     CharacterPrefab: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
   - CharacterData:
       Id: 0
@@ -36,6 +37,7 @@ MonoBehaviour:
       Damage: 25
       Vision: 0
       CharacterType: 0
+      Icon: {fileID: 1756494856608997511, guid: d119adc08a0cd6740b1cc01ad0e202fe, type: 3}
     CharacterPrefab: {fileID: 73327585664465529, guid: f32108651fa934b42b52a4caed809307, type: 3}
   - CharacterData:
       Id: 0
@@ -47,6 +49,7 @@ MonoBehaviour:
       Damage: 5
       Vision: 2
       CharacterType: 1
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 5774848599246418716, guid: 69bf79eb2ce1fdb4cb0e1d4429b4e460, type: 3}
   - CharacterData:
       Id: 0
@@ -58,6 +61,7 @@ MonoBehaviour:
       Damage: 10
       Vision: 2
       CharacterType: 1
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 6813855635219573417, guid: 8e49c01130c2bd444ada18b4dfb6d57e, type: 3}
   - CharacterData:
       Id: 0
@@ -69,6 +73,7 @@ MonoBehaviour:
       Damage: 20
       Vision: 1
       CharacterType: 1
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 1332959700545535262, guid: 87c9d6fff20aced4baa01c6299ab7cff, type: 3}
   - CharacterData:
       Id: 0
@@ -80,6 +85,7 @@ MonoBehaviour:
       Damage: 10
       Vision: 3
       CharacterType: 3
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 5437140783749305979, guid: a02d6f7ee67f47e4a856f63eeb9cf541, type: 3}
   - CharacterData:
       Id: 0
@@ -91,6 +97,7 @@ MonoBehaviour:
       Damage: 15
       Vision: 2
       CharacterType: 2
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 6067927307954777840, guid: 5c4ec640bebbeb943a71b873998a986a, type: 3}
   - CharacterData:
       Id: 0
@@ -102,5 +109,6 @@ MonoBehaviour:
       Damage: 20
       Vision: 2
       CharacterType: 2
+      Icon: {fileID: 0}
     CharacterPrefab: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}
   CastleView: {fileID: 8921622137195285026, guid: ea3b1ca94f3ddb240b6aee534e63c86c, type: 3}

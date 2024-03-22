@@ -200,7 +200,7 @@ namespace CharacterModule.ModelPart
             {
                 Pair<int, int> checkPoint = _route.Peek();
                 if (playgroundPresenter.CheckCellOnCharacter(checkPoint.FirstValue, checkPoint.SecondValue) &&
-                    _route.Count != 0)
+                    _route.Count > 1)
                 {
                     _route.Clear();
                     break;

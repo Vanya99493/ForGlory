@@ -30,6 +30,7 @@ namespace Infrastructure
             LevelData newLevelData)
         {
             ServiceLocator.Instance.RegisterService(uiController);
+            ServiceLocator.Instance.RegisterService(gameScenePrefabsProvider);
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;

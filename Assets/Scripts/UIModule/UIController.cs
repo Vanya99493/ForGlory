@@ -4,8 +4,8 @@ using Infrastructure.ServiceLocatorModule;
 using UIModule.Panels;
 using UIModule.Panels.Base;
 using UIModule.Panels.BattleHudModule;
+using UIModule.Panels.CastleMenuModule;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace UIModule
 {
