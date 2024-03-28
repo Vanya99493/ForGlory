@@ -17,6 +17,7 @@ MonoBehaviour:
   Characters:
   - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
   - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
+  - {fileID: 11400000, guid: 68446a956965be8489a593ee81e3b00a, type: 2}
   - {fileID: 11400000, guid: cc9ee57a5fde6204db54be2c1c4b68ba, type: 2}
   - {fileID: 11400000, guid: c15ba12941830794e8cf0b3f3b3bb308, type: 2}
   - {fileID: 11400000, guid: a07b55ac9f46b7a4a98f41f7262dd453, type: 2}

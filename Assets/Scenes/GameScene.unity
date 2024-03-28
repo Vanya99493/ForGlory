@@ -187,8 +187,9 @@ MonoBehaviour:
       PlayersInCastle:
       - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
       - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
-      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
       - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
+      - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
+      - {fileID: 11400000, guid: 68446a956965be8489a593ee81e3b00a, type: 2}
       PlayerTeam:
         CharactersData: []
         HeightCellIndex: 0
