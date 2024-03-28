@@ -30,8 +30,12 @@ namespace UIModule.Panels.BattleHudModule
         public void Unsubscribe()
         {
             _gridLayoutGroup.cellSize = new Vector2(_standartSize, _gridLayoutGroup.cellSize.y);
-            _subscribedCharacter.Model.Damaged -= UpdateHPBar;
-            _subscribedCharacter.Model.Death -= Unsubscribe;
+
+            if (_subscribedCharacter != null)
+            {
+                _subscribedCharacter.Model.Damaged -= UpdateHPBar;
+                _subscribedCharacter.Model.Death -= Unsubscribe;
+            }
             HideBar();
         }
 
