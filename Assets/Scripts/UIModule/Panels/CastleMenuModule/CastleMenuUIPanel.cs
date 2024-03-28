@@ -1,7 +1,5 @@
 ﻿using System;
-using CharacterModule.ModelPart;
 using CharacterModule.PresenterPart;
-using CharacterModule.ViewPart;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
@@ -14,7 +12,9 @@ namespace UIModule.Panels.CastleMenuModule
 {
     public class CastleMenuUIPanel : BaseUIPanel
     {
+        public event Action EnterCastleAction;
         public event Action ExitCastleAction;
+        public event Action<int[]> AcceptCastleAction;
 
         [SerializeField] private Button exitCastleButton;
         [SerializeField] private Button acceptAndExitCastleButton;
@@ -22,53 +22,109 @@ namespace UIModule.Panels.CastleMenuModule
         [SerializeField] private HeroInfoPanel heroInfoPanel;
         [SerializeField] private TeamPositionArea[] teamPositionArea;
 
-        /*---*/ [SerializeField] /*---*/ private HeroCard[] _heroCards;
+        private GameObject _tempParent;
+        private HeroCard[] _heroCards;
+        private bool _isFirstEntry = true;
 
         private void Awake()
         {
-            //*****
-            for (int i = 0; i < teamPositionArea.Length; i++)
+            _heroCards = Array.Empty<HeroCard>();
+            _tempParent = new GameObject
             {
-                teamPositionArea[i].Initialize(castleGarrisonPanel);
-            }
+                name = "TempParentForCard"
+            };
+            _tempParent.transform.SetParent(transform);
+        }
 
-            for (int i = 0; i < _heroCards.Length; i++)
+        public void Enter(PlayerCharacterPresenter[] charactersInCastle, PlayerTeamPresenter playerTeam)
+        {
+            RemoveHeroCards();
+            
+            var heroCardPrefab = ServiceLocator.Instance.GetService<UIPrefabsProvider>().GetHeroCard();
+            _heroCards = new HeroCard[charactersInCastle.Length + playerTeam.Model.GetAliveCharactersCount()];
+            for (int i = 0; i < charactersInCastle.Length; i++)
             {
-                _heroCards[i].Initialize(new PlayerCharacterPresenter(
-                    new PlayerCharacterModel(
-                        100 + i,
-                        i % 2 == 0 ? "PlayerMale" : "PlayerFemale",
-                        40 + 20 * i,
-                        4,
-                        5,
-                        20,
-                        35
-                        ),
-                    Instantiate(new GameObject().AddComponent<PlayerCharacterView>())),
-                    ServiceLocator.Instance.GetService<GameScenePrefabsProvider>().GetCharacterByName(
-                        i % 2 == 0 ? "PlayerMale" : "PlayerFemale").CharacterData.Icon
+                _heroCards[i] = Instantiate(heroCardPrefab, castleGarrisonPanel.transform);
+                _heroCards[i].Initialize(
+                    charactersInCastle[i], 
+                    ServiceLocator.Instance.GetService<GameScenePrefabsProvider>().
+                        GetCharacterByName(charactersInCastle[i].Model.Name).Icon,
+                    _tempParent
                     );
                 _heroCards[i].ClickAction += heroInfoPanel.SetHeroInfo;
             }
-            //*****
+
+            for (int i = 0, k = charactersInCastle.Length; i < 3; i++)
+            {
+                if (playerTeam.Model.GetCharacterPresenter(i) != null)
+                {
+                    _heroCards[k] = Instantiate(heroCardPrefab, teamPositionArea[i].transform);
+                    _heroCards[k].Initialize(
+                        playerTeam.Model.GetCharacterPresenter(i), 
+                        ServiceLocator.Instance.GetService<GameScenePrefabsProvider>().
+                            GetCharacterByName(playerTeam.Model.GetCharacterPresenter(i).Model.Name).Icon,
+                        _tempParent
+                    );
+                    _heroCards[k].ClickAction += heroInfoPanel.SetHeroInfo;
+                    k++;
+                }
+            }
+
+            _isFirstEntry = playerTeam.Model.GetAliveCharactersCount() == 0;
+        }
+
+        private void RemoveHeroCards()
+        {
+            for (int i = 0; i < _heroCards.Length; i++)
+            {
+                _heroCards[i].Destroy();
+            }
         }
 
         protected override void SubscribeActions()
         {
             ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
             exitCastleButton.onClick.AddListener(ExitCastle);
+            acceptAndExitCastleButton.onClick.AddListener(AcceptAndExitCastle);
+            EnterCastleAction?.Invoke();
         }
 
         protected override void UnsubscribeActions()
         {
             exitCastleButton.onClick.RemoveListener(ExitCastle);
+            acceptAndExitCastleButton.onClick.RemoveListener(AcceptAndExitCastle);
             ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
         }
-        
-        
 
+        private void AcceptAndExitCastle()
+        {
+            int[] selectedCharactersId = {-1, -1, -1};
+            bool teamIsNotEmpty = false;
+
+            foreach (var heroCard in _heroCards)
+            {
+                for (int i = 0; i < teamPositionArea.Length; i++)
+                {
+                    if (heroCard.transform.parent.Equals(teamPositionArea[i].transform))
+                    {
+                        selectedCharactersId[i] = heroCard.CharacterId;
+                        teamIsNotEmpty = true;
+                    }
+                }
+            }
+
+            if (!teamIsNotEmpty)
+                return;
+            
+            AcceptCastleAction?.Invoke(selectedCharactersId);
+            ExitCastleAction?.Invoke();
+        }
+        
         private void ExitCastle()
         {
+            if (_isFirstEntry)
+                return;
+            
             ExitCastleAction?.Invoke();
         }
     }

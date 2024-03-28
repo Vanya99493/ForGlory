@@ -1,4 +1,5 @@
-﻿using CharacterModule.PresenterPart;
+﻿using System;
+using CharacterModule.PresenterPart;
 using UIModule.Panels.Base;
 using UnityEngine;
 
@@ -15,6 +16,16 @@ namespace UIModule.Panels.BattleHudModule
         [SerializeField] private HPBar enemyLeftVanguardHPBar;
         [SerializeField] private HPBar enemyRightVanguardHPBar;
 
+        private void Awake()
+        {
+            heroRearguardHPBar.Initialize();
+            heroLeftVanguardHPBar.Initialize();
+            heroRightVanguardHPBar.Initialize();
+            enemyRearguardHPBar.Initialize();
+            enemyLeftVanguardHPBar.Initialize();
+            enemyRightVanguardHPBar.Initialize();
+        }
+
         public void SubscribeBars(PlayerTeamPresenter playerTeam, EnemyTeamPresenter enemyTeam)
         {
             if (playerTeam.Model.GetCharacterPresenter(0) != null)
@@ -29,6 +40,16 @@ namespace UIModule.Panels.BattleHudModule
                 enemyRightVanguardHPBar.Subscribe(enemyTeam.Model.GetCharacterPresenter(1));
             if (enemyTeam.Model.GetCharacterPresenter(2) != null)
                 enemyRearguardHPBar.Subscribe(enemyTeam.Model.GetCharacterPresenter(2));
+        }
+
+        public void UnsubscribeBars()
+        {
+            heroRearguardHPBar.Unsubscribe();
+            heroLeftVanguardHPBar.Unsubscribe();
+            heroRightVanguardHPBar.Unsubscribe();
+            enemyRearguardHPBar.Unsubscribe();
+            enemyLeftVanguardHPBar.Unsubscribe();
+            enemyRightVanguardHPBar.Unsubscribe();
         }
     }
 }

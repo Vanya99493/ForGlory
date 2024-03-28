@@ -27,10 +27,11 @@ namespace Infrastructure
 
         public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, 
             InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider,
-            LevelData newLevelData)
+            UIPrefabsProvider uiPrefabsProvider, LevelData newLevelData)
         {
             ServiceLocator.Instance.RegisterService(uiController);
             ServiceLocator.Instance.RegisterService(gameScenePrefabsProvider);
+            ServiceLocator.Instance.RegisterService(uiPrefabsProvider);
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;

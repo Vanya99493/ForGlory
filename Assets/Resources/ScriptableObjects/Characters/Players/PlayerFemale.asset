@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9f525d049348a29ea20143ece4d62f, type: 3}
+  m_Name: PlayerFemale
+  m_EditorClassIdentifier: 
+  CharacterData:
+    Id: 0
+    Name: PlayerFemale
+    CurrentHealth: -1
+    MaxHealth: 125
+    MaxEnergy: 4
+    Initiative: 7
+    Damage: 25
+    Vision: 0
+    CharacterType: 0
+  CharacterPrefab: {fileID: 73327585664465529, guid: f32108651fa934b42b52a4caed809307, type: 3}
+  Icon: {fileID: 1756494856608997511, guid: d119adc08a0cd6740b1cc01ad0e202fe, type: 3}

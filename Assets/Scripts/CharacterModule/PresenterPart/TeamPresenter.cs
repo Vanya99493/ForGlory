@@ -32,6 +32,7 @@ namespace CharacterModule.PresenterPart
             _characterBehaviour = characterBehaviour;
             
             Model.MoveAction += View.Move;
+            Model.SetupCharactersAction += OnSetupCharacters;
             //Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
@@ -45,7 +46,7 @@ namespace CharacterModule.PresenterPart
             
             SubscribeStateMachineActions();
         }
-
+        
         public void StartBehave(PlaygroundPresenter playgroundPresenter)
         {
             _characterBehaviour.Start(this, playgroundPresenter);
@@ -104,6 +105,33 @@ namespace CharacterModule.PresenterPart
             ((MoveCharacterState)_characterStates[typeof(MoveCharacterState)]).MoveAction += OnMove;
             ((FollowCharacterState)_characterStates[typeof(FollowCharacterState)]).AddRouteAction += OnAddRoute;
             ((FollowCharacterState)_characterStates[typeof(FollowCharacterState)]).MoveAction += OnMove;
+        }
+
+        private void OnSetupCharacters(CharacterPresenter[] characters)
+        {
+            if (characters.Length == 0)
+                return;
+
+            if (characters.Length > 0 && characters[0] != null)
+            {
+                characters[0].View.gameObject.SetActive(true);
+                characters[0].View.gameObject.transform.SetParent(View.transform);
+                characters[0].View.gameObject.transform.position = View.characterPositions[0].position;
+            }
+
+            if (characters.Length > 1 && characters[1] != null)
+            {
+                characters[1].View.gameObject.SetActive(true);
+                characters[1].View.gameObject.transform.SetParent(View.transform);
+                characters[1].View.gameObject.transform.position = View.characterPositions[1].position;
+            }
+
+            if (characters.Length > 2 && characters[2] != null)
+            {
+                characters[2].View.gameObject.SetActive(true);
+                characters[2].View.gameObject.transform.SetParent(View.transform);
+                characters[2].View.gameObject.transform.position = View.characterPositions[2].position;
+            }
         }
 
         private void OnStepEnded()

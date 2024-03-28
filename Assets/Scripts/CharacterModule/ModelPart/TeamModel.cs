@@ -13,6 +13,7 @@ namespace CharacterModule.ModelPart
 {
     public abstract class TeamModel
     {
+        public event Action<CharacterPresenter[]> SetupCharactersAction;
         public event Action<Vector3, Direction> MoveAction;
         public event Action EndStepAction;
         public event Action<PlaygroundPresenter> EndMoveAction;
@@ -45,33 +46,44 @@ namespace CharacterModule.ModelPart
         public void SetCharacters(CharacterPresenter[] characters)
         {
             if (characters.Length == 0)
-                throw new Exception("Characters length can not be zero");
+                return;
 
-            if (characters.Length > 0)
+            List<CharacterPresenter> characterPresenters = new List<CharacterPresenter>();
+
+            _leftVanguard = null;
+            _rightVanguard = null;
+            _rearguard = null;
+            
+            if (characters.Length > 0 && characters[0] != null)
             {
                 _leftVanguard = characters[0];
                 _leftVanguard.DeathAction += OnKillCharacter;
+                characterPresenters.Add(_leftVanguard);
             }
 
-            if (characters.Length > 1)
+            if (characters.Length > 1 && characters[1] != null)
             {
                 _rightVanguard = characters[1];
                 _rightVanguard.DeathAction += OnKillCharacter;
+                characterPresenters.Add(_rightVanguard);
             }
 
-            if (characters.Length > 2)
+            if (characters.Length > 2 && characters[2] != null)
             {
                 _rearguard = characters[2];
                 _rearguard.DeathAction += OnKillCharacter;
+                characterPresenters.Add(_rearguard);
             }
             
-            _teamEnergy = characters[0].Model.MaxEnergy;
-            for (int i = 0; i < characters.Length; i++)
+            _teamEnergy = characterPresenters[0].Model.MaxEnergy;
+            foreach (var characterPresenter in characterPresenters)
             {
-                if (characters[i].Model.MaxEnergy < _teamEnergy)
-                    _teamEnergy = characters[i].Model.MaxEnergy;
+                if (characterPresenter.Model.MaxEnergy < _teamEnergy)
+                    _teamEnergy = characterPresenter.Model.MaxEnergy;
             }
             TeamEnergy = _teamEnergy;
+
+            SetupCharactersAction?.Invoke(new[] { _leftVanguard, _rightVanguard, _rearguard });
         }
 
         public void SetCharacters(CharacterPresenter leftVanguard, CharacterPresenter rightVanguard, CharacterPresenter rearguard)
@@ -108,6 +120,8 @@ namespace CharacterModule.ModelPart
                     _teamEnergy = character.Model.MaxEnergy;
             }
             TeamEnergy = _teamEnergy;
+            
+            SetupCharactersAction?.Invoke(new[] { _leftVanguard, _rightVanguard, _rearguard });
         }
 
         public CharacterPresenter GetCharacterPresenter(int index)

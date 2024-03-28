@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine.UI;
 
 namespace CharacterModule.ModelPart.Data
 {
@@ -15,6 +14,5 @@ namespace CharacterModule.ModelPart.Data
         public int Damage;
         public int Vision;
         public CharacterType CharacterType;
-        public Image Icon;
     }
 }

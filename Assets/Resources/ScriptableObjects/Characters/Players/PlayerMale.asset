@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9f525d049348a29ea20143ece4d62f, type: 3}
+  m_Name: PlayerMale
+  m_EditorClassIdentifier: 
+  CharacterData:
+    Id: 0
+    Name: PlayerMale
+    CurrentHealth: -1
+    MaxHealth: 100
+    MaxEnergy: 5
+    Initiative: 5
+    Damage: 35
+    Vision: 0
+    CharacterType: 0
+  CharacterPrefab: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
+  Icon: {fileID: 1770688426668741574, guid: 28bb55d6e1ca8b14ba61658ab4a3e341, type: 3}

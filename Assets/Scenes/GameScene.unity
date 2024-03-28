@@ -173,51 +173,24 @@ MonoBehaviour:
     gameScenePrefabsContainer: {fileID: 11400000, guid: d87c0b64801e0b842a108f6ef9908178, type: 2}
   cellDataProvider:
     cellDataContainer: {fileID: 11400000, guid: 4b19646e46949964abec6a07b13c39d5, type: 2}
+  uiPrefabsProvider:
+    uiPrefabsContainer: {fileID: 11400000, guid: 911fb53993174e041a318e2e827a9e60, type: 2}
   newLevelData:
     GeneralData:
-      LastId: 0
+      LastCharacterId: 0
     PlaygroundData:
       Height: 35
       Width: 35
       LengthOfWaterLine: 10
       LengthOfCoast: 4
     TeamsData:
-      Players: []
+      PlayersInCastle:
+      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
+      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
+      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
+      - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
       PlayerTeam:
-        CharactersData:
-        - CharacterData:
-            Id: 0
-            Name: PlayerMale
-            CurrentHealth: 0
-            MaxHealth: 0
-            MaxEnergy: 0
-            Initiative: 0
-            Damage: 0
-            Vision: 0
-            CharacterType: 0
-          CharacterPrefab: {fileID: 0}
-        - CharacterData:
-            Id: 0
-            Name: PlayerFemale
-            CurrentHealth: 0
-            MaxHealth: 0
-            MaxEnergy: 0
-            Initiative: 0
-            Damage: 0
-            Vision: 0
-            CharacterType: 0
-          CharacterPrefab: {fileID: 0}
-        - CharacterData:
-            Id: 0
-            Name: PlayerFemale
-            CurrentHealth: 0
-            MaxHealth: 0
-            MaxEnergy: 0
-            Initiative: 0
-            Damage: 0
-            Vision: 0
-            CharacterType: 0
-          CharacterPrefab: {fileID: 0}
+        CharactersData: []
         HeightCellIndex: 0
         WidthCellIndex: 0
       EnemyTeams:

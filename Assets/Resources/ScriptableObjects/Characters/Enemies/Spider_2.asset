@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9f525d049348a29ea20143ece4d62f, type: 3}
+  m_Name: Spider_2
+  m_EditorClassIdentifier: 
+  CharacterData:
+    Id: 0
+    Name: Spider2
+    CurrentHealth: -1
+    MaxHealth: 120
+    MaxEnergy: 3
+    Initiative: 9
+    Damage: 20
+    Vision: 2
+    CharacterType: 2
+  CharacterPrefab: {fileID: 8439661451327391950, guid: 7ce0d3c299c38a846aeeb9521bf0af14, type: 3}
+  Icon: {fileID: 0}

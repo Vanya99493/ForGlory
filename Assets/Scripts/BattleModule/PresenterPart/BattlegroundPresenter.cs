@@ -144,7 +144,6 @@ namespace BattleModule.PresenterPart
                 yield return new WaitForSeconds(0.5f);
             }
             
-            
             UnsubscribeUIActions();
             UnsubscribeOnClickActions();
 
@@ -219,6 +218,7 @@ namespace BattleModule.PresenterPart
             var uiController = ServiceLocator.Instance.GetService<UIController>();
             uiController.battleHudUIPanel.AvoidAction -= OnAvoidBattle;
             uiController.battleHudUIPanel.WinAction -= OnWinBattle;
+            uiController.battleHudUIPanel.UnsubscribeInfoPanel();
         }
 
         private void UnsubscribeOnClickActions()

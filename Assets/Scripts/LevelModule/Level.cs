@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BattleModule.ModelPart;
 using BattleModule.PresenterPart;
 using BattleModule.ViewPart;
@@ -12,6 +13,7 @@ using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.FactoryModule;
+using CharacterModule.ViewPart;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
@@ -43,9 +45,11 @@ namespace LevelModule
         private readonly WideSearch _bfsSearch;
         
         private PlaygroundPresenter _playgroundPresenter;
+        private CastlePresenter _castlePresenter;
+        private BattlegroundPresenter _battlegroundPresenter;
+        
         private PlayerTeamPresenter _playerTeamPresenter;
         private List<EnemyTeamPresenter> _enemiesTeamPresenters;
-        private BattlegroundPresenter _battlegroundPresenter;
 
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
@@ -72,14 +76,14 @@ namespace LevelModule
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
             (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
-                CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.Players);
+                CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.PlayersInCastle);
             
             CreateBattleground();
 
             _enemiesStepCounter = levelData.TeamsData.EnemyTeams.Length;
             _playerStepCounter = 1;
-            
-            CreatePlayer(levelData.TeamsData.PlayerTeam);
+
+            CreatePlayerTeam(levelData.TeamsData.PlayerTeam);
             CreateEnemies(levelData.TeamsData.EnemyTeams);
         }
 
@@ -198,47 +202,95 @@ namespace LevelModule
         private (int, int) CreateCastle(CharacterFullData[] playersData)
         {
             (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
-
-            PlayerCharacterPresenter[] players = new PlayerCharacterPresenter[playersData.Length];
-            for (int i = 0; i < playersData.Length; i++)
-            {
-                
-            }
             
-            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex, players);
+            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex);
             CastleView view = new CastleFactory().InstantiateCastle(_gameScenePrefabsProvider.GetCastleView(), _playgroundPresenter.View.transform);
-            CastlePresenter presenter = new CastlePresenter(model, view);
-            _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.SetCastleOnCell(presenter);
-            presenter.SetPosition(_playgroundPresenter);
+            _castlePresenter = new CastlePresenter(model, view);
+            _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.SetCastleOnCell(_castlePresenter);
+            _castlePresenter.SetPosition(_playgroundPresenter);
 
-            presenter.TurnOnEvent += OnEnterCastle;
-            presenter.TurnOffEvent += OnExitCastle;
+            _castlePresenter.TurnOnEvent += OnEnterCellWithCastle;
+            _castlePresenter.TurnOffEvent += OnExitCellWithCastleCastle;
+            
+            PlayerCharacterPresenter[] instantiatedPlayers = CreateHeroes(playersData, _castlePresenter.View.transform);
+            _castlePresenter.SetCharactersInCastle(instantiatedPlayers);
 
+            ServiceLocator.Instance.GetService<UIController>().castleMenuUIPanel.EnterCastleAction += OnEnterCastle;
+            ServiceLocator.Instance.GetService<UIController>().castleMenuUIPanel.AcceptCastleAction += OnAcceptTeamChanging;
             return (heightSpawnCellIndex, widthSpawnCellIndex);
         }
 
-        private void OnEnterCastle()
+        private void OnEnterCellWithCastle()
         {
             ServiceLocator.Instance.GetService<UIController>().gameHudUIPanel.ShowEnterButton();
         }
 
-        private void OnExitCastle()
+        private void OnExitCellWithCastleCastle()
         {
             ServiceLocator.Instance.GetService<UIController>().gameHudUIPanel.HideEnterButton();
         }
 
-        private void CreateBattleground()
+        private void OnEnterCastle()
         {
-            BattlegroundView view = new BattlegroundFactory().InstantiateBattleground(_gameScenePrefabsProvider.GetBattlgroundView());
-            BattlegroundModel model = new BattlegroundModel();
-            _battlegroundPresenter = new BattlegroundPresenter(model, view);
-            _battlegroundPresenter.EndBattle += OnEndBattle;
+            ServiceLocator.Instance.GetService<UIController>().castleMenuUIPanel.Enter(_castlePresenter.GetCharactersInCastle(), _playerTeamPresenter);
         }
 
-        private void CreatePlayer(TeamData playerTeamData)
+        private void OnAcceptTeamChanging(int[] newPlayersTeamId)
+        {
+            _playerTeamPresenter.View.Rotate(Direction.Down);
+            
+            List<PlayerCharacterPresenter> allCharacters = _castlePresenter.GetCharactersInCastle().ToList();
+            foreach (var character in _playerTeamPresenter.Model.GetCharacters())
+                allCharacters.Add(character as PlayerCharacterPresenter);
+
+            PlayerCharacterPresenter[] newTeamCharacters = new PlayerCharacterPresenter[newPlayersTeamId.Length];
+            List<PlayerCharacterPresenter> charactersInCastle = new List<PlayerCharacterPresenter>();
+
+            foreach (var character in allCharacters)
+            {
+                var wasAdded = false;
+                for (int i = 0; i < newTeamCharacters.Length; i++)
+                {
+                    if (character.Model.Id == newPlayersTeamId[i])
+                    {
+                        newTeamCharacters[i] = character;
+                        wasAdded = true;
+                        break;
+                    }
+                }
+
+                if (!wasAdded)
+                    charactersInCastle.Add(character);
+            }
+            
+            _playerTeamPresenter.Model.SetCharacters(newTeamCharacters);
+            _castlePresenter.SetCharactersInCastle(charactersInCastle.ToArray());
+        }
+
+        private PlayerCharacterPresenter[] CreateHeroes(CharacterFullData[] playersInCastle, Transform parent)
+        {
+            PlayerCharacterFactory characterFactory = new PlayerCharacterFactory();
+            PlayerCharacterPresenter[] playersInCastlePresenters = new PlayerCharacterPresenter[playersInCastle.Length]; 
+
+            for (int i = 0; i < playersInCastle.Length; i++)
+            {
+                playersInCastlePresenters[i] = characterFactory.InstantiateCharacter(
+                    _gameScenePrefabsProvider.GetCharacterByName(playersInCastle[i].CharacterData.Name).CharacterPrefab,
+                    playersInCastle[i].CharacterData,
+                    parent,
+                    _castlePresenter.View.transform.position
+                ) as PlayerCharacterPresenter;
+                playersInCastlePresenters[i].View.HideView();
+            }
+
+            return playersInCastlePresenters;
+        }
+
+        private void CreatePlayerTeam(TeamData playerTeamData)
         {
             _playerTeamFactory = new PlayerTeamFactory();
-            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData, new PlayerBehaviour()) as PlayerTeamPresenter;
+            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData, 
+                new PlayerBehaviour()) as PlayerTeamPresenter;
             
             _playerTeamPresenter.Model.SetPosition(_playgroundPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, playerTeamData.HeightCellIndex, playerTeamData.WidthCellIndex, true);
@@ -247,6 +299,14 @@ namespace LevelModule
             _playerTeamPresenter.Model.EndStepAction += OnEndPlayerMove;
            
             _playerTeamPresenter.EnterIdleState(_playgroundPresenter);
+        }
+
+        private void CreateBattleground()
+        {
+            BattlegroundView view = new BattlegroundFactory().InstantiateBattleground(_gameScenePrefabsProvider.GetBattlgroundView());
+            BattlegroundModel model = new BattlegroundModel();
+            _battlegroundPresenter = new BattlegroundPresenter(model, view);
+            _battlegroundPresenter.EndBattle += OnEndBattle;
         }
 
         private void CreateEnemies(TeamData[] enemyTeamsData)
@@ -266,7 +326,6 @@ namespace LevelModule
                         _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
                     
                     enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
-                    //_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true);
                     
                     enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
                     enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;

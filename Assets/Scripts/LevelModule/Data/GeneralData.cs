@@ -5,6 +5,6 @@ namespace LevelModule.Data
     [Serializable]
     public class GeneralData
     {
-        public int LastId;
+        public int LastCharacterId;
     }
 }

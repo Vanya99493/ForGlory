@@ -32,6 +32,11 @@ namespace UIModule.Panels.BattleHudModule
             infoPanel.SubscribeBars(playerTeam, enemyTeam);
         }
 
+        public void UnsubscribeInfoPanel()
+        {
+            infoPanel.UnsubscribeBars();
+        }
+
         private void AvoidBattle()
         {
             AvoidAction?.Invoke();

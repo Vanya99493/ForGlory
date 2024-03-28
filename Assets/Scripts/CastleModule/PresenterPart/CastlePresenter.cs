@@ -1,6 +1,7 @@
 ﻿using System;
 using CastleModule.ModelPart;
 using CastleModule.ViewPart;
+using CharacterModule.PresenterPart;
 using PlaygroundModule.PresenterPart;
 
 namespace CastleModule.PresenterPart
@@ -10,20 +11,27 @@ namespace CastleModule.PresenterPart
         public event Action TurnOnEvent;
         public event Action TurnOffEvent;
         
-        public readonly CastleModel Model;
+        public readonly CastleView View;
         
-        private CastleView _view;
+        private readonly CastleModel _model;
 
         public CastlePresenter(CastleModel castleModel, CastleView castleView)
         {
-            Model = castleModel;
-            _view = castleView;
+            _model = castleModel;
+            View = castleView;
         }
         
         public void SetPosition(PlaygroundPresenter playgroundPresenter)
         {
-            _view.transform.position = playgroundPresenter.Model.GetCellPresenter(Model.HeightCellIndex, Model.WidthCellIndex).Model.MoveCellPosition;
+            View.transform.position = playgroundPresenter.Model.GetCellPresenter(_model.HeightCellIndex, _model.WidthCellIndex).Model.MoveCellPosition;
         }
+        
+        public void SetCharactersInCastle(PlayerCharacterPresenter[] characters)
+        {
+            _model.SetCharactersInCastle(characters, View.transform);
+        }
+
+        public PlayerCharacterPresenter[] GetCharactersInCastle() => _model.CharactersInCastle;
 
         public void ActivateEvent()
         {
@@ -37,7 +45,7 @@ namespace CastleModule.PresenterPart
 
         public void Destroy()
         {
-            _view.DestroyView();
+            View.DestroyView();
         }
     }
 }

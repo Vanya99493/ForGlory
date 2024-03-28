@@ -42,6 +42,11 @@ namespace CharacterModule.ViewPart
             transform.eulerAngles = DirectionEulerAngels.GetDirection(_direction);
         }
 
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
         public void Click(InputMouseButtonType mouseButtonType)
         {
             ClickOnCharacter?.Invoke(mouseButtonType);

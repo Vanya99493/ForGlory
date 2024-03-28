@@ -41,7 +41,7 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _currentLevel.StartLevel(levelData);
             _currentLevel.SetCameraTarget(_mainCamera);
-            _uiController.ActivateGameHud();
+            _uiController.ActivateCastleMenuUIPanel();
         }
 
         public void Exit()
