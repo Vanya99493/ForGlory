@@ -72,7 +72,7 @@ MonoBehaviour:
       keyCollision: 0
   - cellType: 2
     cellPrefabs:
-    - {fileID: 626293964962371252, guid: a91d3d8689f4f6e4089a150bd76834b6, type: 3}
+    - {fileID: 1206723353404822823, guid: 832bda31f409584438f87625e0ac1ec2, type: 3}
     moveRoot:
       list:
       - Key: 0
