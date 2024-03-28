@@ -22,8 +22,8 @@ namespace CharacterModule.PresenterPart
 
         private void OnDeath()
         {
-            //View.DestroyView();
-            View.HideView();
+            View.DestroyView();
+            //View.HideView();
             DeathAction?.Invoke(Model.Id);
         }
 
