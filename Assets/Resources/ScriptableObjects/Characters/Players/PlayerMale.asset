@@ -22,5 +22,5 @@ MonoBehaviour:
     Damage: 35
     Vision: 0
     CharacterType: 0
-  CharacterPrefab: {fileID: 1965209486855276535, guid: 5cc95254df172754a82ee76801612894, type: 3}
+  CharacterPrefab: {fileID: 265827594758012078, guid: 5cc95254df172754a82ee76801612894, type: 3}
   Icon: {fileID: 1770688426668741574, guid: 28bb55d6e1ca8b14ba61658ab4a3e341, type: 3}
