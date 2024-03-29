@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f9f525d049348a29ea20143ece4d62f, type: 3}
-  m_Name: Skeleton_1
+  m_Name: Skeleton_3
   m_EditorClassIdentifier: 
   CharacterData:
     Id: 0
-    Name: Skeleton1
+    Name: Skeleton3
     CurrentHealth: -1
-    MaxHealth: 100
-    MaxEnergy: 2
-    Initiative: 6
-    Damage: 10
-    Vision: 2
+    MaxHealth: 130
+    MaxEnergy: 1
+    Initiative: 2
+    Damage: 8
+    Vision: 1
     CharacterType: 3
-  CharacterPrefab: {fileID: 5612482122074657301, guid: 1a0cefadaeff5cf4ab269071b9f26648, type: 3}
+  CharacterPrefab: {fileID: 1522042536042205115, guid: d3e89f78290672e4da9799e2c7f423dd, type: 3}
   Icon: {fileID: 0}

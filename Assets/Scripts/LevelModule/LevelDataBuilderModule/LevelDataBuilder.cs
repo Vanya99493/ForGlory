@@ -19,7 +19,7 @@ namespace LevelModule.LevelDataBuilderModule
             CharacterType[] EnemyTypes = 
             {
                 CharacterType.Arthropods,
-                CharacterType.Ghosts,
+                CharacterType.Slimes,
                 CharacterType.Skeletons
             };
             

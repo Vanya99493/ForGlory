@@ -3,7 +3,7 @@
     public enum CharacterType
     {
         Players,
-        Ghosts,
+        Slimes,
         Arthropods,
         Skeletons
     }
