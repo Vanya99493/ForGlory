@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using CharacterModule.ViewPart.AnimationControllerModule;
 using Infrastructure.InputHandlerModule;
 using Interfaces;
@@ -37,15 +38,22 @@ namespace CharacterModule.ViewPart
         public void Attack() => AttackingAction?.Invoke();
         public void Defend() => DefendingAction?.Invoke();
         public void Die() => DyingAction?.Invoke();
-        
-        public void DestroyView()
-        {
-            Destroy?.Invoke(this);
-        }
 
         public void Click(InputMouseButtonType mouseButtonType)
         {
             ClickedAction?.Invoke();
+        }
+        
+        public void DestroyView()
+        {
+            Die();
+            StartCoroutine(DestroyAfterTime(1f));
+        }
+
+        private IEnumerator DestroyAfterTime(float time)
+        {
+            yield return new WaitForSeconds(time);
+            Destroy?.Invoke(this);
         }
     }
 }
