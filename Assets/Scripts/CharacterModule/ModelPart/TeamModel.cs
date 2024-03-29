@@ -210,6 +210,10 @@ namespace CharacterModule.ModelPart
 
         private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter, TeamPresenter teamPresenter)
         {
+            if (_route.Count > 0 && TeamEnergy > 0)
+                foreach (var character in GetCharacters())
+                    character.View.Move(true);
+            
             while (_route.Count > 0 && TeamEnergy > 0)
             {
                 Pair<int, int> checkPoint = _route.Peek();
@@ -258,6 +262,9 @@ namespace CharacterModule.ModelPart
                 TeamEnergy--;
             }
 
+            foreach (var character in GetCharacters())
+                character.View.Move(false);
+            
             SwitchMoveState();
             CanMove = true;
             EndMoveAction?.Invoke(playgroundPresenter);

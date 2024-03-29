@@ -831,6 +831,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3110142125854750639}
   - component: {fileID: 3216635235558585492}
+  - component: {fileID: 7442594802266083658}
   m_Layer: 0
   m_Name: FemaleCharacterPolyart
   m_TagString: Untagged
@@ -877,6 +878,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7442594802266083658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333605014749883669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb845600222492c9cde053a3392ad46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRunningBoolName: IsRunning
+  attackingTriggerName: Attacking
+  defendingTriggerName: Defending
+  dyingTriggerName: Dying
 --- !u!1 &2652754554281108122
 GameObject:
   m_ObjectHideFlags: 0
@@ -1083,6 +1100,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9318795c46e4d1b81cd9a836421b613, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationController: {fileID: 7442594802266083658}
+  hasRunningState: 1
+  hasAttackingState: 1
+  hasDefendingState: 1
+  hasDyingState: 1
 --- !u!1 &2980242548087694216
 GameObject:
   m_ObjectHideFlags: 0

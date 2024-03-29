@@ -45,6 +45,11 @@ namespace BattleModule.PresenterPart
                 _model.SetTeams(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
                 uiController.battleHudUIPanel.SubscribeInfoPanel(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
             }
+
+            foreach (var character in _model.PlayerTeam.Model.GetCharacters())
+                character.View.Move(false);
+            foreach (var character in _model.EnemyTeam.Model.GetCharacters())
+                character.View.Move(false);
             
             _model.PlayerTeam.View.Rotate(Direction.Right);
             _model.EnemyTeam.View.Rotate(Direction.Left);
@@ -73,7 +78,6 @@ namespace BattleModule.PresenterPart
         {
             Queue<CharacterPresenter> attackQueue = MakeAttackQueue();
             
-            //while (_model.PlayerTeam.Model.CharactersCount > 0 && _model.EnemyTeam.Model.CharactersCount > 0 && attackQueue.Count > 0)
             while (IsTeamAlive(_model.PlayerTeam) && IsTeamAlive(_model.EnemyTeam) && attackQueue.Count > 0)
             {
                 CharacterPresenter attackingCharacter = attackQueue.Dequeue();
@@ -111,7 +115,9 @@ namespace BattleModule.PresenterPart
                         throw new Exception("Impossible clicked character");
                     
                     _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex);
+                    attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
+                    _clickedCharacter.View.Defend();
                     _clickedCharacter.Model.TakeDamage(attackingCharacter.Model.Damage);
                     _clickedCharacter = null;
                     yield return new WaitForSeconds(0.5f);
@@ -133,7 +139,9 @@ namespace BattleModule.PresenterPart
                             break;
                     }
                     _view.SetAttackPlayerPosition(attackingCharacter, randomIndex);
+                    attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
+                    _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).View.Defend();
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackingCharacter.Model.Damage);
                     yield return new WaitForSeconds(0.5f);
                 }
