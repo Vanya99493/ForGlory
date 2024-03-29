@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterData:
     Id: 0
-    Name: 
-    CurrentHealth: 0
-    MaxHealth: 0
-    MaxEnergy: 0
-    Initiative: 0
-    Damage: 0
-    Vision: 0
-    CharacterType: 0
-  CharacterPrefab: {fileID: 0}
+    Name: Slime1
+    CurrentHealth: -1
+    MaxHealth: 50
+    MaxEnergy: 3
+    Initiative: 5
+    Damage: 15
+    Vision: 3
+    CharacterType: 1
+  CharacterPrefab: {fileID: 7735059046290531145, guid: bc806e0ca79137a49aca351e73ef149c, type: 3}
   Icon: {fileID: 0}
