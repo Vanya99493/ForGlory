@@ -16,7 +16,7 @@ MonoBehaviour:
     Id: 0
     Name: PlayerMale
     CurrentHealth: -1
-    MaxHealth: 50
+    MaxHealth: 100
     MaxEnergy: 5
     Initiative: 5
     Damage: 35

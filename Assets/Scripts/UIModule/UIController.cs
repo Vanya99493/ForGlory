@@ -5,6 +5,7 @@ using UIModule.Panels;
 using UIModule.Panels.Base;
 using UIModule.Panels.BattleHudModule;
 using UIModule.Panels.CastleMenuModule;
+using UIModule.Panels.GameHudModule;
 using UnityEngine;
 
 namespace UIModule

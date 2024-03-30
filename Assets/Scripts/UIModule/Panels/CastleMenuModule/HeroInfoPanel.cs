@@ -19,12 +19,12 @@ namespace UIModule.Panels.CastleMenuModule
             heroInfo.gameObject.SetActive(false);
         }
 
-        public void SetHeroInfo(CharacterPresenter character, Image heroIcon)
+        public void SetHeroInfo(CharacterPresenter character, Sprite heroSprite)
         {
-            this.heroIcon.gameObject.SetActive(true);
+            heroIcon.gameObject.SetActive(true);
             heroInfo.gameObject.SetActive(true);
 
-            this.heroIcon.color = heroIcon.color;
+            heroIcon.sprite = heroSprite;
             heroInfo.text = $"Name: {character.Model.Name}\n" +
                             $"Health: {character.Model.Health}/{character.Model.MaxHealth}\n" +
                             $"Damage: {character.Model.Damage}\n" +

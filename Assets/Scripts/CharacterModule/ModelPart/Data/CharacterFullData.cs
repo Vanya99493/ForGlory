@@ -1,6 +1,5 @@
 ﻿using CharacterModule.ViewPart;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CharacterModule.ModelPart.Data
 {
@@ -9,6 +8,6 @@ namespace CharacterModule.ModelPart.Data
     {
         public CharacterData CharacterData;
         public CharacterView CharacterPrefab;
-        public Image Icon;
+        public Sprite Icon;
     }
 }

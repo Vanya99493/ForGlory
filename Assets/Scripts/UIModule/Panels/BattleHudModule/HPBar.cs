@@ -6,15 +6,14 @@ namespace UIModule.Panels.BattleHudModule
 {
     public class HPBar : MonoBehaviour
     {
-        private GridLayoutGroup _gridLayoutGroup;
-        private float _standartSize;
+        [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
+        private float _standartSize;
         private CharacterPresenter _subscribedCharacter;
         
         public void Initialize()
         {
-            _gridLayoutGroup = gameObject.GetComponent<GridLayoutGroup>();
-            _standartSize = _gridLayoutGroup.cellSize.x;
+            _standartSize = gridLayoutGroup.cellSize.x;
             HideBar();
         }
 
@@ -29,7 +28,7 @@ namespace UIModule.Panels.BattleHudModule
         
         public void Unsubscribe()
         {
-            _gridLayoutGroup.cellSize = new Vector2(_standartSize, _gridLayoutGroup.cellSize.y);
+            gridLayoutGroup.cellSize = new Vector2(_standartSize, gridLayoutGroup.cellSize.y);
 
             if (_subscribedCharacter != null)
             {
@@ -46,7 +45,7 @@ namespace UIModule.Panels.BattleHudModule
 
         private void UpdateHPBar(int maxHealth, int newHealth)
         {
-            _gridLayoutGroup.cellSize = new Vector2(_standartSize * newHealth / maxHealth, _gridLayoutGroup.cellSize.y);
+            gridLayoutGroup.cellSize = new Vector2(_standartSize * newHealth / maxHealth, gridLayoutGroup.cellSize.y);
         }
 
         

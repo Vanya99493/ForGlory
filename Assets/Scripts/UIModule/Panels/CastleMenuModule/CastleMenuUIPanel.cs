@@ -6,7 +6,6 @@ using Infrastructure.Services;
 using UIModule.Panels.Base;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace UIModule.Panels.CastleMenuModule
 {

@@ -10,7 +10,7 @@ namespace UIModule.Panels.CastleMenuModule
 {
     public class HeroCard : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        public event Action<CharacterPresenter, Image> ClickAction;
+        public event Action<CharacterPresenter, Sprite> ClickAction;
         
         [SerializeField] private Image heroIcon;
         [SerializeField] private HPBar hpBar;
@@ -22,12 +22,12 @@ namespace UIModule.Panels.CastleMenuModule
         public int CharacterId => _character.Model.Id;
         public Transform LastParent { get; private set; }
 
-        public void Initialize(CharacterPresenter character, Image heroIcon, GameObject tempParent)
+        public void Initialize(CharacterPresenter character, Sprite heroSprite, GameObject tempParent)
         {
             _character = character;
             hpBar.Initialize();
             hpBar.Subscribe(_character);
-            this.heroIcon.color = heroIcon.color;
+            heroIcon.sprite = heroSprite;
             _tempParent = tempParent;
         }
         
@@ -66,7 +66,7 @@ namespace UIModule.Panels.CastleMenuModule
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            ClickAction?.Invoke(_character, heroIcon);
+            ClickAction?.Invoke(_character, heroIcon.sprite);
         }
 
         public void Destroy()
