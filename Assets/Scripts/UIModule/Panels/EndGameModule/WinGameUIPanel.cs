@@ -5,9 +5,9 @@ using UIModule.Panels.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIModule.Panels
+namespace UIModule.Panels.EndGameModule
 {
-    public class GameOverMenuUIPanel : BaseUIPanel
+    public class WinGameUIPanel : BaseUIPanel
     {
         public event Action ExitToMainMenuAction;
 

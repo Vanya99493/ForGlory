@@ -13,7 +13,6 @@ using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.FactoryModule;
-using CharacterModule.ViewPart;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
 using Infrastructure.ServiceLocatorModule;
@@ -36,7 +35,8 @@ namespace LevelModule
         public event Action EndStepChangingAction;
         public event Action BattleStartAction;
         public event Action BattleEndAction;
-        public event Action EndGameAction;
+        public event Action WinGameAction;
+        public event Action LoseGameAction;
         
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
@@ -59,8 +59,12 @@ namespace LevelModule
         private int _enemiesStepCounter;
         private int _playerStepCounter;
         
+        public int LevelId { get; private set; }
+        public bool IsActive { get; private set; }
+        
         public Level(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
+            IsActive = false;
             _coroutineRunner = coroutineRunner;
             _cellDataProvider = cellDataProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
@@ -71,6 +75,8 @@ namespace LevelModule
 
         public void StartLevel(LevelData levelData)
         {
+            LevelId = levelData.LevelId;
+            IsActive = true;
             _isStepChanging = false;
             _isWaitingOnEndStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
@@ -94,6 +100,7 @@ namespace LevelModule
 
         public void RemoveLevel()
         {
+            _battlegroundPresenter.EndBattle -= OnEndBattle;
             _playgroundPresenter.Destroy();
             _playgroundPresenter = null;
             _battlegroundPresenter.Destroy();
@@ -105,7 +112,8 @@ namespace LevelModule
             }
             _playerTeamFactory.RemoveParent();
             _enemyTeamFactory.RemoveParent();
-            
+
+            IsActive = false;
             ServiceLocator.Instance.UnregisterService<CharacterIdSetter>();
         }
 
@@ -513,6 +521,8 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter,
                     enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex);
                 enemyTeamPresenter.Destroy();
+                if(_enemiesTeamPresenters.Count <= 0)
+                    WinGameAction?.Invoke();
             }
             else
             {
@@ -523,7 +533,7 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(playerTeamPresenter,
                     playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
                 _playerTeamPresenter = null;
-                EndGameAction?.Invoke();
+                LoseGameAction?.Invoke();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using CameraModule;
+using DataBaseModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
@@ -54,9 +55,32 @@ namespace Infrastructure.GameStateMachineModule.States
 
         private void SubscribeOnUIActions()
         {
+            _uiController.mainMenuUIPanel.ToLoadLevelMenuAction += _uiController.ActivateLoadLevelMenu;
+            _uiController.loadLevelUIPanel.GoBackAction += OnGoBackFromLoadLevelMenu;
+            _uiController.gameHudUIPanel.OpenPauseMenuAction += () =>
+            {
+                _uiController.ActivatePauseMenu();
+                _uiController.pauseMenuUIPanel.ActivateGamePauseButtons();
+            }; 
             _uiController.gameHudUIPanel.NextStepAction += _currentLevel.NextStep;
             _uiController.gameHudUIPanel.EnterAction += _uiController.ActivateCastleMenuUIPanel;
+            _uiController.pauseMenuUIPanel.CloseGamePauseMenuAction += _uiController.ActivateGameHud;
+            _uiController.pauseMenuUIPanel.CloseBattlePauseMenuAction += _uiController.ActivateBattleHud;
+            _uiController.pauseMenuUIPanel.LoadLevelAction += _uiController.ActivateLoadLevelMenu;
             _uiController.castleMenuUIPanel.ExitCastleAction += _uiController.ActivateGameHud;
+            _uiController.battleHudUIPanel.PauseBattleAction += () => {
+                _uiController.ActivatePauseMenu();
+                _uiController.pauseMenuUIPanel.ActivateBattlePauseButtons();
+                _uiController.pauseMenuUIPanel.HideSaveButton();
+            };
+        }
+
+        private void OnGoBackFromLoadLevelMenu()
+        {
+            if(_currentLevel.IsActive)
+                _uiController.ActivatePauseMenu();
+            else
+                _uiController.ActivateMainMenu();
         }
 
         private void SubscribeStepChangingActions()
@@ -69,7 +93,8 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _currentLevel.BattleStartAction += OnBattleStart;
             _currentLevel.BattleEndAction += OnBattleEnd;
-            _currentLevel.EndGameAction += OnGameEnd;
+            _currentLevel.LoseGameAction += OnGameLose;
+            _currentLevel.WinGameAction += OnGameWin;
         }
 
         private void OnBattleStart()
@@ -84,9 +109,14 @@ namespace Infrastructure.GameStateMachineModule.States
             _uiController.ActivateGameHud();
         }
 
-        private void OnGameEnd()
+        private void OnGameWin()
         {
-            _uiController.ActivateGameOverMenu();
+            _uiController.ActivateWinGameMenu();
+        }
+
+        private void OnGameLose()
+        {
+            _uiController.ActivateLoseGameMenu();
         }
     }
 }

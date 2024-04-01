@@ -78,6 +78,7 @@ namespace UIModule.Panels.CastleMenuModule
             {
                 _heroCards[i].Destroy();
             }
+            _heroCards = Array.Empty<HeroCard>();
         }
 
         protected override void SubscribeActions()
@@ -90,6 +91,7 @@ namespace UIModule.Panels.CastleMenuModule
 
         protected override void UnsubscribeActions()
         {
+            RemoveHeroCards();
             exitCastleButton.onClick.RemoveListener(ExitCastle);
             acceptAndExitCastleButton.onClick.RemoveListener(AcceptAndExitCastle);
             ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();

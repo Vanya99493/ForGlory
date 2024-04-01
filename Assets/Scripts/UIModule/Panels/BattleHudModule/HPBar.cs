@@ -38,7 +38,7 @@ namespace UIModule.Panels.BattleHudModule
             HideBar();
         }
 
-        public void HideBar()
+        private void HideBar()
         {
             gameObject.SetActive(false);
         } 

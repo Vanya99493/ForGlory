@@ -1,4 +1,5 @@
 ﻿using UIModule.Panels.CastleMenuModule;
+using UIModule.Panels.LoadLevelMenuModule;
 using UnityEngine;
 
 namespace ScriptableObjects
@@ -7,5 +8,6 @@ namespace ScriptableObjects
     public class UIPrefabsContainer : ScriptableObject
     {
         public HeroCard HeroCardPrefab;
+        public LevelSaveCard LevelSaveCardPrefab;
     }
 }

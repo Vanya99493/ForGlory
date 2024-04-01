@@ -8,6 +8,11 @@ namespace LevelModule.LevelDataBuilderModule
 {
     public class LevelDataBuilder
     {
+        public LevelData GetBackgroundLevelData()
+        {
+            return null;
+        }
+        
         public LevelData BuildLevelData(LevelData inputData, GameScenePrefabsProvider gameScenePrefabsProvider)
         {
             for (int i = 0; i < inputData.TeamsData.PlayerTeam.CharactersData.Length; i++)

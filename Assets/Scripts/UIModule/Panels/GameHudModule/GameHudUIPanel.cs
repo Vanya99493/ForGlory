@@ -8,7 +8,7 @@ namespace UIModule.Panels.GameHudModule
 {
     public class GameHudUIPanel : BaseUIPanel
     {
-        public event Action ExitToMainMenuAction;
+        public event Action OpenPauseMenuAction;
         public event Action NextStepAction;
         public event Action EnterAction;
 
@@ -53,31 +53,31 @@ namespace UIModule.Panels.GameHudModule
         
         protected override void SubscribeActions()
         {
-            exitToMainMenuButton.onClick.AddListener(ExitToMainMenu);
-            nextStepButton.Button.onClick.AddListener(NextStep);
-            enterButton.onClick.AddListener(Enter);
+            exitToMainMenuButton.onClick.AddListener(OnopenPauseMenu);
+            nextStepButton.Button.onClick.AddListener(OnNextStep);
+            enterButton.onClick.AddListener(OnEnter);
         }
 
         protected override void UnsubscribeActions()
         {
-            exitToMainMenuButton.onClick.RemoveListener(ExitToMainMenu);
-            nextStepButton.Button.onClick.RemoveListener(NextStep);
-            enterButton.onClick.RemoveListener(Enter);
+            exitToMainMenuButton.onClick.RemoveListener(OnopenPauseMenu);
+            nextStepButton.Button.onClick.RemoveListener(OnNextStep);
+            enterButton.onClick.RemoveListener(OnEnter);
         }
 
-        private void ExitToMainMenu()
+        private void OnopenPauseMenu()
         {
-            ExitToMainMenuAction?.Invoke();
+            OpenPauseMenuAction?.Invoke();
         }
 
-        private void NextStep()
+        private void OnNextStep()
         {
             if (_isBlockedNextStepButton)
                 return;
             NextStepAction?.Invoke();
         }
 
-        private void Enter()
+        private void OnEnter()
         {
             EnterAction?.Invoke();
         }
