@@ -323,30 +323,29 @@ namespace LevelModule
             
             for (int i = 0; i < enemyTeamsData.Length; i++)
             {
-                while (true)
+                int heightSpawnCellIndex, widthSpawnCellIndex;
+                do
                 {
-                    if(enemyTeamsData[i].HeightCellIndex == -1 || enemyTeamsData[i].WidthCellIndex == -1)
-                        (enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex) = FindEmptyCell();
+                    (heightSpawnCellIndex, widthSpawnCellIndex) = FindEmptyCell();
+                } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.TeamsOnCell.Count > 0);
+                
+                enemyTeamsData[i].HeightCellIndex = heightSpawnCellIndex;
+                enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
+                
+                EnemyTeamPresenter enemyTeamPresenter = 
+                    _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
                     
-                    EnemyTeamPresenter enemyTeamPresenter = 
-                        _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
+                enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
                     
-                    enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
-                    
-                    enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
-                    enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
+                enemyTeamPresenter.ClickOnCharacterAction += OnEnemyTeamClicked;
+                enemyTeamPresenter.FollowClickAction += OnEnemyFollowClick;
 
-                    enemyTeamPresenter.EnterIdleState(_playgroundPresenter);
-                    
-                    if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true))
-                    {
-                        enemyTeamPresenter.Model.EndStepAction += OnEndEnemyMove;
-                        _enemiesTeamPresenters.Add(enemyTeamPresenter);
-                        break;
-                    }
+                enemyTeamPresenter.EnterIdleState(_playgroundPresenter);
 
-                    enemyTeamPresenter.Destroy();
-                }
+                _playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex,
+                    enemyTeamsData[i].WidthCellIndex, true);
+                enemyTeamPresenter.Model.EndStepAction += OnEndEnemyMove;
+                _enemiesTeamPresenters.Add(enemyTeamPresenter);
             }
         }
 

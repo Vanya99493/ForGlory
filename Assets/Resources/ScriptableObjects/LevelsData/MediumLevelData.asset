@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MediumLevelData
   m_EditorClassIdentifier: 
   PlaygroundData:
-    Height: 50
-    Width: 50
+    Height: 37
+    Width: 37
     LengthOfWaterLine: 10
-    LengthOfCoast: 4
+    LengthOfCoast: 3
   CountOfEnemyTeams: 10
   CharactersInCastle:
   - {fileID: 11400000, guid: 68446a956965be8489a593ee81e3b00a, type: 2}

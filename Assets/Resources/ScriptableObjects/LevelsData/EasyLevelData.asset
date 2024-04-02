@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EasyLevelData
   m_EditorClassIdentifier: 
   PlaygroundData:
-    Height: 35
-    Width: 35
+    Height: 30
+    Width: 30
     LengthOfWaterLine: 10
     LengthOfCoast: 3
   CountOfEnemyTeams: 6

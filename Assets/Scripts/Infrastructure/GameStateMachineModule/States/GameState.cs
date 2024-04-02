@@ -1,6 +1,5 @@
 ﻿using System;
 using CameraModule;
-using DataBaseModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
