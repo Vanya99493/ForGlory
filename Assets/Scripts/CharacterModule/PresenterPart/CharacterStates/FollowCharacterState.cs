@@ -39,7 +39,7 @@ namespace CharacterModule.PresenterPart.CharacterStates
             {
                 playgroundPresenter.RemoveCharacterFromCell(teamPresenter, teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex);
                 AddRouteAction?.Invoke(route);
-                if (teamPresenter.Model.RoutLength <= teamPresenter.Model.TeamEnergy)
+                if (teamPresenter.Model.RoutLength <= teamPresenter.Model.TeamCurrentEnergy)
                     targetTeamPresenter = null;
                 MoveAction?.Invoke(playgroundPresenter);
             }

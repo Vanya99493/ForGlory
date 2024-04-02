@@ -20,7 +20,7 @@ namespace CharacterModule.ModelPart
         
         private float _speed = 4f;
         private Queue<Pair<int, int>> _route;
-        private int _teamEnergy;
+        private int _teamMaxEnergy;
         protected CharacterPresenter _leftVanguard;
         protected CharacterPresenter _rightVanguard;
         protected CharacterPresenter _rearguard;
@@ -32,7 +32,7 @@ namespace CharacterModule.ModelPart
         public bool CanMove { get; private set; }
         public int HeightCellIndex { get; private set; }
         public int WidthCellIndex { get; private set; }
-        public int TeamEnergy { get; private set; }
+        public int TeamCurrentEnergy { get; private set; }
 
         protected TeamModel(int heightCellIndex, int widthCellIndex)
         {
@@ -75,13 +75,15 @@ namespace CharacterModule.ModelPart
                 characterPresenters.Add(_rearguard);
             }
             
-            _teamEnergy = characterPresenters[0].Model.MaxEnergy;
+            _teamMaxEnergy = characterPresenters[0].Model.MaxEnergy;
+            TeamCurrentEnergy = characterPresenters[0].Model.Energy;
             foreach (var characterPresenter in characterPresenters)
             {
-                if (characterPresenter.Model.MaxEnergy < _teamEnergy)
-                    _teamEnergy = characterPresenter.Model.MaxEnergy;
+                if (characterPresenter.Model.MaxEnergy < _teamMaxEnergy)
+                    _teamMaxEnergy = characterPresenter.Model.MaxEnergy;
+                if (characterPresenter.Model.Energy < TeamCurrentEnergy)
+                    TeamCurrentEnergy = characterPresenter.Model.Energy;
             }
-            TeamEnergy = _teamEnergy;
 
             SetupCharactersAction?.Invoke(new[] { _leftVanguard, _rightVanguard, _rearguard });
         }
@@ -113,13 +115,15 @@ namespace CharacterModule.ModelPart
                 _rearguard.DeathAction += OnKillCharacter;
             }
             
-            _teamEnergy = characters[0].Model.MaxEnergy;
+            _teamMaxEnergy = characters[0].Model.MaxEnergy;
+            TeamCurrentEnergy = characters[0].Model.Energy;
             foreach (var character in characters)
             {
-                if (character.Model.MaxEnergy < _teamEnergy)
-                    _teamEnergy = character.Model.MaxEnergy;
+                if (character.Model.MaxEnergy < _teamMaxEnergy)
+                    _teamMaxEnergy = character.Model.MaxEnergy;
+                if (character.Model.Energy < TeamCurrentEnergy)
+                    TeamCurrentEnergy = character.Model.Energy;
             }
-            TeamEnergy = _teamEnergy;
             
             SetupCharactersAction?.Invoke(new[] { _leftVanguard, _rightVanguard, _rearguard });
         }
@@ -181,7 +185,10 @@ namespace CharacterModule.ModelPart
 
         public void ResetEnergy()
         {
-            TeamEnergy = _teamEnergy;
+            TeamCurrentEnergy = _teamMaxEnergy;
+            var characters = GetCharacters();
+            foreach (var character in characters)
+                character.Model.ResetEnergy();
         }
         
         public void ResetMovementSettings()
@@ -210,11 +217,11 @@ namespace CharacterModule.ModelPart
 
         private IEnumerator MovementCoroutine(PlaygroundPresenter playgroundPresenter, TeamPresenter teamPresenter)
         {
-            if (_route.Count > 0 && TeamEnergy > 0)
+            if (_route.Count > 0 && TeamCurrentEnergy > 0)
                 foreach (var character in GetCharacters())
                     character.View.Move(true);
             
-            while (_route.Count > 0 && TeamEnergy > 0)
+            while (_route.Count > 0 && TeamCurrentEnergy > 0)
             {
                 Pair<int, int> checkPoint = _route.Peek();
                 if (playgroundPresenter.CheckCellOnCharacter(checkPoint.FirstValue, checkPoint.SecondValue) &&
@@ -259,7 +266,9 @@ namespace CharacterModule.ModelPart
                 
                 playgroundPresenter.SetCharacterOnCell(teamPresenter, HeightCellIndex, WidthCellIndex);
                 _route.Dequeue();
-                TeamEnergy--;
+                TeamCurrentEnergy--;
+                foreach (var character in GetCharacters())
+                    character.Model.SpendEnergy();
             }
 
             foreach (var character in GetCharacters())

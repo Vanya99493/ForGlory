@@ -139,10 +139,10 @@ namespace LevelModule
             
             if (_playerTeamPresenter.Model.RoutLength > 0)
             {
-                while (_playerTeamPresenter.Model.TeamEnergy != 0 && _playerTeamPresenter.Model.RoutLength != 0)
+                while (_playerTeamPresenter.Model.TeamCurrentEnergy != 0 && _playerTeamPresenter.Model.RoutLength != 0)
                     yield return null;
 
-                if (_playerTeamPresenter.Model.TeamEnergy > 0 || _isWaitingOnEndStepChanging)
+                if (_playerTeamPresenter.Model.TeamCurrentEnergy > 0 || _isWaitingOnEndStepChanging)
                     EndStepChanging();
                 else
                     _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
@@ -183,6 +183,8 @@ namespace LevelModule
                 enemyTeamPresenter.Model.ResetEnergy();
                 enemyTeamPresenter.Model.ResetMovementSettings();
             }
+
+            _castlePresenter.ResetHeroesEnergy();
 
             EndStepChanging();
         }
@@ -399,7 +401,7 @@ namespace LevelModule
             if (playerTeamPresenter.Model.MoveState)
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
-                    playerTeamPresenter.Model.TeamEnergy, 
+                    playerTeamPresenter.Model.TeamCurrentEnergy, 
                     new MoveNode(
                         playerTeamPresenter.Model.HeightCellIndex, 
                         playerTeamPresenter.Model.WidthCellIndex, 
@@ -428,7 +430,7 @@ namespace LevelModule
             if (enemyTeamPresenter.Model.MoveState)
             {
                 _playgroundPresenter.SetAciveCells(_bfsSearch.GetCellsByLength(
-                    enemyTeamPresenter.Model.TeamEnergy, 
+                    enemyTeamPresenter.Model.TeamCurrentEnergy, 
                     new MoveNode(
                         enemyTeamPresenter.Model.HeightCellIndex, 
                         enemyTeamPresenter.Model.WidthCellIndex, 

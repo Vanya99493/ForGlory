@@ -28,7 +28,7 @@ namespace UIModule.Panels.CastleMenuModule
             heroInfo.text = $"Name: {character.Model.Name}\n" +
                             $"Health: {character.Model.Health}/{character.Model.MaxHealth}\n" +
                             $"Damage: {character.Model.Damage}\n" +
-                            $"Energy: {character.Model.MaxEnergy}\n" +
+                            $"Energy: {character.Model.Energy}/{character.Model.MaxEnergy}\n" +
                             $"Initiative: {character.Model.Initiative}";
         }
 

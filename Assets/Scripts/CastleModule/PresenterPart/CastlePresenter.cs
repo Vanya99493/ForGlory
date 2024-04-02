@@ -36,6 +36,11 @@ namespace CastleModule.PresenterPart
 
         public PlayerCharacterPresenter[] GetCharactersInCastle() => _model.CharactersInCastle;
 
+        public void ResetHeroesEnergy()
+        {
+            _model.ResetHeroesEnergy();
+        }
+
         public void ActivateEvent()
         {
             TurnOnEvent?.Invoke();

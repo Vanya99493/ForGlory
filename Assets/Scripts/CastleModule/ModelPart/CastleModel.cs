@@ -26,5 +26,13 @@ namespace CastleModule.ModelPart
                 CharactersInCastle[i].View.transform.SetParent(parent);
             }
         }
+
+        public void ResetHeroesEnergy()
+        {
+            for (int i = 0; i < CharactersInCastle.Length; i++)
+            {
+                CharactersInCastle[i].Model.ResetEnergy();
+            }
+        }
     }
 }
