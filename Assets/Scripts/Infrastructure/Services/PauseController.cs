@@ -1,4 +1,5 @@
 ﻿using Infrastructure.ServiceLocatorModule;
+using UnityEngine;
 
 namespace Infrastructure.Services
 {
@@ -11,8 +12,18 @@ namespace Infrastructure.Services
             IsPause = false;
         }
 
-        public void TurnOnPause() => IsPause = true;
-        public void TurnOffPause() => IsPause = false;
+        public void TurnOnPause()
+        {
+            IsPause = true;
+            Time.timeScale = 0;
+        }
+
+        public void TurnOffPause()
+        {
+            IsPause = false;
+            Time.timeScale = 1;
+        }
+
         public void ResetPause() => TurnOffPause();
     }
 }
