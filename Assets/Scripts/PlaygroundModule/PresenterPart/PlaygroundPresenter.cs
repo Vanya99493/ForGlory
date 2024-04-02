@@ -28,13 +28,17 @@ namespace PlaygroundModule.PresenterPart
             View.DestroyPlayground();
         }
 
-        public void CreateAndSpawnPlayground(Transform parent, int height, int width, int lengthOfWater, int lengthOfCoast, 
-            float playgroundSizeHeight, float playgroundSizeWidth, CellDataProvider cellDataProvider, 
-            Action<int, int> OnMoveCellClicked, Action OnCellClicked, Action<List<TeamPresenter>> OnTeamsCollision)
+        public void SpawnPlayground(Transform parent, CellType[,] cellTypes, Action<int, int> OnMoveCellClicked, 
+            Action OnCellClicked, Action<List<TeamPresenter>> OnTeamsCollision)
         {
-            var playground = new PlaygroundCreator().CreatePlaygroundByNewRootSpawnSystem(cellDataProvider, height, width, lengthOfWater, lengthOfCoast);
+            CellPresenter[,] playground = new CellPresenter[cellTypes.GetLength(0), cellTypes.GetLength(1)];
+            for (int i = 0; i < playground.GetLength(0); i++)
+                for (int j = 0; j < playground.GetLength(1); j++)
+                    playground[i, j] = new CellPresenter(new CellModel(cellTypes[i, j], i, j));
+            
             Model.InitializePlayground(playground);
-            new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playgroundSizeHeight, playgroundSizeWidth, OnMoveCellClicked, OnCellClicked);
+            new PlaygroundSpawner().SpawnPlayground(_cellFactory, Model, parent, playground.GetLength(0), 
+                playground.GetLength(1), OnMoveCellClicked, OnCellClicked);
             SubscribeOnTeamsCollision(OnTeamsCollision);
         }
 

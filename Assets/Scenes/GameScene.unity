@@ -175,41 +175,5 @@ MonoBehaviour:
     cellDataContainer: {fileID: 11400000, guid: 4b19646e46949964abec6a07b13c39d5, type: 2}
   uiPrefabsProvider:
     uiPrefabsContainer: {fileID: 11400000, guid: 911fb53993174e041a318e2e827a9e60, type: 2}
-  newLevelData:
-    GeneralData:
-      LastCharacterId: 0
-    PlaygroundData:
-      Height: 35
-      Width: 35
-      LengthOfWaterLine: 10
-      LengthOfCoast: 4
-    TeamsData:
-      PlayersInCastle:
-      - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
-      - {fileID: 11400000, guid: f3e95529030b6f14bb3dff69bf610e35, type: 2}
-      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
-      - {fileID: 11400000, guid: 1863fdccc02ba3d4da7dc695ef8551d0, type: 2}
-      - {fileID: 11400000, guid: 68446a956965be8489a593ee81e3b00a, type: 2}
-      PlayerTeam:
-        CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      EnemyTeams:
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
-      - CharactersData: []
-        HeightCellIndex: 0
-        WidthCellIndex: 0
+  levelDataProvider:
+    levelDataContainer: {fileID: 11400000, guid: 0d3856a1cb98bb34bb2ca1fac4a2488a, type: 2}

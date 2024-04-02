@@ -20,6 +20,7 @@ namespace Infrastructure
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
         
         private readonly GameStateMachine _gameStateMachine;
+        private readonly CellDataProvider _cellDataProvider;
         
         private CameraFollower _mainCamera;
         private InputHandler _inputHandler;
@@ -27,21 +28,21 @@ namespace Infrastructure
         private DataBaseController _dbController;
         private LevelDataBuilder _levelDataBuilder;
         private GameData _gameData;
-
-        private LevelData _newLevelData;
+        private LevelDataProvider _levelDataProvider;
 
         public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, 
             InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider,
-            UIPrefabsProvider uiPrefabsProvider, LevelData newLevelData)
+            UIPrefabsProvider uiPrefabsProvider, LevelDataProvider levelDataProvider)
         {
             ServiceLocator.Instance.RegisterService(uiController);
             ServiceLocator.Instance.RegisterService(gameScenePrefabsProvider);
             ServiceLocator.Instance.RegisterService(uiPrefabsProvider);
             _uiController = uiController;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
+            _cellDataProvider = cellDataProvider;
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;
-            _newLevelData = newLevelData;
+            _levelDataProvider = levelDataProvider;
             _gameStateMachine = new GameStateMachine(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
             _dbController = new DataBaseController();
             _gameData = new GameData(_dbController.GetLastLevelId());
@@ -52,30 +53,35 @@ namespace Infrastructure
 
         public void StartGame()
         {
-            _gameStateMachine.Enter<MainMenuState>(null);
+            _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
         }
 
         private void InitializeUIActions()
         {
-            _uiController.mainMenuUIPanel.StartGameAction += StartNewLevel;
+            _uiController.mainMenuUIPanel.SelectDifficultyAction += StartNewLevel;
             _uiController.mainMenuUIPanel.EndGameAction += Application.Quit;
             _uiController.loadLevelUIPanel.EnterLoadLevelAction += LoadSavesFromDB;
-            _uiController.pauseMenuUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+            _uiController.pauseMenuUIPanel.ExitToMainMenuAction += () => {
+                _uiController.battleHudUIPanel.UnsubscribeInfoPanel();
+                _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+            };
             _uiController.loseGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
             _uiController.winGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
-        }
-
-        private void StartNewLevel()
-        {
-            LevelData levelData = _levelDataBuilder.BuildLevelData(_newLevelData, _gameScenePrefabsProvider);
-            ServiceLocator.Instance.RegisterService(new CharacterIdSetter(0));
-            
-            _gameStateMachine.Enter<GameState>(levelData);
         }
 
         private void LoadSavesFromDB()
         {
             _uiController.loadLevelUIPanel.FillSaves(_dbController.GetLevelsId().ToArray(), LoadLevel, DeleteLevel);
+        }
+
+        private void StartNewLevel(LevelDifficulty levelDifficulty)
+        {
+            CharacterIdSetter characterIdSetter = new CharacterIdSetter(0);
+            ServiceLocator.Instance.RegisterService(characterIdSetter);
+            LevelData levelData = _levelDataBuilder.BuildNewLevelData(_levelDataProvider.GetLevelDifficultyData(levelDifficulty), 
+                _gameScenePrefabsProvider, _cellDataProvider, characterIdSetter, _dbController);
+            
+            _gameStateMachine.Enter<GameState>(levelData);
         }
 
         private void LoadLevel(int index)

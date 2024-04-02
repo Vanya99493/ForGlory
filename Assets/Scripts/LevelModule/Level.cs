@@ -81,8 +81,9 @@ namespace LevelModule
             _isWaitingOnEndStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
-            (levelData.TeamsData.PlayerTeam.HeightCellIndex, levelData.TeamsData.PlayerTeam.WidthCellIndex) = 
-                CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.PlayersInCastle);
+            CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.PlayersInCastle);
+            levelData.TeamsData.PlayerTeam.HeightCellIndex = _castlePresenter.CastleHeightIndex;
+            levelData.TeamsData.PlayerTeam.WidthCellIndex = _castlePresenter.CastleWidthIndex;
             
             CreateBattleground();
 
@@ -192,29 +193,27 @@ namespace LevelModule
             _isStepChanging = false;
         }
         
-        private (int, int) CreatePlayground(PlaygroundData playgroundData, CharacterFullData[] playersData)
+        private void CreatePlayground(CreatedPlaygroundData playgroundData, CharacterFullData[] playersData)
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel();
             _playgroundPresenter = new PlaygroundPresenter(model, view, _cellDataProvider);
             
-            _playgroundPresenter.CreateAndSpawnPlayground(view.transform, playgroundData.Height, playgroundData.Width, 
-                playgroundData.LengthOfWaterLine, playgroundData.LengthOfCoast, 
-                playgroundData.Height * 1f, playgroundData.Width * 1f, _cellDataProvider, 
-                OnMoveCellClicked, OnCellClicked, 
-                (List<TeamPresenter> teams) => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
+            _playgroundPresenter.SpawnPlayground(view.transform, playgroundData.Playground, OnMoveCellClicked, OnCellClicked, 
+                teams => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
 
-            return CreateCastle(playersData);
+            CreateCastle(playersData, playgroundData.CastleHeightIndex, playgroundData.CastleWidthIndex);
         }
 
-        private (int, int) CreateCastle(CharacterFullData[] playersData)
+        private void CreateCastle(CharacterFullData[] playersData, int castleHeightIndex, int castleWidthIndex)
         {
-            (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
+            if(castleHeightIndex == -1 || castleWidthIndex == -1)
+                (castleHeightIndex, castleWidthIndex) = FindEmptyCell();
             
-            CastleModel model = new CastleModel(heightSpawnCellIndex, widthSpawnCellIndex);
+            CastleModel model = new CastleModel(castleHeightIndex, castleWidthIndex);
             CastleView view = new CastleFactory().InstantiateCastle(_gameScenePrefabsProvider.GetCastleView(), _playgroundPresenter.View.transform);
             _castlePresenter = new CastlePresenter(model, view);
-            _playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.SetCastleOnCell(_castlePresenter);
+            _playgroundPresenter.Model.GetCellPresenter(castleHeightIndex, castleWidthIndex).Model.SetCastleOnCell(_castlePresenter);
             _castlePresenter.SetPosition(_playgroundPresenter);
 
             _castlePresenter.TurnOnEvent += OnEnterCellWithCastle;
@@ -225,7 +224,6 @@ namespace LevelModule
 
             ServiceLocator.Instance.GetService<UIController>().castleMenuUIPanel.EnterCastleAction += OnEnterCastle;
             ServiceLocator.Instance.GetService<UIController>().castleMenuUIPanel.AcceptCastleAction += OnAcceptTeamChanging;
-            return (heightSpawnCellIndex, widthSpawnCellIndex);
         }
 
         private void OnEnterCellWithCastle()
@@ -311,7 +309,7 @@ namespace LevelModule
 
         private void CreateBattleground()
         {
-            BattlegroundView view = new BattlegroundFactory().InstantiateBattleground(_gameScenePrefabsProvider.GetBattlgroundView());
+            BattlegroundView view = new BattlegroundFactory().InstantiateBattleground(_gameScenePrefabsProvider.GetBattlegroundView());
             BattlegroundModel model = new BattlegroundModel();
             _battlegroundPresenter = new BattlegroundPresenter(model, view);
             _battlegroundPresenter.EndBattle += OnEndBattle;
@@ -325,10 +323,8 @@ namespace LevelModule
             {
                 while (true)
                 {
-                    (int heightSpawnCellIndex, int widthSpawnCellIndex) = FindEmptyCell();
-
-                    enemyTeamsData[i].HeightCellIndex = heightSpawnCellIndex;
-                    enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
+                    if(enemyTeamsData[i].HeightCellIndex == -1 || enemyTeamsData[i].WidthCellIndex == -1)
+                        (enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex) = FindEmptyCell();
                     
                     EnemyTeamPresenter enemyTeamPresenter = 
                         _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
@@ -340,7 +336,7 @@ namespace LevelModule
 
                     enemyTeamPresenter.EnterIdleState(_playgroundPresenter);
                     
-                    if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, heightSpawnCellIndex, widthSpawnCellIndex, true))
+                    if (_playgroundPresenter.SetCharacterOnCell(enemyTeamPresenter, enemyTeamsData[i].HeightCellIndex, enemyTeamsData[i].WidthCellIndex, true))
                     {
                         enemyTeamPresenter.Model.EndStepAction += OnEndEnemyMove;
                         _enemiesTeamPresenters.Add(enemyTeamPresenter);

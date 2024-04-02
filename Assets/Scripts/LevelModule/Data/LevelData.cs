@@ -1,6 +1,7 @@
 ﻿using System;
 using CharacterModule.ModelPart.Data;
 using PlaygroundModule.ModelPart.Data;
+using UnityEngine.Serialization;
 
 namespace LevelModule.Data
 {
@@ -9,7 +10,7 @@ namespace LevelModule.Data
     {
         public int LevelId;
         public GeneralData GeneralData;
-        public PlaygroundData PlaygroundData;
+        public CreatedPlaygroundData PlaygroundData;
         public TeamsData TeamsData;
     }
 }

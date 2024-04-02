@@ -25,6 +25,12 @@ namespace UIModule.Panels.BattleHudModule
             _subscribedCharacter.Model.Death += Unsubscribe;
             UpdateHPBar(character.Model.MaxHealth, character.Model.Health);
         }
+
+        public void Update()
+        {
+            if(_subscribedCharacter != null)
+                gameObject.SetActive(true);
+        }
         
         public void Unsubscribe()
         {

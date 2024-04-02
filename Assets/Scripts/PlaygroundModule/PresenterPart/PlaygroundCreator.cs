@@ -30,7 +30,7 @@ namespace PlaygroundModule.PresenterPart
             }
         }
         
-        public CellPresenter[,] CreatePlaygroundByNewRootSpawnSystem(CellDataProvider cellDataProvider, int height, int width, int lengthOfWater, int lengthOfCoast)
+        public CellType[,] CreatePlaygroundByNewRootSpawnSystem(CellDataProvider cellDataProvider, int height, int width, int lengthOfWater, int lengthOfCoast)
         {
             if (height - (lengthOfWater + lengthOfCoast) <= 0 || width - (lengthOfWater + lengthOfCoast) <= 0)
                 throw new Exception("Height or width too small");
@@ -97,15 +97,11 @@ namespace PlaygroundModule.PresenterPart
                 
             } while (!SmoothOutPlayground2(nodes));
             
-            CellPresenter[,] playground = new CellPresenter[height, width];
+            CellType[,] playground = new CellType[height, width];
             
             for (int i = 0; i < playground.GetLength(0); i++)
-            {
                 for (int j = 0; j < playground.GetLength(1); j++)
-                {
-                    playground[i, j] = new CellPresenter(new CellModel(nodes[i, j].CellType, nodes[i, j].HeightIndex, nodes[i, j].WidthIndex));
-                }
-            }
+                    playground[i, j] = nodes[i, j].CellType;
 
             return playground;
         }

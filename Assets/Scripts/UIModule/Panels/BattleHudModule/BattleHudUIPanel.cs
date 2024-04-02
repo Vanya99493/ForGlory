@@ -22,6 +22,8 @@ namespace UIModule.Panels.BattleHudModule
             pauseButton.onClick.AddListener(OnPauseBattle);
             avoidButton.onClick.AddListener(OnAvoidBattle);
             winButton.onClick.AddListener(OnWinBattle);
+            
+            //infoPanel.UpdateBars();
         }
 
         protected override void UnsubscribeActions()

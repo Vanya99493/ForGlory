@@ -15,6 +15,9 @@ namespace CastleModule.PresenterPart
         
         private readonly CastleModel _model;
 
+        public int CastleHeightIndex => _model.HeightCellIndex;
+        public int CastleWidthIndex => _model.WidthCellIndex;
+
         public CastlePresenter(CastleModel castleModel, CastleView castleView)
         {
             _model = castleModel;

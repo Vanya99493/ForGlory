@@ -15,7 +15,7 @@ namespace Infrastructure.Providers
     {
         [SerializeField] private GameScenePrefabsContainer gameScenePrefabsContainer;
 
-        public BattlegroundView GetBattlgroundView() => gameScenePrefabsContainer.BattlegroundView;
+        public BattlegroundView GetBattlegroundView() => gameScenePrefabsContainer.BattlegroundView;
         public TeamView GetTeamView() => gameScenePrefabsContainer.TeamView;
         public CastleView GetCastleView() => gameScenePrefabsContainer.CastleView;
         

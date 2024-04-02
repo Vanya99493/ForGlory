@@ -42,6 +42,16 @@ namespace UIModule.Panels.BattleHudModule
                 enemyRearguardHPBar.Subscribe(enemyTeam.Model.GetCharacterPresenter(2));
         }
 
+        public void UpdateBars()
+        {
+            heroRearguardHPBar.Update();
+            heroLeftVanguardHPBar.Update();
+            heroRightVanguardHPBar.Update();
+            enemyRearguardHPBar.Update();
+            enemyLeftVanguardHPBar.Update();
+            enemyRightVanguardHPBar.Update();
+        }
+
         public void UnsubscribeBars()
         {
             heroRearguardHPBar.Unsubscribe();

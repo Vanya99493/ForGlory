@@ -8,6 +8,8 @@ using UIModule.Panels.CastleMenuModule;
 using UIModule.Panels.EndGameModule;
 using UIModule.Panels.GameHudModule;
 using UIModule.Panels.LoadLevelMenuModule;
+using UIModule.Panels.MainMenuModule;
+using UIModule.Panels.PauseMenuModule;
 using UnityEngine;
 
 namespace UIModule

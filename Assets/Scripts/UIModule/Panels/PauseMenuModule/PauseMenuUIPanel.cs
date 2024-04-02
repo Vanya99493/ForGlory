@@ -5,7 +5,7 @@ using UIModule.Panels.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIModule.Panels
+namespace UIModule.Panels.PauseMenuModule
 {
     public class PauseMenuUIPanel : BaseUIPanel
     {
