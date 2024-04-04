@@ -85,9 +85,10 @@ namespace BattleModule.PresenterPart
                 CharacterPresenter attackingCharacter = attackQueue.Dequeue();
                 if (attackingCharacter.Model.Health <= 0)
                     continue;
-                
-                _view.SetAttackPosition(attackingCharacter);
+
                 _uiController.battleHudUIPanel.UpdateAttackingCharacter();
+                _view.SetAttackPosition(attackingCharacter, 1f);
+                yield return new WaitForSeconds(1f);
 
                 if (attackingCharacter is PlayerCharacterPresenter)
                 {
@@ -117,7 +118,8 @@ namespace BattleModule.PresenterPart
                     if (enemyIndex == -1)
                         throw new Exception("Impossible clicked character");
                     
-                    _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex);
+                    _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex, 1f);
+                    yield return new WaitForSeconds(1f);
                     attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
                     _clickedCharacter.View.Defend();
@@ -142,7 +144,8 @@ namespace BattleModule.PresenterPart
                         if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
                             break;
                     }
-                    _view.SetAttackPlayerPosition(attackingCharacter, randomIndex);
+                    _view.SetAttackPlayerPosition(attackingCharacter, randomIndex, 1f);
+                    yield return new WaitForSeconds(1f);
                     attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).View.Defend();
@@ -150,7 +153,8 @@ namespace BattleModule.PresenterPart
                     yield return new WaitForSeconds(0.5f);
                 }
                 
-                _view.ResetAttackPosition(attackingCharacter);
+                _view.ResetAttackPosition(attackingCharacter, 1.5f);
+                yield return new WaitForSeconds(1f);
                 attackQueue.Enqueue(attackingCharacter);
                 
                 yield return new WaitForSeconds(0.5f);

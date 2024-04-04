@@ -23,7 +23,7 @@ namespace CharacterModule.ViewPart
         public event Action DefendingAction;
         public event Action DyingAction;
 
-        public void Awake()
+        private void Awake()
         {
             if(animationController != null)
                 animationController.SubscribeAnimations(this, hasRunningState, hasAttackingState, hasDefendingState, hasDyingState);
@@ -43,11 +43,44 @@ namespace CharacterModule.ViewPart
         {
             ClickedAction?.Invoke();
         }
+
+        public void MoveCharacter(Vector3 targetPosition, float movementTime)
+        {
+            StartCoroutine(MoveCharacterCoroutine(targetPosition, movementTime));
+        }
         
         public void DestroyView()
         {
             Die();
             StartCoroutine(DestroyAfterTime(1f));
+        }
+
+        private IEnumerator MoveCharacterCoroutine(Vector3 targetPosition, float movementTime)
+        {
+            Vector3 currentPosition = transform.position;
+            Quaternion startRotation = transform.rotation;
+            
+            Vector3 direction = targetPosition - currentPosition;
+            /*float angle = Vector3.Angle(Vector3.forward, direction);
+            float sign = Mathf.Sign(Vector3.Cross(Vector3.up, direction).y);
+            float eulerAngleY = angle * sign;*/
+            transform.rotation = Quaternion.LookRotation(direction);
+            transform.Rotate(new Vector3(0, 180, 0));
+
+            float startTime = Time.time;
+            Move(true);
+            while (true)
+            {
+                float distCovered = Time.time - startTime;
+                float fracJourney = distCovered / movementTime;
+                transform.position = Vector3.Lerp(currentPosition, targetPosition, fracJourney);
+                
+                if (fracJourney >= 1f)
+                    break;
+                yield return null;
+            }
+            Move(false);
+            transform.rotation = startRotation;
         }
 
         private IEnumerator DestroyAfterTime(float time)

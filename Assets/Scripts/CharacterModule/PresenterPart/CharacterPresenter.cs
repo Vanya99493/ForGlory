@@ -1,6 +1,7 @@
 ﻿using System;
 using CharacterModule.ModelPart;
 using CharacterModule.ViewPart;
+using UnityEngine;
 
 namespace CharacterModule.PresenterPart
 {
@@ -20,10 +21,14 @@ namespace CharacterModule.PresenterPart
             View.ClickedAction += OnClick;
         }
 
+        public void MoveCharacter(Vector3 targetPosition, float movementTime)
+        {
+            View.MoveCharacter(targetPosition, movementTime);
+        }
+
         private void OnDeath()
         {
             View.DestroyView();
-            //View.HideView();
             DeathAction?.Invoke(Model.Id);
         }
 

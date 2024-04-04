@@ -17,6 +17,10 @@ namespace BattleModule.ViewPart
 
         private Vector3 _lastPosition;
 
+        public Vector3 GetAttackStepPosition() => attackStepPosition.position;
+        public Vector3 GetAttackPlayerPosition(int index) => attackPlayersPositions[index].position;
+        public Vector3 GetAttackEnemyPosition(int index) => attackEnemiesPositions[index].position;
+
         public void SetCharactersOnBattleground(PlayerTeamPresenter players, EnemyTeamPresenter enemies)
         {
             for (int i = 0; i < players.Model.CharactersCount; i++)
@@ -36,25 +40,29 @@ namespace BattleModule.ViewPart
             }
         }
 
-        public void SetAttackPosition(CharacterPresenter attackingCharacter)
+        public void SetAttackPosition(CharacterPresenter attackingCharacter, float movementTime)
         {
             _lastPosition = attackingCharacter.View.transform.position;
-            attackingCharacter.View.transform.position = attackStepPosition.position;
+            attackingCharacter.MoveCharacter(attackStepPosition.position, movementTime);
+            //attackingCharacter.View.transform.position = attackStepPosition.position;
         }
 
-        public void SetAttackPlayerPosition(CharacterPresenter attackingCharacter, int attackedPlayerNumber)
+        public void SetAttackPlayerPosition(CharacterPresenter attackingCharacter, int attackedPlayerNumber, float movementTime)
         {
-            attackingCharacter.View.transform.position = attackPlayersPositions[attackedPlayerNumber].position;
+            attackingCharacter.MoveCharacter(attackPlayersPositions[attackedPlayerNumber].position, movementTime);
+            //attackingCharacter.View.transform.position = attackPlayersPositions[attackedPlayerNumber].position;
         }
 
-        public void SetAttackEnemyPosition(CharacterPresenter attackingCharacter, int attackedEnemyNumber)
+        public void SetAttackEnemyPosition(CharacterPresenter attackingCharacter, int attackedEnemyNumber, float movementTime)
         {
-            attackingCharacter.View.transform.position = attackEnemiesPositions[attackedEnemyNumber].position;
+            attackingCharacter.MoveCharacter(attackEnemiesPositions[attackedEnemyNumber].position, movementTime);
+            //attackingCharacter.View.transform.position = attackEnemiesPositions[attackedEnemyNumber].position;
         }
 
-        public void ResetAttackPosition(CharacterPresenter attackingCharacter)
+        public void ResetAttackPosition(CharacterPresenter attackingCharacter, float movementTime)
         {
-            attackingCharacter.View.transform.position = _lastPosition;
+            //attackingCharacter.View.transform.position = _lastPosition;
+            attackingCharacter.MoveCharacter(_lastPosition, movementTime);
             _lastPosition = new Vector3(0, 0, 0);
         }
 
