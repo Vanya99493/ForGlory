@@ -66,10 +66,10 @@ namespace UIModule.Panels.BattleHudModule
 
         private void DestroyChildren()
         {
-            for (int i = 0; i < queueParent.GetChildCount(); i++)
+            for (int i = 0; i < queueParent.childCount; i++)
                 Destroy(queueParent.gameObject.transform.GetChild(i).gameObject);
             
-            for (int i = 0; i < tempParent.GetChildCount(); i++)
+            for (int i = 0; i < tempParent.childCount; i++)
                 Destroy(tempParent.gameObject.transform.GetChild(i).gameObject);
         }
     }

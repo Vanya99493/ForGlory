@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using LevelModule;
 using LevelModule.Data;
 using UIModule;
+using UnityEngine;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
@@ -63,8 +64,13 @@ namespace Infrastructure.GameStateMachineModule.States
             }; 
             _uiController.gameHudUIPanel.NextStepAction += _currentLevel.NextStep;
             _uiController.gameHudUIPanel.EnterAction += _uiController.ActivateCastleMenuUIPanel;
-            _uiController.pauseMenuUIPanel.CloseGamePauseMenuAction += _uiController.ActivateGameHud;
-            _uiController.pauseMenuUIPanel.CloseBattlePauseMenuAction += _uiController.ActivateBattleHud;
+            _uiController.pauseMenuUIPanel.SaveLevelAction += () =>
+            {
+                _uiController.ActivateConfirmWindow("Are you sure?", () =>
+                {
+                    Debug.Log("saved!");
+                });
+            };
             _uiController.pauseMenuUIPanel.LoadLevelAction += _uiController.ActivateLoadLevelMenu;
             _uiController.castleMenuUIPanel.ExitCastleAction += _uiController.ActivateGameHud;
             _uiController.battleHudUIPanel.PauseBattleAction += () => {
@@ -77,7 +83,7 @@ namespace Infrastructure.GameStateMachineModule.States
         private void OnGoBackFromLoadLevelMenu()
         {
             if(_currentLevel.IsActive)
-                _uiController.ActivatePauseMenu();
+                _uiController.ActivateLastActivePanel();
             else
                 _uiController.ActivateMainMenu();
         }

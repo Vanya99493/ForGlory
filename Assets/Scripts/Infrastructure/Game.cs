@@ -59,11 +59,22 @@ namespace Infrastructure
         private void InitializeUIActions()
         {
             _uiController.mainMenuUIPanel.SelectDifficultyAction += StartNewLevel;
-            _uiController.mainMenuUIPanel.EndGameAction += Application.Quit;
+            _uiController.mainMenuUIPanel.EndGameAction += () =>
+            {
+                _uiController.ActivateConfirmWindow("Are you sure?", () =>
+                {
+                    Application.Quit();
+                });
+            };
             _uiController.loadLevelUIPanel.EnterLoadLevelAction += LoadSavesFromDB;
-            _uiController.pauseMenuUIPanel.ExitToMainMenuAction += () => {
-                _uiController.battleHudUIPanel.UnsubscribeInfoPanel();
-                _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+            _uiController.pauseMenuUIPanel.ExitToMainMenuAction += () => 
+            {
+                _uiController.ActivateConfirmWindow("Are you sure?", () =>
+                {
+                    _uiController.battleHudUIPanel.UnsubscribeInfoPanel();
+                    _uiController.pauseMenuUIPanel.Exit();
+                    _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+                });
             };
             _uiController.loseGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
             _uiController.winGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
@@ -71,7 +82,18 @@ namespace Infrastructure
 
         private void LoadSavesFromDB()
         {
-            _uiController.loadLevelUIPanel.FillSaves(_dbController.GetLevelsId().ToArray(), LoadLevel, DeleteLevel);
+            _uiController.loadLevelUIPanel.FillSaves(
+                _dbController.GetLevelsId().ToArray(), 
+                //LoadLevel, 
+                levelIndex =>
+                {
+                    _uiController.ActivateConfirmWindow("Are you sure?", () => LoadLevel(levelIndex));
+                },
+                levelIndex =>
+                {
+                    _uiController.ActivateConfirmWindow("Are you sure?", () => DeleteLevel(levelIndex));
+                }
+                );
         }
 
         private void StartNewLevel(LevelDifficulty levelDifficulty)
