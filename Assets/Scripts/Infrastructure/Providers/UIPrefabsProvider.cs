@@ -4,6 +4,7 @@ using ScriptableObjects;
 using UIModule.Panels.CastleMenuModule;
 using UIModule.Panels.LoadLevelMenuModule;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Infrastructure.Providers
 {
@@ -14,5 +15,6 @@ namespace Infrastructure.Providers
 
         public HeroCard GetHeroCard() => uiPrefabsContainer.HeroCardPrefab;
         public LevelSaveCard GetLevelSaveCard() => uiPrefabsContainer.LevelSaveCardPrefab;
+        public Image GetQueueCharacterIcon() => uiPrefabsContainer.QueueCharacterIcon;
     }
 }

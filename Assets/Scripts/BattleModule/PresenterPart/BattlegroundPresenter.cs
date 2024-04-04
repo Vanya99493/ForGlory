@@ -19,6 +19,8 @@ namespace BattleModule.PresenterPart
         private BattlegroundModel _model;
         private BattlegroundView _view;
 
+        private UIController _uiController;
+        
         private CharacterPresenter _clickedCharacter;
 
         public BattlegroundPresenter(BattlegroundModel battlegroundModel, BattlegroundView battlegroundView)
@@ -27,23 +29,22 @@ namespace BattleModule.PresenterPart
             _view = battlegroundView;
             
             _clickedCharacter = null;
+            _uiController = ServiceLocator.Instance.GetService<UIController>();
         }
         
         public void StartBattle(List<TeamPresenter> teams)
         {
             bool isWin = true;
             
-            var uiController = ServiceLocator.Instance.GetService<UIController>();
-            
             if (teams[0] is PlayerTeamPresenter)
             {
                 _model.SetTeams(teams[0] as PlayerTeamPresenter, teams[1] as EnemyTeamPresenter);
-                uiController.battleHudUIPanel.SubscribeInfoPanel(teams[0] as PlayerTeamPresenter, teams[1] as EnemyTeamPresenter);
+                _uiController.battleHudUIPanel.SubscribeInfoPanel(teams[0] as PlayerTeamPresenter, teams[1] as EnemyTeamPresenter);
             }
             else
             {
                 _model.SetTeams(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
-                uiController.battleHudUIPanel.SubscribeInfoPanel(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
+                _uiController.battleHudUIPanel.SubscribeInfoPanel(teams[1] as PlayerTeamPresenter, teams[0] as EnemyTeamPresenter);
             }
 
             foreach (var character in _model.PlayerTeam.Model.GetCharacters())
@@ -77,6 +78,7 @@ namespace BattleModule.PresenterPart
         private IEnumerator BattleCoroutine()
         {
             Queue<CharacterPresenter> attackQueue = MakeAttackQueue();
+            _uiController.battleHudUIPanel.InstantiateAttackQueuePanel(attackQueue);
             
             while (IsTeamAlive(_model.PlayerTeam) && IsTeamAlive(_model.EnemyTeam) && attackQueue.Count > 0)
             {
@@ -85,6 +87,7 @@ namespace BattleModule.PresenterPart
                     continue;
                 
                 _view.SetAttackPosition(attackingCharacter);
+                _uiController.battleHudUIPanel.UpdateAttackingCharacter();
 
                 if (attackingCharacter is PlayerCharacterPresenter)
                 {
@@ -120,6 +123,7 @@ namespace BattleModule.PresenterPart
                     _clickedCharacter.View.Defend();
                     _clickedCharacter.Model.TakeDamage(attackingCharacter.Model.Damage);
                     _clickedCharacter = null;
+                    _uiController.battleHudUIPanel.UpdateAttackQueuePanel();
                     yield return new WaitForSeconds(0.5f);
                 }
                 else if (attackingCharacter is EnemyCharacterPresenter)
@@ -206,9 +210,8 @@ namespace BattleModule.PresenterPart
 
         private void SubscribeUIActions()
         {
-            var uiController = ServiceLocator.Instance.GetService<UIController>();
-            uiController.battleHudUIPanel.AvoidAction += OnAvoidBattle;
-            uiController.battleHudUIPanel.WinAction += OnWinBattle;
+            _uiController.battleHudUIPanel.AvoidAction += OnAvoidBattle;
+            _uiController.battleHudUIPanel.WinAction += OnWinBattle;
         }
 
         private void SubscribeOnClickActions()
@@ -223,10 +226,9 @@ namespace BattleModule.PresenterPart
 
         private void UnsubscribeUIActions()
         {
-            var uiController = ServiceLocator.Instance.GetService<UIController>();
-            uiController.battleHudUIPanel.AvoidAction -= OnAvoidBattle;
-            uiController.battleHudUIPanel.WinAction -= OnWinBattle;
-            uiController.battleHudUIPanel.UnsubscribeInfoPanel();
+            _uiController.battleHudUIPanel.AvoidAction -= OnAvoidBattle;
+            _uiController.battleHudUIPanel.WinAction -= OnWinBattle;
+            _uiController.battleHudUIPanel.UnsubscribeInfoPanel();
         }
 
         private void UnsubscribeOnClickActions()
