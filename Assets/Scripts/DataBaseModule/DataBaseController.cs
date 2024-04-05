@@ -17,7 +17,7 @@ namespace DataBaseModule
 
         public List<int> GetLevelsId()
         {
-            return new List<int> { 3, 5, 8, 9, 11 };
+            return new List<int> { 3, 5, 8, 9, 11, 15, 18, 19, 24 };
         }
     }
 }

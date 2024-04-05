@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: UIPrefabContainer
   m_EditorClassIdentifier: 
   HeroCardPrefab: {fileID: 5578087815270637043, guid: da2abc4f0086fbc42b44fb3fd43c2d91, type: 3}
-  LevelSaveCardPrefab: {fileID: 7349755357040868459, guid: 8fc0a74d22a98954fb97d3bf6bdb8b01, type: 3}
+  LevelSaveCardPrefab: {fileID: 7731902761729030565, guid: 3fa8293e941cc9b44878d47cf084ffcc, type: 3}
   QueueCharacterIcon: {fileID: 4140532320652101023, guid: 214720c4529b8d248bf8e4e126bd28cd, type: 3}

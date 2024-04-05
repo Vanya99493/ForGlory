@@ -518,8 +518,11 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter,
                     enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex);
                 enemyTeamPresenter.Destroy();
-                if(_enemiesTeamPresenters.Count <= 0)
+                if (_enemiesTeamPresenters.Count <= 0)
+                {
+                    IsActive = false;
                     WinGameAction?.Invoke();
+                }
             }
             else
             {
@@ -530,6 +533,7 @@ namespace LevelModule
                 _playgroundPresenter.RemoveCharacterFromCell(playerTeamPresenter,
                     playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
                 _playerTeamPresenter = null;
+                IsActive = false;
                 LoseGameAction?.Invoke();
             }
         }

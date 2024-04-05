@@ -1,5 +1,4 @@
 ﻿using System;
-using TMPro;
 using UIModule.Panels.Base;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,11 +11,11 @@ namespace UIModule.Panels.GameHudModule
         public event Action NextStepAction;
         public event Action EnterAction;
 
-        [SerializeField] private Button exitToMainMenuButton;
+        [SerializeField] private Button pauseButton;
         [SerializeField] private Button enterButton;
         [SerializeField] private NextStepButton nextStepButton;
 
-        private bool _isBlockedNextStepButton = false;
+        private bool _isBlockedNextStepButton;
 
         private void Awake()
         {
@@ -53,14 +52,14 @@ namespace UIModule.Panels.GameHudModule
         
         protected override void SubscribeActions()
         {
-            exitToMainMenuButton.onClick.AddListener(OnopenPauseMenu);
+            pauseButton.onClick.AddListener(OnopenPauseMenu);
             nextStepButton.Button.onClick.AddListener(OnNextStep);
             enterButton.onClick.AddListener(OnEnter);
         }
 
         protected override void UnsubscribeActions()
         {
-            exitToMainMenuButton.onClick.RemoveListener(OnopenPauseMenu);
+            pauseButton.onClick.RemoveListener(OnopenPauseMenu);
             nextStepButton.Button.onClick.RemoveListener(OnNextStep);
             enterButton.onClick.RemoveListener(OnEnter);
         }

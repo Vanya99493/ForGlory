@@ -61,9 +61,6 @@ namespace CharacterModule.ViewPart
             Quaternion startRotation = transform.rotation;
             
             Vector3 direction = targetPosition - currentPosition;
-            /*float angle = Vector3.Angle(Vector3.forward, direction);
-            float sign = Mathf.Sign(Vector3.Cross(Vector3.up, direction).y);
-            float eulerAngleY = angle * sign;*/
             transform.rotation = Quaternion.LookRotation(direction);
             transform.Rotate(new Vector3(0, 180, 0));
 

@@ -115,8 +115,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePositionTransform: {fileID: 2845866363190473083}
-  activeMaterial: {fileID: 2100000, guid: 6627deb6d391efa4aaeebe43eb57b3b5, type: 2}
-  activeRedMaterial: {fileID: 2100000, guid: 013039c816e7e504d8aff282359c0202, type: 2}
+  activeMaterial: {fileID: 2100000, guid: 0cdc088e78066ef4c914367a772cc7a7, type: 2}
+  activeRedMaterial: {fileID: 2100000, guid: 2050bc8c962576a44a9ef51e19b9978f, type: 2}
 --- !u!1 &4786914903522134446
 GameObject:
   m_ObjectHideFlags: 0

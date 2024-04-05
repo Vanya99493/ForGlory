@@ -23,4 +23,4 @@ MonoBehaviour:
     Vision: 2
     CharacterType: 3
   CharacterPrefab: {fileID: 5612482122074657301, guid: 1a0cefadaeff5cf4ab269071b9f26648, type: 3}
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 94b1040f0c6e8d942aeee2d2d2d93a11, type: 3}

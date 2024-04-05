@@ -87,8 +87,8 @@ namespace BattleModule.PresenterPart
                     continue;
 
                 _uiController.battleHudUIPanel.UpdateAttackingCharacter();
-                _view.SetAttackPosition(attackingCharacter, 1f);
-                yield return new WaitForSeconds(1f);
+                _view.SetAttackPosition(attackingCharacter, 0.5f);
+                yield return new WaitForSeconds(0.5f);
 
                 if (attackingCharacter is PlayerCharacterPresenter)
                 {
@@ -118,15 +118,15 @@ namespace BattleModule.PresenterPart
                     if (enemyIndex == -1)
                         throw new Exception("Impossible clicked character");
                     
-                    _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex, 1f);
-                    yield return new WaitForSeconds(1f);
+                    _view.SetAttackEnemyPosition(attackingCharacter, enemyIndex, 0.5f);
+                    yield return new WaitForSeconds(0.5f);
                     attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
                     _clickedCharacter.View.Defend();
                     _clickedCharacter.Model.TakeDamage(attackingCharacter.Model.Damage);
                     _clickedCharacter = null;
                     _uiController.battleHudUIPanel.UpdateAttackQueuePanel();
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(1f);
                 }
                 else if (attackingCharacter is EnemyCharacterPresenter)
                 {
@@ -144,16 +144,17 @@ namespace BattleModule.PresenterPart
                         if (_model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.Health > 0)
                             break;
                     }
-                    _view.SetAttackPlayerPosition(attackingCharacter, randomIndex, 1f);
-                    yield return new WaitForSeconds(1f);
+                    _view.SetAttackPlayerPosition(attackingCharacter, randomIndex, 0.5f);
+                    yield return new WaitForSeconds(0.5f);
                     attackingCharacter.View.Attack();
                     yield return new WaitForSeconds(0.5f);
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).View.Defend();
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackingCharacter.Model.Damage);
-                    yield return new WaitForSeconds(0.5f);
+                    _uiController.battleHudUIPanel.UpdateAttackQueuePanel();
+                    yield return new WaitForSeconds(1f);
                 }
                 
-                _view.ResetAttackPosition(attackingCharacter, 1.5f);
+                _view.ResetAttackPosition(attackingCharacter, 1f);
                 yield return new WaitForSeconds(1f);
                 attackQueue.Enqueue(attackingCharacter);
                 
