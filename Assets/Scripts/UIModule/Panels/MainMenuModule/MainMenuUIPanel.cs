@@ -3,6 +3,7 @@ using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
 using LevelModule.Data;
 using UIModule.Panels.Base;
+using UIModule.Panels.LoadingScreenModule;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ namespace UIModule.Panels.MainMenuModule
         [SerializeField] private Button toLoadLevelMenuButton;
         [SerializeField] private Button endButton;
         [SerializeField] private SelectDifficultyPanel selectDifficultyPanel;
+        [SerializeField] private BlackBackgroundPanel blackBackgroundPanel;
 
         private void Start()
         {
@@ -28,10 +30,10 @@ namespace UIModule.Panels.MainMenuModule
         protected override void SubscribeActions()
         {
             selectDifficultyPanel.gameObject.SetActive(false);
-            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
             startButton.onClick.AddListener(OnStartGame);
             toLoadLevelMenuButton.onClick.AddListener(OnToLoadLevelMenu);
             endButton.onClick.AddListener(OnEndGame);
+            blackBackgroundPanel.StartDisappear();
         }
 
         protected override void UnsubscribeActions()
@@ -39,7 +41,6 @@ namespace UIModule.Panels.MainMenuModule
             startButton.onClick.RemoveListener(OnStartGame);
             toLoadLevelMenuButton.onClick.RemoveListener(OnToLoadLevelMenu);
             endButton.onClick.RemoveListener(OnEndGame);
-            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
         }
 
         private void OnStartGame()

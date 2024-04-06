@@ -1,6 +1,8 @@
 ﻿using CharacterModule.ModelPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.ViewPart;
+using Infrastructure.ServiceLocatorModule;
+using Infrastructure.Services;
 using UnityEngine;
 
 namespace CharacterModule.PresenterPart.FactoryModule
@@ -12,6 +14,7 @@ namespace CharacterModule.PresenterPart.FactoryModule
             CharacterView enemyView = Object.Instantiate(characterPrefab, parent.transform);
             enemyView.transform.position = spawnPosition;
             enemyView.Destroy += OnDestroyCharacter;
+            _characterIdSetter ??= ServiceLocator.Instance.GetService<CharacterIdSetter>();
             
             CharacterModel enemyModel = new EnemyCharacterModel(_characterIdSetter.GetNewId(), data.Name, data.MaxHealth, data.MaxEnergy, data.Vision, data.Initiative, data.Damage, data.CurrentHealth);
             CharacterPresenter characterPresenter = new EnemyCharacterPresenter(enemyModel as EnemyCharacterModel, enemyView as EnemyCharacterView);

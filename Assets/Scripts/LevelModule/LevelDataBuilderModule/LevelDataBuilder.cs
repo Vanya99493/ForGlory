@@ -14,10 +14,11 @@ namespace LevelModule.LevelDataBuilderModule
 {
     public class LevelDataBuilder
     {
-        public LevelData GetBackgroundLevelData()
+        /*public LevelData GetBackgroundLevelData(LevelDifficultyData inputData, GameScenePrefabsProvider gameScenePrefabsProvider, 
+            CellDataProvider cellDataProvider, CharacterIdSetter charactersIdSetter, DataBaseController dbController)
         {
-            return null;
-        }
+            
+        }*/
 
         public LevelData BuildNewLevelData(LevelDifficultyData inputData, GameScenePrefabsProvider gameScenePrefabsProvider, 
             CellDataProvider cellDataProvider, CharacterIdSetter charactersIdSetter, DataBaseController dbController)

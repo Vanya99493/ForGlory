@@ -8,5 +8,6 @@ namespace ScriptableObjects
     public class LevelDataContainer : ScriptableObject
     {
         public SerializableDictionary<LevelDifficulty, LevelDifficultyData> LevelDifficultyDatas;
+        public LevelDifficultyData BackgroundLevelData;
     }
 }

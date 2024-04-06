@@ -12,5 +12,7 @@ namespace Infrastructure.Providers
 
         public LevelDifficultyData GetLevelDifficultyData(LevelDifficulty levelDifficulty) =>
             levelDataContainer.LevelDifficultyDatas[levelDifficulty];
+
+        public LevelDifficultyData GetBackgroundLevelData() => levelDataContainer.BackgroundLevelData;
     }
 }

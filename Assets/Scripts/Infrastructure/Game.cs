@@ -53,7 +53,7 @@ namespace Infrastructure
 
         public void StartGame()
         {
-            _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+            StartBackgroundLevel();
         }
 
         private void InitializeUIActions()
@@ -73,11 +73,11 @@ namespace Infrastructure
                 {
                     _uiController.battleHudUIPanel.UnsubscribeInfoPanel();
                     _uiController.pauseMenuUIPanel.Exit();
-                    _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+                    StartBackgroundLevel();
                 });
             };
-            _uiController.loseGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
-            _uiController.winGameUIPanel.ExitToMainMenuAction += () => _gameStateMachine.Enter<MainMenuState>(_levelDataBuilder.GetBackgroundLevelData());
+            _uiController.loseGameUIPanel.ExitToMainMenuAction += StartBackgroundLevel;
+            _uiController.winGameUIPanel.ExitToMainMenuAction += StartBackgroundLevel;
         }
 
         private void LoadSavesFromDB()
@@ -96,10 +96,18 @@ namespace Infrastructure
                 );
         }
 
+        private void StartBackgroundLevel()
+        {
+            CharacterIdSetter characterIdSetter = new CharacterIdSetter(0);
+            LevelData levelData = _levelDataBuilder.BuildNewLevelData(_levelDataProvider.GetBackgroundLevelData(), 
+                _gameScenePrefabsProvider, _cellDataProvider, characterIdSetter, _dbController);
+            
+            _gameStateMachine.Enter<MainMenuState>(levelData);
+        }
+
         private void StartNewLevel(LevelDifficulty levelDifficulty)
         {
             CharacterIdSetter characterIdSetter = new CharacterIdSetter(0);
-            ServiceLocator.Instance.RegisterService(characterIdSetter);
             LevelData levelData = _levelDataBuilder.BuildNewLevelData(_levelDataProvider.GetLevelDifficultyData(levelDifficulty), 
                 _gameScenePrefabsProvider, _cellDataProvider, characterIdSetter, _dbController);
             

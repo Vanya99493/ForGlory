@@ -51,6 +51,7 @@ namespace LevelModule
         private PlayerTeamPresenter _playerTeamPresenter;
         private List<EnemyTeamPresenter> _enemiesTeamPresenters;
 
+        private Coroutine _backgroundLiveCoroutine;
         private PlayerTeamFactory _playerTeamFactory;
         private EnemyTeamFactory _enemyTeamFactory;
         private bool _isStepChanging;
@@ -73,15 +74,50 @@ namespace LevelModule
             ServiceLocator.Instance.RegisterService(_bfsSearch);
         }
 
+        public void StartBackgroundLevel(LevelData levelData)
+        {
+            ServiceLocator.Instance.RegisterService(new CharacterIdSetter(levelData.GeneralData.LastCharacterId));
+            _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
+            
+            CreatePlayground(levelData.PlaygroundData);
+            CreateEnemies(levelData.TeamsData.EnemyTeams);
+            
+            _backgroundLiveCoroutine = _coroutineRunner.StartCoroutine(BackgroundLiveCoroutine());
+        }
+
+        private IEnumerator BackgroundLiveCoroutine()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(3f);
+                _coroutineRunner.StartCoroutine(EnemiesBehaveStarter());
+            }
+        }
+
+        public void RemoveBackgroundLevel()
+        {
+            _coroutineRunner.StopCoroutine(_backgroundLiveCoroutine);
+            _playgroundPresenter.Destroy();
+            _playgroundPresenter = null;
+            foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
+            {
+                enemyTeamPresenter.Destroy();
+            }
+            _enemyTeamFactory.RemoveParent();
+            ServiceLocator.Instance.UnregisterService<CharacterIdSetter>();
+        }
+
         public void StartLevel(LevelData levelData)
         {
+            ServiceLocator.Instance.RegisterService(new CharacterIdSetter(levelData.GeneralData.LastCharacterId));
             LevelId = levelData.LevelId;
             IsActive = true;
             _isStepChanging = false;
             _isWaitingOnEndStepChanging = false;
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
-            CreatePlayground(levelData.PlaygroundData, levelData.TeamsData.PlayersInCastle);
+            CreatePlayground(levelData.PlaygroundData);
+            CreateCastle(levelData.TeamsData.PlayersInCastle, levelData.PlaygroundData.CastleHeightIndex, levelData.PlaygroundData.CastleWidthIndex);
             levelData.TeamsData.PlayerTeam.HeightCellIndex = _castlePresenter.CastleHeightIndex;
             levelData.TeamsData.PlayerTeam.WidthCellIndex = _castlePresenter.CastleWidthIndex;
             
@@ -175,8 +211,8 @@ namespace LevelModule
             }
             yield return new WaitForSeconds(0.5f);
             
-            _playerTeamPresenter.Model.ResetEnergy();
-            _playerTeamPresenter.Model.ResetMovementSettings();
+            _playerTeamPresenter?.Model.ResetEnergy();
+            _playerTeamPresenter?.Model.ResetMovementSettings();
 
             foreach (EnemyTeamPresenter enemyTeamPresenter in _enemiesTeamPresenters)
             {
@@ -184,7 +220,7 @@ namespace LevelModule
                 enemyTeamPresenter.Model.ResetMovementSettings();
             }
 
-            _castlePresenter.ResetHeroesEnergy();
+            _castlePresenter?.ResetHeroesEnergy();
 
             EndStepChanging();
         }
@@ -195,7 +231,7 @@ namespace LevelModule
             _isStepChanging = false;
         }
         
-        private void CreatePlayground(CreatedPlaygroundData playgroundData, CharacterFullData[] playersData)
+        private void CreatePlayground(CreatedPlaygroundData playgroundData)
         {
             PlaygroundView view = new PlaygroundFactory().InstantiatePlayground();
             PlaygroundModel model = new PlaygroundModel();
@@ -203,8 +239,6 @@ namespace LevelModule
             
             _playgroundPresenter.SpawnPlayground(view.transform, playgroundData.Playground, OnMoveCellClicked, OnCellClicked, 
                 teams => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
-
-            CreateCastle(playersData, playgroundData.CastleHeightIndex, playgroundData.CastleWidthIndex);
         }
 
         private void CreateCastle(CharacterFullData[] playersData, int castleHeightIndex, int castleWidthIndex)

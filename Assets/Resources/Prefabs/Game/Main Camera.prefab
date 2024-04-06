@@ -178,6 +178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 7, z: -1.7}
+  rotationSpeed: 2
 --- !u!1 &5453219743443997725
 GameObject:
   m_ObjectHideFlags: 0
