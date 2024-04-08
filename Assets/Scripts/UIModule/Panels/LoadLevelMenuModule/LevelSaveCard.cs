@@ -17,10 +17,10 @@ namespace UIModule.Panels.LoadLevelMenuModule
         
         public int LevelIndex { get; private set; }
         
-        public void Initialize(int levelIndex)
+        public void Initialize(int levelIndex, string save)
         {
             LevelIndex = levelIndex;
-            saveNameText.text = $"Level {LevelIndex}";
+            saveNameText.text = $"{save} {LevelIndex}";
             SubscribeActions();
         }
 

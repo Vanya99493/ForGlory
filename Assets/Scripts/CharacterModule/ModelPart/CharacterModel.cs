@@ -1,4 +1,5 @@
 ﻿using System;
+using CharacterModule.ModelPart.Data;
 
 namespace CharacterModule.ModelPart
 {
@@ -16,6 +17,7 @@ namespace CharacterModule.ModelPart
         public int MaxEnergy { get; private set; }
         public int Initiative { get; private set; }
         public int Damage { get; private set; }
+        public PositionType PositionType { get; private set; }
 
         public CharacterModel(int id, string name, int maxHealth, int maxEnergy, int initiative, int damage, int currentEnergy = -1, int currentHealth = -1)
         {
@@ -27,6 +29,11 @@ namespace CharacterModule.ModelPart
             Energy = currentEnergy == -1 ? MaxEnergy : currentEnergy;
             Initiative = initiative;
             Damage = damage;
+        }
+
+        public void SetPositionType(PositionType newPositionType)
+        {
+            PositionType = newPositionType;
         }
 
         public void ResetEnergy()

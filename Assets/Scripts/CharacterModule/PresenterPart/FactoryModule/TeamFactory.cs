@@ -1,6 +1,7 @@
 ﻿using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart.BehaviourModule.Base;
 using CharacterModule.ViewPart;
+using Infrastructure.Providers;
 using UnityEngine;
 
 namespace CharacterModule.PresenterPart.FactoryModule
@@ -11,7 +12,8 @@ namespace CharacterModule.PresenterPart.FactoryModule
 
         public abstract TeamPresenter InstantiateTeam(TeamData teamData);
 
-        public abstract TeamPresenter InstantiateTeam(TeamView teamPrefab, TeamData teamData, IBehaviour characterBehaviour);
+        public abstract TeamPresenter InstantiateTeam(GameScenePrefabsProvider gameScenePrefabsProvider, 
+            TeamData teamData, IBehaviour characterBehaviour);
 
         public void RemoveParent()
         {

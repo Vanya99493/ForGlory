@@ -1,4 +1,5 @@
-﻿using CharacterModule.PresenterPart;
+﻿using CharacterModule.ModelPart.Data;
+using CharacterModule.PresenterPart;
 using UnityEngine;
 
 namespace CastleModule.ModelPart
@@ -24,6 +25,7 @@ namespace CastleModule.ModelPart
                 CharactersInCastle[i] = characters[i];
                 CharactersInCastle[i].View.HideView();
                 CharactersInCastle[i].View.transform.SetParent(parent);
+                CharactersInCastle[i].Model.SetPositionType(PositionType.Castle);
             }
         }
 

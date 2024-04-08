@@ -23,12 +23,14 @@ namespace UIModule.Panels.MainMenuModule
 
         private void Start()
         {
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnInputPause();
             selectDifficultyPanel.Initialize();
             selectDifficultyPanel.SelectDifficultyAction += OnSelectDifficulty;
         }
 
         protected override void SubscribeActions()
         {
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffInputPause();
             selectDifficultyPanel.gameObject.SetActive(false);
             startButton.onClick.AddListener(OnStartGame);
             toLoadLevelMenuButton.onClick.AddListener(OnToLoadLevelMenu);

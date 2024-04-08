@@ -15,14 +15,14 @@ namespace UIModule.Panels.EndGameModule
         
         protected override void SubscribeActions()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnGamePause();
             exitToMainMenuButton.onClick.AddListener(OnExitToMainMenu);
         }
 
         protected override void UnsubscribeActions()
         {
             exitToMainMenuButton.onClick.RemoveListener(OnExitToMainMenu);
-            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffGamePause();
         }
 
         private void OnExitToMainMenu()

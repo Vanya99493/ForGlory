@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using CustomClasses;
 using Infrastructure.CoroutineRunnerModule;
@@ -59,6 +60,7 @@ namespace CharacterModule.ModelPart
                 _leftVanguard = characters[0];
                 _leftVanguard.DeathAction += OnKillCharacter;
                 characterPresenters.Add(_leftVanguard);
+                _leftVanguard.Model.SetPositionType(PositionType.LeftVanguard);
             }
 
             if (characters.Length > 1 && characters[1] != null)
@@ -66,6 +68,7 @@ namespace CharacterModule.ModelPart
                 _rightVanguard = characters[1];
                 _rightVanguard.DeathAction += OnKillCharacter;
                 characterPresenters.Add(_rightVanguard);
+                _rightVanguard.Model.SetPositionType(PositionType.RightVanguard);
             }
 
             if (characters.Length > 2 && characters[2] != null)
@@ -73,6 +76,7 @@ namespace CharacterModule.ModelPart
                 _rearguard = characters[2];
                 _rearguard.DeathAction += OnKillCharacter;
                 characterPresenters.Add(_rearguard);
+                _rearguard.Model.SetPositionType(PositionType.Rearguard);
             }
             
             _teamMaxEnergy = characterPresenters[0].Model.MaxEnergy;
@@ -101,18 +105,21 @@ namespace CharacterModule.ModelPart
                 characters.Add(leftVanguard);
                 _leftVanguard = leftVanguard;
                 _leftVanguard.DeathAction += OnKillCharacter;
+                _leftVanguard.Model.SetPositionType(PositionType.LeftVanguard);
             }
             if (rightVanguard != null)
             {
                 characters.Add(rightVanguard);
                 _rightVanguard = rightVanguard;
                 _rightVanguard.DeathAction += OnKillCharacter;
+                _rightVanguard.Model.SetPositionType(PositionType.RightVanguard);
             }
             if (rearguard != null)
             {
                 characters.Add(rearguard);
                 _rearguard = rearguard;
                 _rearguard.DeathAction += OnKillCharacter;
+                _rearguard.Model.SetPositionType(PositionType.Rearguard);
             }
             
             _teamMaxEnergy = characters[0].Model.MaxEnergy;

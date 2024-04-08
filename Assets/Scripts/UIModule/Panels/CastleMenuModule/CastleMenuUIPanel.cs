@@ -35,7 +35,7 @@ namespace UIModule.Panels.CastleMenuModule
             _tempParent.transform.SetParent(transform);
         }
 
-        public void Enter(PlayerCharacterPresenter[] charactersInCastle, PlayerTeamPresenter playerTeam)
+        public void Enter(CharacterPresenter[] charactersInCastle, PlayerTeamPresenter playerTeam)
         {
             RemoveHeroCards();
             
@@ -83,7 +83,7 @@ namespace UIModule.Panels.CastleMenuModule
 
         protected override void SubscribeActions()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnGamePause();
             exitCastleButton.onClick.AddListener(ExitCastle);
             acceptAndExitCastleButton.onClick.AddListener(AcceptAndExitCastle);
             EnterCastleAction?.Invoke();
@@ -94,7 +94,7 @@ namespace UIModule.Panels.CastleMenuModule
             RemoveHeroCards();
             exitCastleButton.onClick.RemoveListener(ExitCastle);
             acceptAndExitCastleButton.onClick.RemoveListener(AcceptAndExitCastle);
-            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffGamePause();
         }
 
         private void AcceptAndExitCastle()

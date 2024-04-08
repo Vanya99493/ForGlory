@@ -32,14 +32,14 @@ namespace Infrastructure.Providers
             throw new Exception($"Cannot find character with Name: {name}");
         }
 
-        public List<CharacterFullData> GetCharactersByType(CharacterType type)
+        public List<CharacterData> GetCharactersByType(CharacterType type)
         {
-            List<CharacterFullData> characters = new List<CharacterFullData>();
+            List<CharacterData> characters = new List<CharacterData>();
             foreach (CharacterFullData characterFullData in gameScenePrefabsContainer.Characters)
             {
                 if (characterFullData.CharacterData.CharacterType == type)
                 {
-                    characters.Add(characterFullData);
+                    characters.Add(characterFullData.CharacterData);
                 }
             }
 

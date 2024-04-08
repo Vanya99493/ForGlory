@@ -34,7 +34,7 @@ namespace CastleModule.PresenterPart
             _model.SetCharactersInCastle(characters, View.transform);
         }
 
-        public PlayerCharacterPresenter[] GetCharactersInCastle() => _model.CharactersInCastle;
+        public CharacterPresenter[] GetCharactersInCastle() => _model.CharactersInCastle;
 
         public void ResetHeroesEnergy()
         {

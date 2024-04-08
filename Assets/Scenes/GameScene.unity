@@ -177,3 +177,4 @@ MonoBehaviour:
     uiPrefabsContainer: {fileID: 11400000, guid: 911fb53993174e041a318e2e827a9e60, type: 2}
   levelDataProvider:
     levelDataContainer: {fileID: 11400000, guid: 0d3856a1cb98bb34bb2ca1fac4a2488a, type: 2}
+  dbName: for-glory.db

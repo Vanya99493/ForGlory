@@ -30,12 +30,12 @@ namespace UIModule.Panels.PauseMenuModule
 
         protected override void SubscribeActions()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOnPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnGamePause();
         }
 
         protected override void UnsubscribeActions()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOffPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffGamePause();
             ShowSaveButton();
         }
 

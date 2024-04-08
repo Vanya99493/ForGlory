@@ -3,17 +3,18 @@ using CameraModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.GameStateMachineModule.States.Base;
 using Infrastructure.Providers;
+using Infrastructure.SaveModule;
 using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
 using LevelModule;
 using LevelModule.Data;
 using UIModule;
-using UnityEngine;
 
 namespace Infrastructure.GameStateMachineModule.States
 {
     public class GameState : IGameState
     {
+        public event SaveDelegate SaveAction;
         public event Action StateEnded;
 
         private readonly UIController _uiController;
@@ -31,7 +32,7 @@ namespace Infrastructure.GameStateMachineModule.States
             
             ServiceLocator.Instance.RegisterService(new PauseController());
             
-            _currentLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
+            _currentLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider, uiController);
             
             SubscribeOnUIActions();
             SubscribeStepChangingActions();
@@ -41,12 +42,14 @@ namespace Infrastructure.GameStateMachineModule.States
         public void Enter(LevelData levelData)
         {
             _currentLevel.StartLevel(levelData);
+            _currentLevel.SaveAction += SaveAction;
             _currentLevel.SetCameraTarget(_mainCamera);
             _uiController.ActivateCastleMenuUIPanel();
         }
 
         public void Exit()
         {
+            _currentLevel.SaveAction -= SaveAction;
             _currentLevel.ResetLevel();
             _mainCamera.ResetTarget();
             _currentLevel.RemoveLevel();
@@ -64,13 +67,6 @@ namespace Infrastructure.GameStateMachineModule.States
             }; 
             _uiController.gameHudUIPanel.NextStepAction += _currentLevel.NextStep;
             _uiController.gameHudUIPanel.EnterAction += _uiController.ActivateCastleMenuUIPanel;
-            _uiController.pauseMenuUIPanel.SaveLevelAction += () =>
-            {
-                _uiController.ActivateConfirmWindow("Are you sure?", () =>
-                {
-                    Debug.Log("saved!");
-                });
-            };
             _uiController.pauseMenuUIPanel.LoadLevelAction += _uiController.ActivateLoadLevelMenu;
             _uiController.castleMenuUIPanel.ExitCastleAction += _uiController.ActivateGameHud;
             _uiController.battleHudUIPanel.PauseBattleAction += () => {

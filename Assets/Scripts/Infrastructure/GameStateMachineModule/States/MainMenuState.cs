@@ -23,7 +23,7 @@ namespace Infrastructure.GameStateMachineModule.States
         {
             _uiController = uiController;
             _mainCamera = mainCamera;
-            _backgroundLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
+            _backgroundLevel = new Level(coroutineRunner, cellDataProvider, gameScenePrefabsProvider, uiController);
         }
         
         public void Enter(LevelData levelData)

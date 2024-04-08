@@ -5,25 +5,37 @@ namespace Infrastructure.Services
 {
     public class PauseController : IService
     {
-        public bool IsPause { get; private set; }
+        public bool IsGamePause { get; private set; }
+        public bool IsInputPause { get; private set; }
 
         public PauseController()
         {
-            IsPause = false;
+            IsGamePause = false;
+            IsInputPause = false;
         }
 
-        public void TurnOnPause()
+        public void TurnOnGamePause()
         {
-            IsPause = true;
+            IsGamePause = true;
             Time.timeScale = 0;
         }
 
-        public void TurnOffPause()
+        public void TurnOffGamePause()
         {
-            IsPause = false;
+            IsGamePause = false;
             Time.timeScale = 1;
         }
 
-        public void ResetPause() => TurnOffPause();
+        public void TurnOnInputPause()
+        {
+            IsInputPause = true;
+        }
+
+        public void TurnOffInputPause()
+        {
+            IsInputPause = false;
+        }
+
+        public void ResetGamePause() => TurnOffGamePause();
     }
 }

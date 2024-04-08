@@ -15,6 +15,7 @@ using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.FactoryModule;
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.Providers;
+using Infrastructure.SaveModule;
 using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
 using LevelModule.Data;
@@ -31,6 +32,7 @@ namespace LevelModule
 {
     public class Level
     {
+        public event SaveDelegate SaveAction;
         public event Action StartStepChangingAction;
         public event Action EndStepChangingAction;
         public event Action BattleStartAction;
@@ -41,6 +43,7 @@ namespace LevelModule
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly CellDataProvider _cellDataProvider;
         private readonly GameScenePrefabsProvider _gameScenePrefabsProvider;
+        private readonly UIController _uiController;
         
         private readonly WideSearch _bfsSearch;
         
@@ -60,18 +63,20 @@ namespace LevelModule
         private int _enemiesStepCounter;
         private int _playerStepCounter;
         
-        public int LevelId { get; private set; }
         public bool IsActive { get; private set; }
         
-        public Level(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider)
+        public Level(ICoroutineRunner coroutineRunner, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider, UIController uiController)
         {
             IsActive = false;
             _coroutineRunner = coroutineRunner;
             _cellDataProvider = cellDataProvider;
             _gameScenePrefabsProvider = gameScenePrefabsProvider;
+            _uiController = uiController;
 
             _bfsSearch = new WideSearch(cellDataProvider);
             ServiceLocator.Instance.RegisterService(_bfsSearch);
+
+            SubscribeUIActions();
         }
 
         public void StartBackgroundLevel(LevelData levelData)
@@ -110,7 +115,6 @@ namespace LevelModule
         public void StartLevel(LevelData levelData)
         {
             ServiceLocator.Instance.RegisterService(new CharacterIdSetter(levelData.GeneralData.LastCharacterId));
-            LevelId = levelData.LevelId;
             IsActive = true;
             _isStepChanging = false;
             _isWaitingOnEndStepChanging = false;
@@ -241,7 +245,7 @@ namespace LevelModule
                 teams => _coroutineRunner.StartCoroutine(WaitOnEndStepChanging(teams)));
         }
 
-        private void CreateCastle(CharacterFullData[] playersData, int castleHeightIndex, int castleWidthIndex)
+        private void CreateCastle(CharacterData[] playersData, int castleHeightIndex, int castleWidthIndex)
         {
             if(castleHeightIndex == -1 || castleWidthIndex == -1)
                 (castleHeightIndex, castleWidthIndex) = FindEmptyCell();
@@ -281,7 +285,7 @@ namespace LevelModule
         {
             _playerTeamPresenter.View.Rotate(Direction.Down);
             
-            List<PlayerCharacterPresenter> allCharacters = _castlePresenter.GetCharactersInCastle().ToList();
+            List<CharacterPresenter> allCharacters = _castlePresenter.GetCharactersInCastle().ToList();
             foreach (var character in _playerTeamPresenter.Model.GetCharacters())
                 allCharacters.Add(character as PlayerCharacterPresenter);
 
@@ -295,21 +299,21 @@ namespace LevelModule
                 {
                     if (character.Model.Id == newPlayersTeamId[i])
                     {
-                        newTeamCharacters[i] = character;
+                        newTeamCharacters[i] = character as PlayerCharacterPresenter;
                         wasAdded = true;
                         break;
                     }
                 }
 
                 if (!wasAdded)
-                    charactersInCastle.Add(character);
+                    charactersInCastle.Add(character as PlayerCharacterPresenter);
             }
             
             _playerTeamPresenter.Model.SetCharacters(newTeamCharacters);
             _castlePresenter.SetCharactersInCastle(charactersInCastle.ToArray());
         }
 
-        private PlayerCharacterPresenter[] CreateHeroes(CharacterFullData[] playersInCastle, Transform parent)
+        private PlayerCharacterPresenter[] CreateHeroes(CharacterData[] playersInCastle, Transform parent)
         {
             PlayerCharacterFactory characterFactory = new PlayerCharacterFactory();
             PlayerCharacterPresenter[] playersInCastlePresenters = new PlayerCharacterPresenter[playersInCastle.Length]; 
@@ -317,8 +321,8 @@ namespace LevelModule
             for (int i = 0; i < playersInCastle.Length; i++)
             {
                 playersInCastlePresenters[i] = characterFactory.InstantiateCharacter(
-                    _gameScenePrefabsProvider.GetCharacterByName(playersInCastle[i].CharacterData.Name).CharacterPrefab,
-                    playersInCastle[i].CharacterData,
+                    _gameScenePrefabsProvider.GetCharacterByName(playersInCastle[i].Name).CharacterPrefab,
+                    playersInCastle[i],
                     parent,
                     _castlePresenter.View.transform.position
                 ) as PlayerCharacterPresenter;
@@ -331,8 +335,7 @@ namespace LevelModule
         private void CreatePlayerTeam(TeamData playerTeamData)
         {
             _playerTeamFactory = new PlayerTeamFactory();
-            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), playerTeamData, 
-                new PlayerBehaviour()) as PlayerTeamPresenter;
+            _playerTeamPresenter = _playerTeamFactory.InstantiateTeam(_gameScenePrefabsProvider, playerTeamData, new PlayerBehaviour()) as PlayerTeamPresenter;
             
             _playerTeamPresenter.Model.SetPosition(_playgroundPresenter);
             _playgroundPresenter.SetCharacterOnCell(_playerTeamPresenter, playerTeamData.HeightCellIndex, playerTeamData.WidthCellIndex, true);
@@ -367,7 +370,7 @@ namespace LevelModule
                 enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
                 
                 EnemyTeamPresenter enemyTeamPresenter = 
-                    _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider.GetTeamView(), enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
+                    _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider, enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;
                     
                 enemyTeamPresenter.Model.SetPosition(_playgroundPresenter);
                     
@@ -395,6 +398,18 @@ namespace LevelModule
                      !_playgroundPresenter.CheckCellOnCharacter(heightSpawnCellIndex, widthSpawnCellIndex));
 
             return (heightSpawnCellIndex, widthSpawnCellIndex);
+        }
+
+        private void SubscribeUIActions()
+        {
+            _uiController.pauseMenuUIPanel.SaveLevelAction += () =>
+            {
+                _uiController.ActivateConfirmWindow("Are you sure?", () =>
+                {
+                    SaveAction?.Invoke(_playgroundPresenter, _castlePresenter, _playerTeamPresenter, _enemiesTeamPresenters, 
+                        ServiceLocator.Instance.GetService<CharacterIdSetter>());
+                });
+            };
         }
 
         private void OnEndPlayerMove()

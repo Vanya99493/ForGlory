@@ -8,7 +8,6 @@ namespace LevelModule.Data
     [Serializable]
     public class LevelData
     {
-        public int LevelId;
         public GeneralData GeneralData;
         public CreatedPlaygroundData PlaygroundData;
         public TeamsData TeamsData;

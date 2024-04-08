@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
 using Interfaces;
@@ -10,15 +11,26 @@ namespace Infrastructure.InputHandlerModule
     {
         private Camera _mainCamera;
         private InputMouseButtonType _pressedMouseButton = InputMouseButtonType.None;
+        private PauseController _pauseController;
 
         private void Start()
         {
             _mainCamera = Camera.main;
+            StartCoroutine(WaitingOnPauseControllerSubscribing());
         }
 
+        private IEnumerator WaitingOnPauseControllerSubscribing()
+        {
+            while (_pauseController == null)
+            {
+                _pauseController = ServiceLocator.Instance.GetService<PauseController>();
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+        
         private void Update()
         {
-            if (ServiceLocator.Instance.GetService<PauseController>().IsPause)
+            if (_pauseController.IsGamePause || _pauseController.IsInputPause)
                 return;
             
             if (Input.GetMouseButtonDown(0) && _pressedMouseButton == InputMouseButtonType.None)

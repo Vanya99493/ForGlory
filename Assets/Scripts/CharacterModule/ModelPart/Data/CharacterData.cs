@@ -9,10 +9,12 @@ namespace CharacterModule.ModelPart.Data
         public string Name;
         public int CurrentHealth;
         public int MaxHealth;
+        public int CurrentEnergy;
         public int MaxEnergy;
         public int Initiative;
         public int Damage;
         public int Vision;
         public CharacterType CharacterType;
+        public PositionType PositionType;
     }
 }

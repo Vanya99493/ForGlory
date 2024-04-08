@@ -1,7 +1,9 @@
-﻿using CameraModule;
+﻿using System.Collections.Generic;
+using CameraModule;
+using CastleModule.PresenterPart;
+using CharacterModule.PresenterPart;
 using DataBaseModule;
 using Infrastructure.CoroutineRunnerModule;
-using Infrastructure.Data;
 using Infrastructure.GameStateMachineModule;
 using Infrastructure.GameStateMachineModule.States;
 using Infrastructure.InputHandlerModule;
@@ -10,6 +12,7 @@ using Infrastructure.ServiceLocatorModule;
 using Infrastructure.Services;
 using LevelModule.Data;
 using LevelModule.LevelDataBuilderModule;
+using PlaygroundModule.PresenterPart;
 using UIModule;
 using UnityEngine;
 
@@ -27,12 +30,11 @@ namespace Infrastructure
         private UIController _uiController;
         private DataBaseController _dbController;
         private LevelDataBuilder _levelDataBuilder;
-        private GameData _gameData;
         private LevelDataProvider _levelDataProvider;
 
         public Game(UIController uiController, CameraFollower mainCamera, CoroutineRunner coroutineRunner, 
             InputHandler inputHandler, CellDataProvider cellDataProvider, GameScenePrefabsProvider gameScenePrefabsProvider,
-            UIPrefabsProvider uiPrefabsProvider, LevelDataProvider levelDataProvider)
+            UIPrefabsProvider uiPrefabsProvider, LevelDataProvider levelDataProvider, string dbName)
         {
             ServiceLocator.Instance.RegisterService(uiController);
             ServiceLocator.Instance.RegisterService(gameScenePrefabsProvider);
@@ -43,9 +45,8 @@ namespace Infrastructure
             _mainCamera = mainCamera;
             _inputHandler = inputHandler;
             _levelDataProvider = levelDataProvider;
-            _gameStateMachine = new GameStateMachine(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider);
-            _dbController = new DataBaseController();
-            _gameData = new GameData(_dbController.GetLastLevelId());
+            _gameStateMachine = new GameStateMachine(uiController, mainCamera, coroutineRunner, cellDataProvider, gameScenePrefabsProvider, OnSaveGame);
+            _dbController = new DataBaseController(dbName);
             _levelDataBuilder = new LevelDataBuilder();
             
             InitializeUIActions();
@@ -83,8 +84,7 @@ namespace Infrastructure
         private void LoadSavesFromDB()
         {
             _uiController.loadLevelUIPanel.FillSaves(
-                _dbController.GetLevelsId().ToArray(), 
-                //LoadLevel, 
+                _dbController.GetLevels(), 
                 levelIndex =>
                 {
                     _uiController.ActivateConfirmWindow("Are you sure?", () => LoadLevel(levelIndex));
@@ -114,6 +114,14 @@ namespace Infrastructure
             _gameStateMachine.Enter<GameState>(levelData);
         }
 
+        private void OnSaveGame(PlaygroundPresenter playgroundPresenter, CastlePresenter castlePresenter, 
+            PlayerTeamPresenter playerTeamPresenter, List<EnemyTeamPresenter> enemyTeamPresenters, CharacterIdSetter characterIdSetter)
+        {
+            LevelData levelData = _levelDataBuilder.BuildDBData(playgroundPresenter, castlePresenter, playerTeamPresenter,
+                enemyTeamPresenters, characterIdSetter);
+            _dbController.SaveLevel(levelData);
+        }
+
         private void LoadLevel(int index)
         {
             //LevelData levelData = new LevelDataBuilder().SetPrefabs(_dbController.GetLevelDataById(index), _gameScenePrefabsProvider);
@@ -124,7 +132,8 @@ namespace Infrastructure
 
         private void DeleteLevel(int index)
         {
-            Debug.Log($"Delete {index} save");
+            _dbController.DeleteLevel(index);
+            LoadSavesFromDB();
         }
     }
 }

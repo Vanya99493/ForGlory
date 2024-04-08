@@ -4,6 +4,7 @@ using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart.BehaviourModule;
 using CharacterModule.PresenterPart.BehaviourModule.Base;
 using CharacterModule.ViewPart;
+using Infrastructure.Providers;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -16,11 +17,12 @@ namespace CharacterModule.PresenterPart.FactoryModule
             return null;
         }
 
-        public override TeamPresenter InstantiateTeam(TeamView teamPrefab, TeamData teamData, IBehaviour enemyBehaviour)
+        public override TeamPresenter InstantiateTeam(GameScenePrefabsProvider gameScenePrefabsProvider,
+            TeamData teamData, IBehaviour enemyBehaviour)
         {
             EnemyCharacterFactory characterFactory = new EnemyCharacterFactory();
             
-            TeamView teamView = Object.Instantiate(teamPrefab, new Vector3(), Quaternion.identity);
+            TeamView teamView = Object.Instantiate(gameScenePrefabsProvider.GetTeamView(), new Vector3(), Quaternion.identity);
             
             if(Parent == null)
                 CreateParent();
@@ -33,7 +35,8 @@ namespace CharacterModule.PresenterPart.FactoryModule
             for (int i = 0; i < instantiatedCharacters.Length; i++)
             {
                 instantiatedCharacters[i] = characterFactory.InstantiateCharacter(
-                    teamData.CharactersData[i].CharacterPrefab, teamData.CharactersData[i].CharacterData,
+                    gameScenePrefabsProvider.GetCharacterByName(teamData.CharactersData[i].Name).CharacterPrefab,
+                    teamData.CharactersData[i],
                     teamView.transform, teamView.characterPositions[i].position
                     );
             }
