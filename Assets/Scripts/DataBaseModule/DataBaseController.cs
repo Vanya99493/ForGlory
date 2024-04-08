@@ -29,7 +29,7 @@ namespace DataBaseModule
             _characterPositionTypeTableController = new CharacterPositionTypeTableController();
             _teamTypeTableController = new TeamTypeTableController();
             
-            _cellTypeTableController.Initialize(_dbName, "CellType", 7);
+            _cellTypeTableController.Initialize(_dbName, "CellType", 6);
             _characterPositionTypeTableController.Initialize(_dbName, "CharacterPositionType", 4);
             _teamTypeTableController.Initialize(_dbName, "TeamType", 3);
             

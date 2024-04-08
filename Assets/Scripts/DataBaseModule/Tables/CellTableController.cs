@@ -2,6 +2,7 @@
 using System.Linq;
 using DataBaseModule.Tables.Base;
 using DataBaseModule.Tables.TypeTables;
+using PlaygroundModule.ModelPart;
 using PlaygroundModule.ModelPart.Data;
 
 namespace DataBaseModule.Tables
@@ -22,6 +23,8 @@ namespace DataBaseModule.Tables
             {
                 for (int j = 0; j < playgroundData.Playground.GetLength(1); j++)
                 {
+                    if (playgroundData.Playground[i, j] == CellType.Water)
+                        continue;
                     string commandText =
                         $"INSERT INTO Cells (playground_id, cell_type_id, height_index, width_index) " +
                         $"VALUES ('{playgroundId}', " +

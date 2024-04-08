@@ -15,7 +15,6 @@ namespace DataBaseModule.Tables.TypeTables
             {
                 CellType.Plain,
                 CellType.Hill,
-                CellType.Water,
                 CellType.RampBT,
                 CellType.RampLR,
                 CellType.RampRL,
