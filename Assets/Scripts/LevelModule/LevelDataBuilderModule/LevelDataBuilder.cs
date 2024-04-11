@@ -185,7 +185,7 @@ namespace LevelModule.LevelDataBuilderModule
                 
                 enemiesTeamData[index] = new TeamData()
                 {
-                    CharactersData = enemgities,
+                    CharactersData = enemies,
                     TeamType = TeamType.Enemies,
                     HeightCellIndex = enemyTeamPresenter.Model.HeightCellIndex, 
                     WidthCellIndex = enemyTeamPresenter.Model.WidthCellIndex
