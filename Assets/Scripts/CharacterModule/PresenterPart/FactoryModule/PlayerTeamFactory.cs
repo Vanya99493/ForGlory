@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CharacterModule.ModelPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart.BehaviourModule;
@@ -41,7 +42,23 @@ namespace CharacterModule.PresenterPart.FactoryModule
             }
             
             TeamModel teamModel = new PlayerTeamModel(teamData.HeightCellIndex, teamData.WidthCellIndex);
-            teamModel.SetCharacters(instantiatedCharacters);
+
+            Dictionary<PositionType, CharacterPresenter> charactersInPositions = new ()
+            {
+                { PositionType.LeftVanguard , null},
+                { PositionType.RightVanguard , null},
+                { PositionType.Rearguard , null}
+            };
+            for (int i = 0; i < instantiatedCharacters.Length; i++)
+            {
+                charactersInPositions[teamData.CharactersData[i].PositionType] = instantiatedCharacters[i];
+            }
+            
+            teamModel.SetCharacters(
+                charactersInPositions[PositionType.LeftVanguard], 
+                charactersInPositions[PositionType.RightVanguard], 
+                charactersInPositions[PositionType.Rearguard]
+                );
             TeamPresenter teamPresenter = new PlayerTeamPresenter(teamModel, teamView, playerBehaviour as PlayerBehaviour);
             
             DownScaleTeam(teamPresenter);

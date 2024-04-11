@@ -17,10 +17,12 @@ MonoBehaviour:
     Name: PlayerFemale
     CurrentHealth: -1
     MaxHealth: 100
+    CurrentEnergy: -1
     MaxEnergy: 4
     Initiative: 7
     Damage: 35
     Vision: 0
     CharacterType: 0
+    PositionType: 0
   CharacterPrefab: {fileID: 4781433747464895799, guid: f32108651fa934b42b52a4caed809307, type: 3}
   Icon: {fileID: 21300000, guid: 98b8a7fd060bd59489fc85a0038a0bc6, type: 3}

@@ -17,10 +17,12 @@ MonoBehaviour:
     Name: Skeleton1
     CurrentHealth: -1
     MaxHealth: 100
+    CurrentEnergy: -1
     MaxEnergy: 2
     Initiative: 6
     Damage: 10
     Vision: 2
     CharacterType: 3
+    PositionType: 0
   CharacterPrefab: {fileID: 5612482122074657301, guid: 1a0cefadaeff5cf4ab269071b9f26648, type: 3}
   Icon: {fileID: 21300000, guid: 94b1040f0c6e8d942aeee2d2d2d93a11, type: 3}

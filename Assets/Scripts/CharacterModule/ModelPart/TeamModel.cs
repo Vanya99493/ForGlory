@@ -121,15 +121,18 @@ namespace CharacterModule.ModelPart
                 _rearguard.DeathAction += OnKillCharacter;
                 _rearguard.Model.SetPositionType(PositionType.Rearguard);
             }
-            
-            _teamMaxEnergy = characters[0].Model.MaxEnergy;
-            TeamCurrentEnergy = characters[0].Model.Energy;
-            foreach (var character in characters)
+
+            if (characters.Count != 0)
             {
-                if (character.Model.MaxEnergy < _teamMaxEnergy)
-                    _teamMaxEnergy = character.Model.MaxEnergy;
-                if (character.Model.Energy < TeamCurrentEnergy)
-                    TeamCurrentEnergy = character.Model.Energy;
+                _teamMaxEnergy = characters[0].Model.MaxEnergy;
+                TeamCurrentEnergy = characters[0].Model.Energy;
+                foreach (var character in characters)
+                {
+                    if (character.Model.MaxEnergy < _teamMaxEnergy)
+                        _teamMaxEnergy = character.Model.MaxEnergy;
+                    if (character.Model.Energy < TeamCurrentEnergy)
+                        TeamCurrentEnergy = character.Model.Energy;
+                }
             }
             
             SetupCharactersAction?.Invoke(new[] { _leftVanguard, _rightVanguard, _rearguard });

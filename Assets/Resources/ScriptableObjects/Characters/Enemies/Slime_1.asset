@@ -17,10 +17,12 @@ MonoBehaviour:
     Name: Slime1
     CurrentHealth: -1
     MaxHealth: 50
+    CurrentEnergy: -1
     MaxEnergy: 3
     Initiative: 5
     Damage: 15
     Vision: 3
     CharacterType: 1
+    PositionType: 0
   CharacterPrefab: {fileID: 7735059046290531145, guid: bc806e0ca79137a49aca351e73ef149c, type: 3}
   Icon: {fileID: 21300000, guid: 5163eec8033f69946842201f27a6a9d3, type: 3}

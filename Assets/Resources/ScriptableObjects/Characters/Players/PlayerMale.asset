@@ -17,10 +17,12 @@ MonoBehaviour:
     Name: PlayerMale
     CurrentHealth: -1
     MaxHealth: 125
+    CurrentEnergy: -1
     MaxEnergy: 5
     Initiative: 5
     Damage: 25
     Vision: 0
     CharacterType: 0
+    PositionType: 0
   CharacterPrefab: {fileID: 265827594758012078, guid: 5cc95254df172754a82ee76801612894, type: 3}
   Icon: {fileID: 21300000, guid: e279a1a6353e0004f85db72f462057b6, type: 3}

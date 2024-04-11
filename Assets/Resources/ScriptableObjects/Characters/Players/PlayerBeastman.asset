@@ -17,10 +17,12 @@ MonoBehaviour:
     Name: PlayerBeastman
     CurrentHealth: -1
     MaxHealth: 175
+    CurrentEnergy: -1
     MaxEnergy: 8
     Initiative: 1
     Damage: 20
     Vision: 0
     CharacterType: 0
+    PositionType: 0
   CharacterPrefab: {fileID: 8772119424269304733, guid: f1e2cc855df2e984c9d93be9a9f87490, type: 3}
   Icon: {fileID: 21300000, guid: 901ad9a526c088b489a23df7f7c2323a, type: 3}
