@@ -2,7 +2,6 @@
 using Infrastructure.CoroutineRunnerModule;
 using Infrastructure.InputHandlerModule;
 using Infrastructure.Providers;
-using LevelModule.Data;
 using UIModule;
 using UnityEngine;
 

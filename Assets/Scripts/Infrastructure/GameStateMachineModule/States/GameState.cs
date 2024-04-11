@@ -44,7 +44,11 @@ namespace Infrastructure.GameStateMachineModule.States
             _currentLevel.StartLevel(levelData);
             _currentLevel.SaveAction += SaveAction;
             _currentLevel.SetCameraTarget(_mainCamera);
-            _uiController.ActivateCastleMenuUIPanel();
+            if(levelData.TeamsData.PlayerTeam.CharactersData.Length > 0)
+                _uiController.ActivateGameHud();
+            else
+                _uiController.ActivateCastleMenuUIPanel();
+            _uiController.DeactivatePauseMenu();
         }
 
         public void Exit()

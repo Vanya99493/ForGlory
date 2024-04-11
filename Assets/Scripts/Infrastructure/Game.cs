@@ -124,10 +124,8 @@ namespace Infrastructure
 
         private void LoadLevel(int index)
         {
-            //LevelData levelData = new LevelDataBuilder().SetPrefabs(_dbController.GetLevelDataById(index), _gameScenePrefabsProvider);
-            //_gameStateMachine.Enter<GameState>(levelData);
-            
-            Debug.Log($"Load {index} save");
+            LevelData levelData = _dbController.GetLevelDataById(index);
+            _gameStateMachine.Enter<GameState>(levelData);
         }
 
         private void DeleteLevel(int index)

@@ -2,6 +2,7 @@
 using System.Data;
 using DataBaseModule.Tables.Base;
 using Mono.Data.Sqlite;
+using PlaygroundModule.ModelPart;
 using PlaygroundModule.ModelPart.Data;
 
 namespace DataBaseModule.Tables
@@ -20,11 +21,33 @@ namespace DataBaseModule.Tables
             return GetLastPlaygroundId(dbName);
         }
 
+        public CreatedPlaygroundData GetPlaygroundData(string dbName, int levelId)
+        {
+            string commandText =
+                $"SELECT * FROM Playgrounds " +
+                $"WHERE level_id = {levelId}";
+
+            (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
+
+            CreatedPlaygroundData playground = new CreatedPlaygroundData()
+            {
+                DBPlaygroundId = Convert.ToInt32(dataReader["id"].ToString()),
+                CastleHeightIndex = Convert.ToInt32(dataReader["castle_height_index"].ToString()),
+                CastleWidthIndex = Convert.ToInt32(dataReader["castle_width_index"].ToString()),
+                Playground = new CellType[Convert.ToInt32(dataReader["height"].ToString()), Convert.ToInt32(dataReader["width"].ToString())]
+            };
+            
+            dataReader.Close();
+            connection.Close();
+
+            return playground;
+        }
+
         private int GetLastPlaygroundId(string dbName)
         {
-            string commandName =
+            string commandText =
                 $"SELECT * FROM Playgrounds ORDER BY id DESC;";
-            (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandName);
+            (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
             int lastPlaygroundId = Convert.ToInt32(dataReader["id"]);
             dataReader.Close();
             connection.Close();

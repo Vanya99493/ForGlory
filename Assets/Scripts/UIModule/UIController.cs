@@ -69,6 +69,11 @@ namespace UIModule
             pauseMenuUIPanel.Enter();
         }
 
+        public void DeactivatePauseMenu()
+        {
+            pauseMenuUIPanel.Exit();
+        }
+
         public void ActivateConfirmWindow(string text, Action confirmAction) =>
             confirmWindow.SubscribeAndActivate(text, confirmAction);
         

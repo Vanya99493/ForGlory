@@ -3,6 +3,7 @@ using CharacterModule.ModelPart.Data;
 using DataBaseModule.Tables;
 using DataBaseModule.Tables.TypeTables;
 using LevelModule.Data;
+using PlaygroundModule.ModelPart.Data;
 
 namespace DataBaseModule
 {
@@ -43,24 +44,20 @@ namespace DataBaseModule
         
         public LevelData GetLevelDataById(int levelId)
         {
-            // to do
+            GeneralData generalData = _generalDataTableController.GetGeneralData(_dbName, levelId);
+            CreatedPlaygroundData createdPlaygroundData = _playgroundTableController.GetPlaygroundData(_dbName, levelId);
+            _cellTableController.GetCellsData(_dbName, ref createdPlaygroundData);
+            TeamsData teamsData = _teamTableController.GetTeamsData(_dbName, levelId);
+            _characterTableController.GetCharactersData(_dbName, ref teamsData);
             
-            return null;
-        }
-
-        public int GetLastLevelId()
-        {
-            return _levelTableController.GetLastLevelIndex(_dbName);
-        }
-
-        public List<int> GetLevelsId()
-        {
-            return _levelTableController.GetAllLevelIndexes(_dbName);
-        }
-
-        public Dictionary<int, string> GetLevels()
-        {
-            return _levelTableController.GetLevels(_dbName);
+            LevelData levelData = new ()
+            {
+                GeneralData = generalData,
+                PlaygroundData = createdPlaygroundData,
+                TeamsData = teamsData
+            };
+            
+            return levelData;
         }
 
         public void SaveLevel(LevelData levelData)
@@ -76,6 +73,21 @@ namespace DataBaseModule
         public void DeleteLevel(int levelIndex)
         {
             _levelTableController.DeleteLevel(_dbName, levelIndex);
+        }
+
+        public int GetLastLevelId()
+        {
+            return _levelTableController.GetLastLevelIndex(_dbName);
+        }
+
+        public List<int> GetLevelsId()
+        {
+            return _levelTableController.GetAllLevelIndexes(_dbName);
+        }
+
+        public Dictionary<int, string> GetLevels()
+        {
+            return _levelTableController.GetLevels(_dbName);
         }
     }
 }

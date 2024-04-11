@@ -15,9 +15,11 @@ namespace CharacterModule.PresenterPart.FactoryModule
             characterView.transform.position = spawnPosition;
             characterView.Destroy += OnDestroyCharacter;
             _characterIdSetter ??= ServiceLocator.Instance.GetService<CharacterIdSetter>();
-            
-            CharacterModel characterModel = new PlayerCharacterModel(_characterIdSetter.GetNewId(), data.Name, data.MaxHealth, data.MaxEnergy, data.Initiative, data.Damage, data.CurrentHealth);
-            CharacterPresenter characterPresenter = new PlayerCharacterPresenter(characterModel as PlayerCharacterModel, characterView as PlayerCharacterView);
+
+            CharacterModel characterModel = new PlayerCharacterModel(_characterIdSetter.GetNewId(), data.Name,
+                data.MaxHealth, data.MaxEnergy, data.Initiative, data.Damage, data.CurrentEnergy, data.CurrentHealth);
+            CharacterPresenter characterPresenter = new PlayerCharacterPresenter(characterModel as PlayerCharacterModel,
+                characterView as PlayerCharacterView);
             
             return characterPresenter;
         }

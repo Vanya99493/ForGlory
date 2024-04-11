@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using DataBaseModule.Tables.Base;
 using DataBaseModule.Tables.TypeTables;
+using Mono.Data.Sqlite;
 using PlaygroundModule.ModelPart;
 using PlaygroundModule.ModelPart.Data;
 
@@ -18,7 +21,7 @@ namespace DataBaseModule.Tables
         
         public void AddCellData(string dbName, int playgroundId, CreatedPlaygroundData playgroundData)
         {
-            Dictionary<string, int> cellTypeData = _cellTypeTableController.GetCellTypes(dbName, "CellType");
+            Dictionary<string, int> cellTypeData = _cellTypeTableController.GetStringTypes(dbName, "CellType");
             for (int i = 0; i < playgroundData.Playground.GetLength(0); i++)
             {
                 for (int j = 0; j < playgroundData.Playground.GetLength(1); j++)
@@ -34,6 +37,30 @@ namespace DataBaseModule.Tables
                     ExecuteCommand(dbName, commandText);
                 }
             }
+        }
+
+        public void GetCellsData(string dbName, ref CreatedPlaygroundData createdPlaygroundData)
+        {
+            string commandText =
+                $"SELECT * FROM Cells " +
+                $"WHERE playground_id = {createdPlaygroundData.DBPlaygroundId}";
+
+            (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
+
+            Dictionary<string, CellType> cellTypes = _cellTypeTableController.GetCellTypes(dbName);
+            Dictionary<int, string> cellStringTypes = _cellTypeTableController.GetStringTypesReverse(dbName, "CellType");
+
+            while (dataReader.Read())
+            {
+                createdPlaygroundData.Playground[
+                    Convert.ToInt32(dataReader["height_index"].ToString()), 
+                    Convert.ToInt32(dataReader["width_index"].ToString())
+                    ] 
+                    = cellTypes[cellStringTypes[Convert.ToInt32(dataReader["cell_type_id"].ToString())]];
+            }
+            
+            dataReader.Close();
+            connection.Close();
         }
     }
 }

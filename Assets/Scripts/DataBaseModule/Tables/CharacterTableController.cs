@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using CharacterModule.ModelPart.Data;
 using DataBaseModule.Tables.Base;
 using DataBaseModule.Tables.TypeTables;
+using Mono.Data.Sqlite;
 
 namespace DataBaseModule.Tables
 {
@@ -18,7 +21,7 @@ namespace DataBaseModule.Tables
         public void AddCharacterData(string dbName, Dictionary<int, TeamData> teams)
         {
             Dictionary<string, int> characterPositionTypeData = _characterPositionTypeTableController.
-                GetCellTypes(dbName, "CharacterPositionType");
+                GetStringTypes(dbName, "CharacterPositionType");
             foreach (var team in teams)
             {
                 for (int i = 0; i < team.Value.CharactersData.Length; i++)
@@ -36,6 +39,54 @@ namespace DataBaseModule.Tables
                     
                     ExecuteCommand(dbName, commandText);
                 }
+            }
+        }
+
+        public void GetCharactersData(string dbName, ref TeamsData teamsData)
+        {
+            List<TeamData> teams = teamsData.EnemyTeams.ToList();
+            teams.Add(teamsData.PlayersInCastleTeam);
+            teams.Add(teamsData.PlayerTeam);
+
+            Dictionary<string, PositionType> characterPositions =
+                _characterPositionTypeTableController.GetPositionTypes(dbName);
+            Dictionary<int, string> characterStringPositions =
+                _characterPositionTypeTableController.GetStringTypesReverse(dbName, "CharacterPositionType");
+
+            foreach (var team in teams)
+            {
+                string commandText =
+                    $"SELECT * FROM Characters " +
+                    $"WHERE team_id = {team.DBTeamId};";
+
+                List<CharacterData> characters = new List<CharacterData>();
+
+                (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
+
+                while (dataReader.Read())
+                {
+                    characters.Add(new CharacterData()
+                    {
+                        Id = Convert.ToInt32(dataReader["character_id"].ToString()),
+                        Name = dataReader["name"].ToString(),
+                        CurrentHealth = Convert.ToInt32(dataReader["current_health"].ToString()),
+                        MaxHealth = Convert.ToInt32(dataReader["max_health"].ToString()),
+                        CurrentEnergy = Convert.ToInt32(dataReader["current_energy"].ToString()),
+                        MaxEnergy = Convert.ToInt32(dataReader["max_energy"].ToString()),
+                        Initiative = Convert.ToInt32(dataReader["initiative"].ToString()),
+                        Damage = Convert.ToInt32(dataReader["damage"].ToString()),
+                        Vision = Convert.ToInt32(dataReader["vision"].ToString()),
+                        PositionType =
+                            characterPositions[
+                                characterStringPositions[
+                                    Convert.ToInt32(dataReader["character_position_type_id"].ToString())]]
+                    });
+                }
+
+                team.CharactersData = characters.ToArray();
+                
+                dataReader.Close();
+                connection.Close();
             }
         }
     }

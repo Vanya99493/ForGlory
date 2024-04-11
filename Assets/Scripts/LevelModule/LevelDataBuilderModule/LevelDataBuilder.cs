@@ -50,6 +50,7 @@ namespace LevelModule.LevelDataBuilderModule
             {
                 enemyTeams[i] = new TeamData
                 {
+                    TeamType = TeamType.Enemies,
                     CharactersData = new CharacterData[Random.Range(1, 4)],
                     HeightCellIndex = -1,
                     WidthCellIndex = -1
@@ -78,9 +79,14 @@ namespace LevelModule.LevelDataBuilderModule
                 },
                 TeamsData = new TeamsData()
                 {
-                    PlayersInCastle = charactersInCastle,
+                    PlayersInCastleTeam = new TeamData()
+                    {
+                        TeamType = TeamType.Castle,
+                        CharactersData = charactersInCastle
+                    }, 
                     PlayerTeam = new TeamData()
                     {
+                        TeamType = TeamType.Players,
                         CharactersData = Array.Empty<CharacterData>(),
                         HeightCellIndex = -1,
                         WidthCellIndex = -1
@@ -118,6 +124,11 @@ namespace LevelModule.LevelDataBuilderModule
                     PositionType = PositionType.Castle
                 };
             }
+            TeamData playersInCastleTeam = new TeamData()
+            {
+                TeamType = TeamType.Castle,
+                CharactersData = playersInCastle
+            };
 
             CharacterData[] players = new CharacterData[playerTeamPresenter.Model.GetAliveCharactersCount()];
             var characters = playerTeamPresenter.Model.GetCharacters();
@@ -194,7 +205,7 @@ namespace LevelModule.LevelDataBuilderModule
                 },
                 TeamsData = new TeamsData()
                 {
-                    PlayersInCastle = playersInCastle,
+                    PlayersInCastleTeam = playersInCastleTeam,
                     PlayerTeam = playerTeamData,
                     EnemyTeams = enemiesTeamData
                 }

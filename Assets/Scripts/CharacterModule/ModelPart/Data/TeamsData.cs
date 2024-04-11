@@ -5,7 +5,7 @@ namespace CharacterModule.ModelPart.Data
     [Serializable]
     public class TeamsData
     {
-        public CharacterData[] PlayersInCastle;
+        public TeamData PlayersInCastleTeam;
         public TeamData PlayerTeam;
         public TeamData[] EnemyTeams;
     }

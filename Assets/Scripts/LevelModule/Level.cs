@@ -121,9 +121,14 @@ namespace LevelModule
             _enemiesTeamPresenters = new List<EnemyTeamPresenter>();
             
             CreatePlayground(levelData.PlaygroundData);
-            CreateCastle(levelData.TeamsData.PlayersInCastle, levelData.PlaygroundData.CastleHeightIndex, levelData.PlaygroundData.CastleWidthIndex);
-            levelData.TeamsData.PlayerTeam.HeightCellIndex = _castlePresenter.CastleHeightIndex;
-            levelData.TeamsData.PlayerTeam.WidthCellIndex = _castlePresenter.CastleWidthIndex;
+            CreateCastle(levelData.TeamsData.PlayersInCastleTeam.CharactersData, levelData.PlaygroundData.CastleHeightIndex, levelData.PlaygroundData.CastleWidthIndex);
+
+            if (levelData.TeamsData.PlayerTeam.HeightCellIndex == -1 &&
+                levelData.TeamsData.PlayerTeam.WidthCellIndex == -1)
+            {
+                levelData.TeamsData.PlayerTeam.HeightCellIndex = _castlePresenter.CastleHeightIndex;
+                levelData.TeamsData.PlayerTeam.WidthCellIndex = _castlePresenter.CastleWidthIndex;
+            }
             
             CreateBattleground();
 
@@ -360,14 +365,17 @@ namespace LevelModule
             
             for (int i = 0; i < enemyTeamsData.Length; i++)
             {
-                int heightSpawnCellIndex, widthSpawnCellIndex;
-                do
+                if (enemyTeamsData[i].HeightCellIndex == -1 && enemyTeamsData[i].WidthCellIndex == -1)
                 {
-                    (heightSpawnCellIndex, widthSpawnCellIndex) = FindEmptyCell();
-                } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.TeamsOnCell.Count > 0);
+                    int heightSpawnCellIndex, widthSpawnCellIndex;
+                    do
+                    {
+                        (heightSpawnCellIndex, widthSpawnCellIndex) = FindEmptyCell();
+                    } while (_playgroundPresenter.Model.GetCellPresenter(heightSpawnCellIndex, widthSpawnCellIndex).Model.TeamsOnCell.Count > 0);
                 
-                enemyTeamsData[i].HeightCellIndex = heightSpawnCellIndex;
-                enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
+                    enemyTeamsData[i].HeightCellIndex = heightSpawnCellIndex;
+                    enemyTeamsData[i].WidthCellIndex = widthSpawnCellIndex;
+                }
                 
                 EnemyTeamPresenter enemyTeamPresenter = 
                     _enemyTeamFactory.InstantiateTeam(_gameScenePrefabsProvider, enemyTeamsData[i], new EnemyBehaviour()) as EnemyTeamPresenter;

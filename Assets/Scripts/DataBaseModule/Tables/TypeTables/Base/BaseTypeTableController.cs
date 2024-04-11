@@ -14,7 +14,7 @@ namespace DataBaseModule.Tables.TypeTables.Base
                 FillTable(dbName);
         }
 
-        public Dictionary<string, int> GetCellTypes(string dbName, string tableName)
+        public Dictionary<string, int> GetStringTypes(string dbName, string tableName)
         {
             string commandText = $"SELECT * FROM {tableName};";
             (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
@@ -29,9 +29,24 @@ namespace DataBaseModule.Tables.TypeTables.Base
             return data;
         }
 
+        public Dictionary<int, string> GetStringTypesReverse(string dbName, string tableName)
+        {
+            string commandText = $"SELECT * FROM {tableName};";
+            (IDataReader dataReader, SqliteConnection connection) = GetData(dbName, commandText);
+            
+            Dictionary<int, string> data = new Dictionary<int, string>();
+            while (dataReader.Read())
+                data.Add(Convert.ToInt32(dataReader["id"]), dataReader["type"].ToString());
+
+            dataReader.Close();
+            connection.Close();
+
+            return data;
+        }
+
         private bool IsInitialized(string dbName, string tableName, int typesCount)
         {
-            var data = GetCellTypes(dbName, tableName);
+            var data = GetStringTypes(dbName, tableName);
             return data.Count == typesCount;
         }
 

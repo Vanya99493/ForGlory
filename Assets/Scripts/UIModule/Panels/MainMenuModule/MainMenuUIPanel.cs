@@ -23,14 +23,13 @@ namespace UIModule.Panels.MainMenuModule
 
         private void Start()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOnInputPause();
             selectDifficultyPanel.Initialize();
             selectDifficultyPanel.SelectDifficultyAction += OnSelectDifficulty;
         }
 
         protected override void SubscribeActions()
         {
-            ServiceLocator.Instance.GetService<PauseController>().TurnOffInputPause();
+            ServiceLocator.Instance.GetService<PauseController>().TurnOnInputPause();
             selectDifficultyPanel.gameObject.SetActive(false);
             startButton.onClick.AddListener(OnStartGame);
             toLoadLevelMenuButton.onClick.AddListener(OnToLoadLevelMenu);
@@ -40,6 +39,7 @@ namespace UIModule.Panels.MainMenuModule
 
         protected override void UnsubscribeActions()
         {
+            ServiceLocator.Instance.GetService<PauseController>().TurnOffInputPause();
             startButton.onClick.RemoveListener(OnStartGame);
             toLoadLevelMenuButton.onClick.RemoveListener(OnToLoadLevelMenu);
             endButton.onClick.RemoveListener(OnEndGame);
