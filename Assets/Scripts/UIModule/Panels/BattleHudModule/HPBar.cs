@@ -7,12 +7,13 @@ namespace UIModule.Panels.BattleHudModule
     public class HPBar : MonoBehaviour
     {
         [SerializeField] private GridLayoutGroup gridLayoutGroup;
-        [SerializeField] private float standardSize;
 
+        private float _standardSize;
         private CharacterPresenter _subscribedCharacter;
-        
+
         public void Initialize()
         {
+            _standardSize = gridLayoutGroup.cellSize.x;
             HideBar();
         }
 
@@ -33,7 +34,7 @@ namespace UIModule.Panels.BattleHudModule
         
         public void Unsubscribe()
         {
-            gridLayoutGroup.cellSize = new Vector2(standardSize, gridLayoutGroup.cellSize.y);
+            gridLayoutGroup.cellSize = new Vector2(_standardSize, gridLayoutGroup.cellSize.y);
 
             if (_subscribedCharacter != null)
             {
@@ -50,7 +51,7 @@ namespace UIModule.Panels.BattleHudModule
 
         private void UpdateHPBar(int maxHealth, int newHealth)
         {
-            gridLayoutGroup.cellSize = new Vector2(standardSize * newHealth / maxHealth, gridLayoutGroup.cellSize.y);
+            gridLayoutGroup.cellSize = new Vector2(_standardSize * newHealth / maxHealth, gridLayoutGroup.cellSize.y);
         }
     }
 }
