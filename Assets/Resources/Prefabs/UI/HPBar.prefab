@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridLayoutGroup: {fileID: 8004962212075503429}
+  standardSize: 175
 --- !u!1 &8667934114454261354
 GameObject:
   m_ObjectHideFlags: 0

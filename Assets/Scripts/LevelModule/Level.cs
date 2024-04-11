@@ -525,7 +525,7 @@ namespace LevelModule
 
         private void OnMoveCellClicked(int heightIndex, int widthIndex)
         {
-            if (_isStepChanging)
+            if (_isStepChanging || !_playerTeamPresenter.Model.MoveState)
                 return;
 
             _playgroundPresenter.DeactivateCells();
