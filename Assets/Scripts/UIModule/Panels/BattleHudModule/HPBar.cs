@@ -23,7 +23,7 @@ namespace UIModule.Panels.BattleHudModule
             _subscribedCharacter = character;
             _subscribedCharacter.Model.Damaged += UpdateHPBar;
             _subscribedCharacter.Model.Death += Unsubscribe;
-            UpdateHPBar(character.Model.MaxHealth, character.Model.Health);
+            UpdateHPBar(_subscribedCharacter.Model.MaxHealth, _subscribedCharacter.Model.Health);
         }
 
         public void Update()

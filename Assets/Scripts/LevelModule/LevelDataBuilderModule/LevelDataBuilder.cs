@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CastleModule.PresenterPart;
+using CharacterModule.ModelPart;
 using CharacterModule.ModelPart.Data;
 using CharacterModule.PresenterPart;
 using DataBaseModule;
@@ -176,6 +177,7 @@ namespace LevelModule.LevelDataBuilderModule
                         MaxEnergy = character.Model.MaxEnergy,
                         Initiative = character.Model.Initiative,
                         Damage = character.Model.Damage,
+                        Vision = ((EnemyCharacterModel)character.Model).MaxVision,
                         PositionType = character.Model.PositionType
                     };
                     index2++;
@@ -183,7 +185,7 @@ namespace LevelModule.LevelDataBuilderModule
                 
                 enemiesTeamData[index] = new TeamData()
                 {
-                    CharactersData = enemies,
+                    CharactersData = enemgities,
                     TeamType = TeamType.Enemies,
                     HeightCellIndex = enemyTeamPresenter.Model.HeightCellIndex, 
                     WidthCellIndex = enemyTeamPresenter.Model.WidthCellIndex

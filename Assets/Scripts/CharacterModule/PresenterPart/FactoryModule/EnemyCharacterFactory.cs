@@ -15,9 +15,12 @@ namespace CharacterModule.PresenterPart.FactoryModule
             enemyView.transform.position = spawnPosition;
             enemyView.Destroy += OnDestroyCharacter;
             _characterIdSetter ??= ServiceLocator.Instance.GetService<CharacterIdSetter>();
-            
-            CharacterModel enemyModel = new EnemyCharacterModel(_characterIdSetter.GetNewId(), data.Name, data.MaxHealth, data.MaxEnergy, data.Vision, data.Initiative, data.Damage, data.CurrentHealth);
-            CharacterPresenter characterPresenter = new EnemyCharacterPresenter(enemyModel as EnemyCharacterModel, enemyView as EnemyCharacterView);
+
+            CharacterModel enemyModel = new EnemyCharacterModel(_characterIdSetter.GetNewId(), data.Name,
+                data.MaxHealth, data.MaxEnergy, data.Vision, data.Initiative, data.Damage, data.CurrentEnergy,
+                data.CurrentHealth);
+            CharacterPresenter characterPresenter =
+                new EnemyCharacterPresenter(enemyModel as EnemyCharacterModel, enemyView as EnemyCharacterView);
             
             return characterPresenter;
         }

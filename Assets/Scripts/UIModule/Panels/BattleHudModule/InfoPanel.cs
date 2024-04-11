@@ -28,6 +28,7 @@ namespace UIModule.Panels.BattleHudModule
 
         public void SubscribeBars(PlayerTeamPresenter playerTeam, EnemyTeamPresenter enemyTeam)
         {
+            UnsubscribeBars();
             if (playerTeam.Model.GetCharacterPresenter(0) != null)
                 heroLeftVanguardHPBar.Subscribe(playerTeam.Model.GetCharacterPresenter(0));
             if (playerTeam.Model.GetCharacterPresenter(1) != null)
