@@ -18,6 +18,11 @@ namespace DataBaseModule.Tables.TypeTables
             CellType.RampRL,
             CellType.RampTB
         };
+
+        public CellTypeTableController(string dbName)
+        {
+            CreateTableIfNotExists(dbName);
+        }
         
         public Dictionary<string, CellType> GetCellTypes(string dbName)
         {
@@ -50,6 +55,16 @@ namespace DataBaseModule.Tables.TypeTables
                     $"VALUES ('{cellType.ToString().Split('.').Last().ToLower()}');";
                 ExecuteCommand(dbName, commandText);
             }
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS CellType (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"type TEXT UNIQUE" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }

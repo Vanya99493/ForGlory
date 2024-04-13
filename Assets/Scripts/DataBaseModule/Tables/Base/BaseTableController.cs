@@ -5,6 +5,8 @@ namespace DataBaseModule.Tables.Base
 {
     public abstract class BaseTableController
     {
+        protected abstract void CreateTableIfNotExists(string dbName);
+        
         protected void ExecuteCommand(string dbName, string commandText)
         {
             using (var connection = new SqliteConnection(dbName))

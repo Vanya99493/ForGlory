@@ -13,9 +13,10 @@ namespace DataBaseModule.Tables
     {
         private CharacterPositionTypeTableController _characterPositionTypeTableController;
 
-        public CharacterTableController(CharacterPositionTypeTableController characterPositionTypeTableController)
+        public CharacterTableController(string dbName, CharacterPositionTypeTableController characterPositionTypeTableController)
         {
             _characterPositionTypeTableController = characterPositionTypeTableController;
+            CreateTableIfNotExists(dbName);
         }
 
         public void AddCharacterData(string dbName, Dictionary<int, TeamData> teams)
@@ -88,6 +89,26 @@ namespace DataBaseModule.Tables
                 dataReader.Close();
                 connection.Close();
             }
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS Characters (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"team_id INTEGER REFERENCES Teams (id), " +
+                $"character_position_type_id INTEGER REFERENCES CharacterPositionType (id), " +
+                $"name TEXT, " +
+                $"character_id INTEGER, " +
+                $"current_health INTEGER, " +
+                $"max_health INTEGER, " +
+                $"current_energy INTEGER, " +
+                $"max_energy INTEGER, " +
+                $"initiative INTEGER, " +
+                $"damage INTEGER, " +
+                $"vision INTEGER" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }

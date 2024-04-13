@@ -26,20 +26,20 @@ namespace DataBaseModule
         {
             _dbName = $"URI=file:{dbName};";
 
-            _cellTypeTableController = new CellTypeTableController();
-            _characterPositionTypeTableController = new CharacterPositionTypeTableController();
-            _teamTypeTableController = new TeamTypeTableController();
+            _cellTypeTableController = new CellTypeTableController(_dbName);
+            _characterPositionTypeTableController = new CharacterPositionTypeTableController(_dbName);
+            _teamTypeTableController = new TeamTypeTableController(_dbName);
             
             _cellTypeTableController.Initialize(_dbName, "CellType", 6);
             _characterPositionTypeTableController.Initialize(_dbName, "CharacterPositionType", 4);
             _teamTypeTableController.Initialize(_dbName, "TeamType", 3);
             
-            _levelTableController = new LevelTableController();
-            _generalDataTableController = new GeneralDataTableController();
-            _playgroundTableController = new PlaygroundTableController();
-            _cellTableController = new CellTableController(_cellTypeTableController);
-            _teamTableController = new TeamTableController(_teamTypeTableController);
-            _characterTableController = new CharacterTableController(_characterPositionTypeTableController);
+            _levelTableController = new LevelTableController(_dbName);
+            _generalDataTableController = new GeneralDataTableController(_dbName);
+            _playgroundTableController = new PlaygroundTableController(_dbName);
+            _cellTableController = new CellTableController(_dbName, _cellTypeTableController);
+            _teamTableController = new TeamTableController(_dbName, _teamTypeTableController);
+            _characterTableController = new CharacterTableController(_dbName, _characterPositionTypeTableController);
         }
         
         public LevelData GetLevelDataById(int levelId)

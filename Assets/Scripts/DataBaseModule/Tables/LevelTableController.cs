@@ -9,6 +9,11 @@ namespace DataBaseModule.Tables
 {
     public class LevelTableController : BaseTableController
     {
+        public LevelTableController(string dbName)
+        {
+            CreateTableIfNotExists(dbName);
+        }
+        
         public int AddLevel(string dbName)
         {
             string commandText = $"INSERT INTO Levels (name) VALUES ('Save')";
@@ -55,6 +60,16 @@ namespace DataBaseModule.Tables
         public void DeleteLevel(string dbName, int levelIndex)
         {
             string commandText = $"DELETE FROM Levels WHERE id = {levelIndex};";
+            ExecuteCommand(dbName, commandText);
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS Levels (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"name TEXT" +
+                $");";
             ExecuteCommand(dbName, commandText);
         }
     }

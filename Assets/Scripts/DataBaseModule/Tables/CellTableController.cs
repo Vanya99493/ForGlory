@@ -14,9 +14,10 @@ namespace DataBaseModule.Tables
     {
         private CellTypeTableController _cellTypeTableController;
 
-        public CellTableController(CellTypeTableController cellTypeTableController)
+        public CellTableController(string dbName, CellTypeTableController cellTypeTableController)
         {
             _cellTypeTableController = cellTypeTableController;
+            CreateTableIfNotExists(dbName);
         }
         
         public void AddCellData(string dbName, int playgroundId, CreatedPlaygroundData playgroundData)
@@ -61,6 +62,19 @@ namespace DataBaseModule.Tables
             
             dataReader.Close();
             connection.Close();
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS Cells (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"playground_id INTEGER REFERENCES Playgrounds (id), " +
+                $"cell_type_id INTEGER REFERENCES CellType (id), " +
+                $"height_index INTEGER, " +
+                $"width_index INTEGER" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }

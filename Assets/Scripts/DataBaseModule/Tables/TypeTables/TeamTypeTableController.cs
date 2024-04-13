@@ -16,6 +16,11 @@ namespace DataBaseModule.Tables.TypeTables
             TeamType.Players
         };
 
+        public TeamTypeTableController(string dbName)
+        {
+            CreateTableIfNotExists(dbName);
+        }
+
         public Dictionary<string, TeamType> GetTeamTypes(string dbName)
         {
             string commandText = $"SELECT * FROM TeamType;";
@@ -47,6 +52,16 @@ namespace DataBaseModule.Tables.TypeTables
                     $"VALUES ('{teamType.ToString().Split('.').Last().ToLower()}');";
                 ExecuteCommand(dbName, commandText);
             }
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS TeamType (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"type TEXT UNIQUE" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }

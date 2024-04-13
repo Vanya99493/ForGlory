@@ -17,6 +17,11 @@ namespace DataBaseModule.Tables.TypeTables
             PositionType.Rearguard
         };
 
+        public CharacterPositionTypeTableController(string dbName)
+        {
+            CreateTableIfNotExists(dbName);
+        }
+
         public Dictionary<string, PositionType> GetPositionTypes(string dbName)
         {
             string commandText = $"SELECT * FROM CharacterPositionType;";
@@ -48,6 +53,16 @@ namespace DataBaseModule.Tables.TypeTables
                     $"VALUES ('{positionType.ToString().Split('.').Last().ToLower()}');";
                 ExecuteCommand(dbName, commandText);
             }
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS CharacterPositionType (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"type TEXT UNIQUE" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }

@@ -13,9 +13,10 @@ namespace DataBaseModule.Tables
     {
         private TeamTypeTableController _teamTypeTableController;
 
-        public TeamTableController(TeamTypeTableController teamTypeTableController)
+        public TeamTableController(string dbName, TeamTypeTableController teamTypeTableController)
         {
             _teamTypeTableController = teamTypeTableController;
+            CreateTableIfNotExists(dbName);
         }
         
         public Dictionary<int, TeamData> AddTeamsData(string dbName, int levelId, TeamsData teamsData)
@@ -124,6 +125,19 @@ namespace DataBaseModule.Tables
             connection.Close();
 
             return lastTeamId;
+        }
+
+        protected override void CreateTableIfNotExists(string dbName)
+        {
+            string commandText =
+                $"CREATE TABLE IF NOT EXISTS Teams (" +
+                $"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                $"level_id INTEGER REFERENCES Levels (id), " +
+                $"team_type_id INTEGER REFERENCES TeamType (id), " +
+                $"height_index INTEGER, " +
+                $"width_index INTEGER" +
+                $");";
+            ExecuteCommand(dbName, commandText);
         }
     }
 }
