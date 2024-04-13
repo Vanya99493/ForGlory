@@ -29,6 +29,7 @@ namespace CharacterModule.PresenterPart.CharacterStates
                         playgroundPresenter.CheckCellOnCharacter(heightCoordinate, widthCoordinate)),
                     playgroundPresenter,
                     true,
+                    false,
                     out route
                 ))
             {

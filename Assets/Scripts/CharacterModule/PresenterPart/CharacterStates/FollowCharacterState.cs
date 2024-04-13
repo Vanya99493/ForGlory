@@ -34,10 +34,10 @@ namespace CharacterModule.PresenterPart.CharacterStates
                         playgroundPresenter.CheckCellOnCharacter(targetTeamPresenter.Model.HeightCellIndex, targetTeamPresenter.Model.WidthCellIndex)),
                     playgroundPresenter,
                     false,
+                    false,
                     out route
                 ))
             {
-                playgroundPresenter.RemoveCharacterFromCell(teamPresenter, teamPresenter.Model.HeightCellIndex, teamPresenter.Model.WidthCellIndex);
                 AddRouteAction?.Invoke(route);
                 if (teamPresenter.Model.RoutLength <= teamPresenter.Model.TeamCurrentEnergy)
                     targetTeamPresenter = null;

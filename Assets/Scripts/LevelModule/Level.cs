@@ -218,7 +218,6 @@ namespace LevelModule
                 if (passedTime > 5f)
                     break;
             }
-            yield return new WaitForSeconds(0.5f);
             
             _playerTeamPresenter?.Model.ResetEnergy();
             _playerTeamPresenter?.Model.ResetMovementSettings();
@@ -230,6 +229,8 @@ namespace LevelModule
             }
 
             _castlePresenter?.ResetHeroesEnergy();
+            
+            yield return new WaitForSeconds(0.5f);
 
             EndStepChanging();
         }
@@ -465,6 +466,7 @@ namespace LevelModule
                         true
                     ), 
                     _playgroundPresenter,
+                    false,
                     false
                 ));
                 _playgroundPresenter.ActivateCells();
@@ -494,7 +496,8 @@ namespace LevelModule
                         true
                     ), 
                     _playgroundPresenter,
-                    false
+                    false,
+                    true
                 ));
                 _playgroundPresenter.ActivateRedCells();
             }
@@ -570,10 +573,10 @@ namespace LevelModule
             {
                 TeamFactory.DownScaleTeam(playerTeamPresenter);
                 TeamFactory.ResetTeamPosition(playerTeamPresenter);
-                _enemiesTeamPresenters.Remove(enemyTeamPresenter);
                 --_enemiesStepCounter;
                 _playgroundPresenter.RemoveCharacterFromCell(enemyTeamPresenter,
                     enemyTeamPresenter.Model.HeightCellIndex, enemyTeamPresenter.Model.WidthCellIndex);
+                _enemiesTeamPresenters.Remove(enemyTeamPresenter);
                 enemyTeamPresenter.Destroy();
                 if (_enemiesTeamPresenters.Count <= 0)
                 {
@@ -586,9 +589,9 @@ namespace LevelModule
                 TeamFactory.DownScaleTeam(enemyTeamPresenter);
                 TeamFactory.ResetTeamPosition(enemyTeamPresenter);
                 --_playerStepCounter;
-                playerTeamPresenter.Destroy();
                 _playgroundPresenter.RemoveCharacterFromCell(playerTeamPresenter,
                     playerTeamPresenter.Model.HeightCellIndex, playerTeamPresenter.Model.WidthCellIndex);
+                playerTeamPresenter.Destroy();
                 _playerTeamPresenter = null;
                 IsActive = false;
                 LoseGameAction?.Invoke();

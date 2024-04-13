@@ -86,7 +86,6 @@ namespace PlaygroundModule.ModelPart
             
             TeamsOnCell.Add(team);
             _preTeamOnCell = null;
-            //Debug.Log($"Set on {CellHeightId}:{CellWidthId}");
 
             if (TeamsOnCell.Count >= 2)
             {

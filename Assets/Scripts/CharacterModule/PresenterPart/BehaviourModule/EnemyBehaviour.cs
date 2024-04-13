@@ -39,6 +39,7 @@ namespace CharacterModule.PresenterPart.BehaviourModule
                             moveNode,
                             playgroundPresenter,
                             true,
+                            true,
                             out var route
                         ))
                     {
@@ -61,7 +62,8 @@ namespace CharacterModule.PresenterPart.BehaviourModule
                     true
                 ),
                 playgroundPresenter,
-                false
+                false,
+                true
             );
             
             return neighborhood;

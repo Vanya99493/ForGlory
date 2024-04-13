@@ -50,14 +50,9 @@ namespace UIModule.Panels.BattleHudModule
             attackQueuePanel.Instantiate(attackQueue);
         }
 
-        public void UpdateAttackingCharacter()
+        public void UpdateAttackingCharacter(CharacterPresenter attackingCharacter, Queue<CharacterPresenter> attackQueue)
         {
-            attackQueuePanel.UpdateAttackingCharacter();
-        }
-
-        public void UpdateAttackQueuePanel()
-        {
-            attackQueuePanel.UpdateQueue();
+            attackQueuePanel.UpdateAttackingCharacter(attackingCharacter, attackQueue);
         }
 
         private void OnPauseBattle()

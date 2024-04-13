@@ -33,7 +33,6 @@ namespace CharacterModule.PresenterPart
             
             Model.MoveAction += View.Move;
             Model.SetupCharactersAction += OnSetupCharacters;
-            //Model.EndMoveAction += OnEndMoveAction;
             DestroyCharacter += View.OnDestroyCharacter;
             View.ClickOnCharacter += ClickOnTeam;
 

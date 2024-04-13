@@ -105,7 +105,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return zones;
         }
         
-        public List<MoveNode> GetCellsByLength(int length, MoveNode startMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters)
+        public List<MoveNode> GetCellsByLength(int length, MoveNode startMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters, bool considerCastle)
         {
             List<MoveNode> cells = new List<MoveNode>();
             
@@ -120,7 +120,10 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             {
                 MoveNode currentMoveNode = bfsQueue.Dequeue();
 
-                if (currentMoveNode.Distance >= length)
+                if (currentMoveNode.Distance >= length || 
+                    (considerCastle && playgroundPresenter.Model
+                        .GetCellPresenter(currentMoveNode.HeightIndex, currentMoveNode.WidthIndex).Model
+                        .CheckCellOnCastle()))
                 {
                     continue;
                 }
@@ -190,7 +193,7 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             return cells;
         }
         
-        public bool TryBuildRoute(MoveNode startMoveNode, MoveNode targetMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters, out List<Pair<int, int>> route)
+        public bool TryBuildRoute(MoveNode startMoveNode, MoveNode targetMoveNode, PlaygroundPresenter playgroundPresenter, bool considerCharacters, bool considerCastle, out List<Pair<int, int>> route)
         {
             if (targetMoveNode.CellType == CellType.Water)
             {
@@ -208,6 +211,13 @@ namespace PlaygroundModule.PresenterPart.WideSearchModule
             {
                 MoveNode currentMoveNode = bfsQueue.Dequeue();
 
+                if (considerCastle && playgroundPresenter.Model
+                        .GetCellPresenter(currentMoveNode.HeightIndex, currentMoveNode.WidthIndex).Model
+                        .CheckCellOnCastle())
+                {
+                    continue;
+                }
+                
                 if (currentMoveNode == targetMoveNode)
                 {
                     route = BuildRoute(startMoveNode, currentMoveNode);

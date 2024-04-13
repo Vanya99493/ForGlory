@@ -86,7 +86,7 @@ namespace BattleModule.PresenterPart
                 if (attackingCharacter.Model.Health <= 0)
                     continue;
 
-                _uiController.battleHudUIPanel.UpdateAttackingCharacter();
+                _uiController.battleHudUIPanel.UpdateAttackingCharacter(attackingCharacter, attackQueue);
                 _view.SetAttackPosition(attackingCharacter, 0.5f);
                 yield return new WaitForSeconds(0.5f);
 
@@ -125,7 +125,7 @@ namespace BattleModule.PresenterPart
                     _clickedCharacter.View.Defend();
                     _clickedCharacter.Model.TakeDamage(attackingCharacter.Model.Damage);
                     _clickedCharacter = null;
-                    _uiController.battleHudUIPanel.UpdateAttackQueuePanel();
+                    _uiController.battleHudUIPanel.UpdateAttackingCharacter(attackingCharacter, attackQueue);
                     yield return new WaitForSeconds(1f);
                 }
                 else if (attackingCharacter is EnemyCharacterPresenter)
@@ -150,8 +150,9 @@ namespace BattleModule.PresenterPart
                     yield return new WaitForSeconds(0.5f);
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).View.Defend();
                     _model.PlayerTeam.Model.GetCharacterPresenter(randomIndex).Model.TakeDamage(attackingCharacter.Model.Damage);
-                    _uiController.battleHudUIPanel.UpdateAttackQueuePanel();
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(0.1f);
+                    _uiController.battleHudUIPanel.UpdateAttackingCharacter(attackingCharacter, attackQueue);
+                    yield return new WaitForSeconds(0.9f);
                 }
                 
                 _view.ResetAttackPosition(attackingCharacter, 1f);
@@ -248,7 +249,8 @@ namespace BattleModule.PresenterPart
 
         private void OnClickEnemy(CharacterPresenter clickedCharacter)
         {
-            _clickedCharacter = clickedCharacter;
+            if(_clickedCharacter == null)
+                _clickedCharacter = clickedCharacter;
         }
 
         private void OnAvoidBattle()

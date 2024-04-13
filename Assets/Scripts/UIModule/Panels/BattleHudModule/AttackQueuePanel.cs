@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CharacterModule.PresenterPart;
 using CustomClasses;
 using Infrastructure.Providers;
@@ -14,54 +15,44 @@ namespace UIModule.Panels.BattleHudModule
         [SerializeField] private Transform queueParent;
         [SerializeField] private Transform tempParent;
 
-        private List<Pair<CharacterPresenter, Image>> _attackQueue;
+        private Dictionary<string, Sprite> _sprites;
+        private List<Image> _images;
         private Image _pickedImage;
-        private int _currentIndex = 0;
         
         public void Instantiate(Queue<CharacterPresenter> attackQueue)
         {
-            _attackQueue = new List<Pair<CharacterPresenter, Image>>();
+            _sprites = new Dictionary<string, Sprite>();
+            _images = new List<Image>();
             DestroyChildren();
-            _currentIndex = 0;
-            
             var attackQueueArray = attackQueue.ToArray();
             var characterImagePrefab = ServiceLocator.Instance.GetService<UIPrefabsProvider>().GetQueueCharacterIcon();
+            var gameScenePrefabsProvider = ServiceLocator.Instance.GetService<GameScenePrefabsProvider>();
 
             for (int i = 0; i < attackQueueArray.Length; i++)
             {
-                var instantiatedImage = Instantiate(characterImagePrefab, queueParent);
-                instantiatedImage.sprite = ServiceLocator.Instance.GetService<GameScenePrefabsProvider>()
-                    .GetCharacterByName(attackQueueArray[i].Model.Name).Icon;
-                _attackQueue.Add(new Pair<CharacterPresenter, Image>(attackQueueArray[i], instantiatedImage));
+                string characterName = attackQueueArray[i].Model.Name;
+                _sprites.TryAdd(characterName, gameScenePrefabsProvider.GetCharacterByName(characterName).Icon);
+                if(i < attackQueueArray.Length - 1)
+                    _images.Add(Instantiate(characterImagePrefab, queueParent));
             }
         }
 
-        public void UpdateAttackingCharacter()
+        public void UpdateAttackingCharacter(CharacterPresenter attackingCharacter, Queue<CharacterPresenter> attackQueue)
         {
-            _pickedImage?.transform.SetParent(queueParent);
-            _pickedImage = _attackQueue[_currentIndex].SecondValue;
-            currentAttackImage.sprite = _pickedImage.sprite;
-            _pickedImage.transform.SetParent(tempParent);
-            do
-            {
-                _currentIndex = ++_currentIndex % _attackQueue.Count;
-            } while (_attackQueue[_currentIndex].FirstValue.Model.Health <= 0);
+            var attackQueueArray = attackQueue.ToArray();
+            var attackQueueArrayAlive = attackQueueArray.Where(character => character.Model.Health > 0).ToArray();
+
+            currentAttackImage.sprite = _sprites[attackingCharacter.Model.Name];
             
-            UpdateQueue();
-        }
-
-        public void UpdateQueue()
-        {
-            var newAttackQueue = new List<Pair<CharacterPresenter, Image>>();
-            foreach (var pair in _attackQueue)
+            int index = 0;
+            foreach (var image in _images)
             {
-                if (pair.FirstValue.Model.Health <= 0)
-                    Destroy(pair.SecondValue.gameObject);
+                if(index >= attackQueueArrayAlive.Length)
+                    image.gameObject.SetActive(false);
                 else
-                    newAttackQueue.Add(pair);
+                    image.sprite = _sprites[attackQueueArrayAlive[index].Model.Name];
+                index++;
             }
-
-            _attackQueue = newAttackQueue;
         }
 
         private void DestroyChildren()
